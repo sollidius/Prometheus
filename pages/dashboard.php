@@ -6,6 +6,12 @@ include 'functions.php';
 
 session_start();
 
+if ($_SESSION['login'] == 1) {
+
+
+
+
+
 ?>
 <div id="wrapper">
 
@@ -165,7 +171,7 @@ session_start();
 
 <?php
 
-
+ } else { header('Location: index.php');}
 
 
 

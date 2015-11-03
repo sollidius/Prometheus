@@ -8,21 +8,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
 
-  $hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-  echo $_POST['email'];
-  echo $_POST['password'];
+  $password = $_POST['password'];
 
   $stmt = $mysqli->prepare("SELECT password,id FROM users WHERE email = ?");
-  $stmt->bind_param( "s", $_POST['email']);
+  $stmt->bind_param('s', $_POST['email']);
   $stmt->execute();
-  $stmt->bind_result($password,$id);
+  $stmt->bind_result($password_db,$id);
+  $stmt->fetch();
   $stmt->close();
 
-  echo $password;
-  echo $id;
-
-    if (password_verify($password, $hash)) {
+    if (password_verify($password, $password_db)) {
         // Success!
         session_start();
         $_SESSION['login'] = 1;
@@ -31,6 +26,7 @@ if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
     }
     else {
         // Invalid credentials
+        echo "wrong";
     }
 }
 
