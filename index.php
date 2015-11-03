@@ -1,7 +1,5 @@
 <?php
 
-
-
 if (isset($_GET["page"])) {
 $page = $_GET["page"];
 }
@@ -17,6 +15,31 @@ if ($page=="login") {
 //Dashboard
 if ($page=="dashboard") {
  include 'pages/dashboard.php';
+}
+
+//Settings
+if ($page=="settings") {
+ include 'pages/settings.php';
+}
+
+//Settings
+if ($page=="usettings") {
+ include 'pages/usettings.php';
+}
+
+//Users
+if ($page=="users") {
+ include 'pages/users.php';
+}
+
+//Rootserver
+if ($page=="rootserver") {
+ include 'pages/rootserver.php';
+}
+
+//Rootserver
+if ($page=="gameserver") {
+ include 'pages/gameserver.php';
 }
 
 //Logout
