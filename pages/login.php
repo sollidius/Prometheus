@@ -2,18 +2,39 @@
 //header
 $title = "Login";
 include 'header.html';
-
+include 'functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-$hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
 
-  if (password_verify($password, $hash)) {
-      // Success!
-  }
-  else {
-      // Invalid credentials
-  }
+  $hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+  echo $_POST['email'];
+  echo $_POST['password'];
+
+  $stmt = $mysqli->prepare("SELECT password,id FROM users WHERE email = ?");
+  $stmt->bind_param( "s", $_POST['email']);
+  $stmt->execute();
+  $stmt->bind_result($password,$id);
+  $stmt->close();
+
+  echo $password;
+  echo $id;
+
+    if (password_verify($password, $hash)) {
+        // Success!
+        session_start();
+        $_SESSION['login'] = 1;
+        $_SESSION['user_id'] = $id;
+        header('Location: index.php?page=dashboard');
+    }
+    else {
+        // Invalid credentials
+    }
+}
+
+
 
 
 

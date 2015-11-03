@@ -2,6 +2,9 @@
 //header
 $title = "Dashboard";
 include 'header.html';
+include 'functions.php';
+
+session_start();
 
 ?>
 <div id="wrapper">
