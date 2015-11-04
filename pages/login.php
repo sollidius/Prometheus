@@ -1,7 +1,7 @@
 <?php
 //header
 $title = "Login";
-include 'header.html';
+include 'header.php';
 include 'functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -29,9 +29,6 @@ if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
 
     }
 }
-
-
-
 
 
 }
@@ -69,13 +66,6 @@ if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
     </div>
 
 <?php
-
-
-
-
-
-
-
 
 //Footer
 include 'footer.html';

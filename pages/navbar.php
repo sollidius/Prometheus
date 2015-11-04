@@ -36,15 +36,21 @@
                 <li>
                     <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                 </li>
+                <?php if  ($db_rank == 1) { echo '
                 <li>
                     <a href="index.php?page=settings"><i class="fa fa-table fa-fw"></i> Einstellungen</a>
                 </li>
+                 '; } ?>
+                <?php if  ($db_rank == 1) { echo '
                 <li>
                     <a href="index.php?page=users"><i class="fa fa-table fa-fw"></i> Benutzer</a>
                 </li>
+                 '; } ?>
+                 <?php if  ($db_rank == 1) { echo '
                 <li>
                     <a href="index.php?page=rootserver"><i class="fa fa-edit fa-fw"></i> Rootserver</a>
                 </li>
+                 '; } ?>
                 <li>
                     <a href="index.php?page=gameserver"><i class="fa fa-edit fa-fw"></i> Gameserver</a>
                 </li>

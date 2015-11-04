@@ -1,12 +1,21 @@
 <?php
 //header
 $title = "Einstellungen";
-include 'header.html';
+include 'header.php';
 include 'functions.php';
 
 session_start();
 
-if ($_SESSION['login'] == 1) {
+$db_rank = 2;
+//Load user Data from DB
+$stmt = $mysqli->prepare("SELECT rank,id FROM users WHERE id = ?");
+$stmt->bind_param('i', $_SESSION['user_id']);
+$stmt->execute();
+$stmt->bind_result($db_rank,$db_id);
+$stmt->fetch();
+$stmt->close();
+
+if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
 
 
@@ -51,7 +60,8 @@ if ($_SESSION['login'] == 1) {
 
 <?php
 
- } else { header('Location: index.php');}
+} elseif ($_SESSION['login'] == 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
+} else {  header('Location: index.php');}
 
 
 //Footer

@@ -1,10 +1,19 @@
 <?php
 //header
 $title = "Dashboard";
-include 'header.html';
+include 'header.php';
 include 'functions.php';
 
 session_start();
+
+$db_rank = 2;
+//Load user Data from DB
+$stmt = $mysqli->prepare("SELECT rank,id FROM users WHERE id = ?");
+$stmt->bind_param('i', $_SESSION['user_id']);
+$stmt->execute();
+$stmt->bind_result($db_rank,$db_id);
+$stmt->fetch();
+$stmt->close();
 
 if ($_SESSION['login'] == 1) {
 
