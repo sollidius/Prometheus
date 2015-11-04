@@ -6,7 +6,7 @@ include 'functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
+if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 7) {
 
   $password = $_POST['password'];
 
