@@ -3,6 +3,8 @@
 $title = "Rootserver";
 include 'header.php';
 include 'functions.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
+include('../components/Net/SSH2.php');
 
 session_start();
 
@@ -16,8 +18,6 @@ $stmt->fetch();
 $stmt->close();
 
 if ($_SESSION['login'] == 1 and $db_rank == 1) {
-
-var_dump(extension_loaded('ssh2'));
 
 
 
@@ -54,10 +54,13 @@ var_dump(extension_loaded('ssh2'));
                        $stmt->execute();
                        $stmt->close();
 
+                       $ssh = new Net_SSH2($ip,$port);
+                        if (!$ssh->login('username', 'password')) {
+                           exit('Login Failed');
+                        }
 
-                       $connection = ssh2_connect('shell.example.com', 22);
-                       ssh2_auth_password($connection, 'username', 'password');
-                       $stream = ssh2_exec($connection, '/usr/local/bin/php -i');
+                        echo $ssh->exec('pwd');
+                        echo $ssh->exec('ls -la');
 
                        echo '
                        <div class="alert alert-success" role="alert">
