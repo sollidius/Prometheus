@@ -1,6 +1,6 @@
 <?php
 //header
-$title = "Einstellungen";
+$title = "Benutzer Einstellungen";
 include 'header.html';
 include 'functions.php';
 
