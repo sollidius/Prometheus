@@ -3,8 +3,8 @@
 $title = "Rootserver";
 include 'header.php';
 include 'functions.php';
-set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
-include('../components/Net/SSH2.php');
+set_include_path('components/phpseclib');
+include('Net/SSH2.php');
 
 session_start();
 
@@ -55,7 +55,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        $stmt->close();
 
                        $ssh = new Net_SSH2($ip,$port);
-                        if (!$ssh->login('username', 'password')) {
+                        if (!$ssh->login($root, $root_password)) {
                            exit('Login Failed');
                         }
 
