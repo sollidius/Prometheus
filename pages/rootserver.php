@@ -42,25 +42,49 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                    if (isset($_POST['confirm'])) {
 
                      $error = false;
-                     $status = 0;
+                     $status = 1;
 
                      $name = $_POST['name']; $ip = $_POST['ip']; $port = $_POST['port'];
                      $user = $_POST['user']; $password = $_POST['password']; $root = $_POST['root']; $root_password = $_POST['root_password'];
 
                      if ($error == false) {
 
-                       $stmt = $mysqli->prepare("INSERT INTO dedicated(name,ip,port,user,password,status) VALUES (?, ?, ?, ? ,? ,?)");
-                       $stmt->bind_param('ssissi', $name,$ip,$port,$user,$password,$status);
-                       $stmt->execute();
-                       $stmt->close();
-
                        $ssh = new Net_SSH2($ip,$port);
                         if (!$ssh->login($root, $root_password)) {
-                           exit('Login Failed');
+                          echo '
+                          <div class="alert alert-danger" role="alert">
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Error:</span>
+                            Login failed
+                          </div>';
+                          exit;
+                        } else {
+
+                          $ssh->exec('apt-get update');
+                          $ssh->exec('apt-get -y install sudo');
+                          $ssh->exec('apt-get -y install screen');
+                          $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
+
+                          $ssh->enablePTY();
+                          $ssh->exec('sudo passwd '.$user);
+                          $ssh->read('Enter new UNIX password:');
+                          $ssh->write($password . "\n");
+                          $ssh->read('Retype new UNIX password:');
+                          $ssh->write($password . "\n");
+                          $ssh->read('passwd: password updated successfully');
+                          $ssh->disablePTY();
+                          $ssh->exec("usermod -a -G sudo ".$user);
+
+                          $stmt = $mysqli->prepare("INSERT INTO dedicated(name,ip,port,user,password,status) VALUES (?, ?, ?, ? ,? ,?)");
+                          $stmt->bind_param('ssissi', $name,$ip,$port,$user,$password,$status);
+                          $stmt->execute();
+                          $stmt->close();
+
+                          unset($root_password);
+                          unset($root);
+
                         }
 
-                        echo $ssh->exec('pwd');
-                        echo $ssh->exec('ls -la');
 
                        echo '
                        <div class="alert alert-success" role="alert">
@@ -151,11 +175,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     <tbody>
                    <?php
 
-                   $query = "SELECT name,ip,port,user,password,status FROM dedicated ORDER by id";
+                   $query = "SELECT name,ip,port,user,status FROM dedicated ORDER by id";
 
                     if ($stmt = $mysqli->prepare($query)) {
                         $stmt->execute();
-                        $stmt->bind_result($db_name, $db_ip,$db_port,$db_user,$db_password,$db_status);
+                        $stmt->bind_result($db_name, $db_ip,$db_port,$db_user,$db_status);
 
                         while ($stmt->fetch()) {
                           echo "<tr>";
@@ -163,8 +187,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           echo "<td>" . $db_ip . "</td>";
                           echo "<td>" . $db_port . "</td>";
                           echo "<td>" . $db_user . "</td>";
-                          echo "<td>" . $db_password . "</td>";
+                          echo "<td> ******** </td>";
                           if ($db_status == 0) { echo "<td>Unbekannt</td>"; }
+                          if ($db_status == 1) { echo "<td>Installiert</td>"; }
                           echo "</tr>";
                         }
                         $stmt->close();
