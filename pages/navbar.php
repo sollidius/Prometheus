@@ -51,6 +51,11 @@
                     <a href="index.php?page=rootserver"><i class="fa fa-edit fa-fw"></i> Rootserver</a>
                 </li>
                  '; } ?>
+                 <?php if  ($db_rank == 1) { echo '
+                <li>
+                    <a href="index.php?page=templates"><i class="fa fa-edit fa-fw"></i> Vorlagen</a>
+                </li>
+                 '; } ?>
                 <li>
                     <a href="index.php?page=gameserver"><i class="fa fa-edit fa-fw"></i> Gameserver</a>
                 </li>

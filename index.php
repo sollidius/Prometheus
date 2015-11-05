@@ -38,6 +38,11 @@ if ($page=="rootserver") {
 }
 
 //Rootserver
+if ($page=="templates") {
+ include 'pages/templates.php';
+}
+
+//Rootserver
 if ($page=="gameserver") {
  include 'pages/gameserver.php';
 }
