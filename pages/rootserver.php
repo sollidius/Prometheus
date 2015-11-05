@@ -40,7 +40,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                   //Install Games
 
-                    $query = "SELECT id,name,type FROM templates ORDER by id";
+                    $query = "SELECT id,name,type,type_name FROM templates ORDER by id";
 
                     if ($result = $mysqli->query($query)) {
 
@@ -63,27 +63,41 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                echo '
                                <div class="alert alert-danger" role="alert">
                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                 <span class="sr-only">Error:</span>
+                                 <span class="sr-only">Success:</span>
                                  Login failed
                                </div>';
                                exit;
                              } else {
 
                               $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates; then echo "1"; fi');
-                              if ($output == 1) { $output =  $ssh->exec('mkdir /home/'.$user.'/templates'); }
+                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates'); }
                               $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row[1].'; then echo "1"; fi');
-                              if ($output == 1) { $output =  $ssh->exec('mkdir /home/'.$user.'/templates/'.$row[1]); }
+                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates/'.$row[1]);
 
-                              //Steamcmd
-                              if ($row[2] == "steamcmd") {
-                                echo  $ssh->exec('cd templates');
-                                echo  $ssh->exec('ls');
-                                echo  $ssh->exec("wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz");
-                                echo  $ssh->exec("tar xvf steamcmd_linux.tar.gz");
+                                //Steamcmd
+                                if ($row[2] == "steamcmd") {
+
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';tar xvf steamcmd_linux.tar.gz');
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';screen -adms cmd /home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +login anonymous +app_update '.$row[3].' validate +quit');
+
+                                  echo '
+                                  <div class="alert alert-success" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Template wird erstellt, das kann etwas dauern :)
+                                  </div>';
+
+                                }
 
 
-
-
+                              } else {
+                                echo '
+                                <div class="alert alert-danger" role="alert">
+                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                  <span class="sr-only">Success:</span>
+                                  Spiel ist bereits installiert
+                                </div>';
 
                               }
                              }
@@ -133,10 +147,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           </div>';
                           exit;
                         } else {
-
+                          $ssh->setTimeout(30);
+                          $ssh->exec('dpkg --add-architecture i386');
                           $ssh->exec('apt-get update');
                           $ssh->exec('apt-get -y install sudo');
                           $ssh->exec('apt-get -y install screen');
+                          $ssh->exec('apt-get -y install ia32-libs');
                           $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
 
                           $ssh->enablePTY();

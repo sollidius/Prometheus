@@ -85,7 +85,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         <input type="text" class="form-control" name="type" placeholder="steamcmd">
                       </div>
                       <div class="col-sm-3">
-                        <input type="text" class="form-control" name="type_name" placeholder="garrysmod">
+                        <input type="text" class="form-control" name="type_name" placeholder="4020">
                       </div>
                     </div>
                     <div class="form-group">
