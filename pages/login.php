@@ -32,8 +32,6 @@ if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
 
 
 
-
-
 }
 
 ?>
@@ -69,9 +67,6 @@ if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
     </div>
 
 <?php
-
-
-
 
 
 

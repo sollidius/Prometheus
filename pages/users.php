@@ -81,11 +81,6 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                      }
 
-
-
-
-
-
                     } else {
 
                   ?>

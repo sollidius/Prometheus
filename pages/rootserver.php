@@ -38,6 +38,80 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                <?php
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+                  //Install Games
+
+                    $query = "SELECT id,name,type FROM templates ORDER by id";
+
+                    if ($result = $mysqli->query($query)) {
+
+                        /* fetch object array */
+                        while ($row = $result->fetch_row()) {
+                          if (isset($_POST['game_'.$row[0]])) {
+
+
+                            $id = $_POST['send_root_id'];
+
+                            $stmtz = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                            $stmtz->bind_param('i', $id);
+                            $stmtz->execute();
+                            $stmtz->bind_result($ip,$port,$user,$password);
+                            $stmtz->fetch();
+                            $stmtz->close();
+
+                            $ssh = new Net_SSH2($ip,$port);
+                             if (!$ssh->login($user, $password)) {
+                               echo '
+                               <div class="alert alert-danger" role="alert">
+                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                 <span class="sr-only">Error:</span>
+                                 Login failed
+                               </div>';
+                               exit;
+                             } else {
+
+                              $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates; then echo "1"; fi');
+                              if ($output == 1) { $output =  $ssh->exec('mkdir /home/'.$user.'/templates'); }
+                              $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row[1].'; then echo "1"; fi');
+                              if ($output == 1) { $output =  $ssh->exec('mkdir /home/'.$user.'/templates/'.$row[1]); }
+
+                              //Steamcmd
+                              if ($row[2] == "steamcmd") {
+                                echo  $ssh->exec('cd templates');
+                                echo  $ssh->exec('ls');
+                                echo  $ssh->exec("wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz");
+                                echo  $ssh->exec("tar xvf steamcmd_linux.tar.gz");
+
+
+
+
+
+                              }
+                             }
+                          }
+                        }
+
+                        /* free result set */
+                        $result->close();
+                    }
+
+
+                    //Check Root
+                    $send_root_id = 0;
+                    $query = "SELECT id FROM dedicated ORDER by id";
+
+                     if ($stmt = $mysqli->prepare($query)) {
+                         $stmt->execute();
+                         $stmt->bind_result($db_id);
+
+                         while ($stmt->fetch()) {
+                             if (isset($_POST['add_games_'.$db_id])) {
+                                    $send_root_id = $db_id;
+                                    $_POST['add_games'] = 1;
+                             }
+                         }
+                         $stmt->close();
+                     }
+
 
                    if (isset($_POST['confirm'])) {
 
@@ -104,11 +178,43 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                    }
 
+                 } else if (isset($_POST['add_games'])) {
+
+                  ?>
+                  <form class="form-horizontal" action="index.php?page=rootserver" method="post">
+                   <div class="col-sm-4">
+                   <table class="table table-bordered">
+                     <thead>
+                       <tr>
+                         <th colspan="2">Name</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                    <?php
+
+                    $query = "SELECT name, type,type_name,id FROM templates ORDER by id";
+
+                     if ($stmt = $mysqli->prepare($query)) {
+                         $stmt->execute();
+                         $stmt->bind_result($db_name, $db_type,$db_type_name,$db_id);
+
+                         while ($stmt->fetch()) {
+                           echo "<tr>";
+                           echo "<td>" . $db_name . "</td>";
+                           echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$db_id.'" class="btn btn-sm center-block btn-success">Installieren</button></td>';
+                           echo "</tr>";
+                         }
+                         $stmt->close();
+                     }
+                     $mysqli->close(); ?>
+                     </tbody>
+                   </table>
+                   </div>
+                  <input type="hidden" name="send_root_id" value="<?php echo $send_root_id; ?>">
+                 </form>
 
 
-
-
-
+                   <?php
                   } else {
 
                 ?>
@@ -141,7 +247,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   <div class="form-group">
                     <label class="control-label col-sm-2" for="pwd">Root/Passwort:</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="root" placeholder="prometheus">
+                      <input type="text" class="form-control" name="root" placeholder="root">
                     </div>
                     <div class="col-sm-4">
                       <input type="password" class="form-control" name="root_password" placeholder="123456">
@@ -175,11 +281,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     <tbody>
                    <?php
 
-                   $query = "SELECT name,ip,port,user,status FROM dedicated ORDER by id";
+                   $query = "SELECT name,ip,port,user,status,id FROM dedicated ORDER by id";
 
                     if ($stmt = $mysqli->prepare($query)) {
                         $stmt->execute();
-                        $stmt->bind_result($db_name, $db_ip,$db_port,$db_user,$db_status);
+                        $stmt->bind_result($db_name, $db_ip,$db_port,$db_user,$db_status,$db_id);
 
                         while ($stmt->fetch()) {
                           echo "<tr>";
@@ -189,7 +295,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           echo "<td>" . $db_user . "</td>";
                           echo "<td> ******** </td>";
                           if ($db_status == 0) { echo "<td>Unbekannt</td>"; }
-                          if ($db_status == 1) { echo "<td>Installiert</td>"; }
+                          if ($db_status == 1) { echo '<td>Installiert <button style="margin-bottom:2px;" type="submit" name="add_games_'.$db_id.'" class="btn btn-xs pull-right btn-success">+</button></td>'; }
                           echo "</tr>";
                         }
                         $stmt->close();
