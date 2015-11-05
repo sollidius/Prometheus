@@ -77,7 +77,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                 //Steamcmd
                                 if ($row[2] == "steamcmd") {
 
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
+                                  //$ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
                                   $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';tar xvf steamcmd_linux.tar.gz');
                                   $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';screen -adms cmd /home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +login anonymous +app_update '.$row[3].' validate +quit');
 

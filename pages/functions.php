@@ -2,6 +2,10 @@
 
 $mysqli = new mysqli("localhost", "Prometheus", "aTFGbJjEC9LtUSN4", "prometheus");
 
+if ($mysqli_connection->connect_error) {
+   echo "Not connected, error: " . $mysqli_connection->connect_error;
+   exit;
+}
 
 function user_exists($user,$mysqli) {
 
