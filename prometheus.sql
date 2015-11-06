@@ -18,6 +18,7 @@ CREATE TABLE `gameservers` (
   `user_name` varchar(50) NOT NULL,
   `game` varchar(50) NOT NULL,
   `slots` int(2) NOT NULL,
+  `map` varchar(30) NOT NULL,
   `ip` varchar(15) NOT NULL,
   `port` varchar(6) NOT NULL,
   `gs_login` varchar(25) NOT NULL,
@@ -27,6 +28,7 @@ CREATE TABLE `gameservers` (
 CREATE TABLE `templates` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `name_internal` varchar(50) NOT NULL,
   `type` varchar(50) NOT NULL,
   `type_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -57,8 +59,8 @@ ALTER TABLE `users`
 ALTER TABLE `dedicated`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 ALTER TABLE `gameservers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 ALTER TABLE `templates`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
