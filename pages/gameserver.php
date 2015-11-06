@@ -67,6 +67,7 @@ if ($_SESSION['login'] == 1) {
                        $error = false;
                        $port = $_POST['port']; $slots = $_POST['slots'];
                        $dedicated = $_POST['dedicated']; $type = $_POST['type'];
+                       $map = $_POST['map'];
 
                        if ($error == false) {
 
@@ -112,8 +113,8 @@ if ($_SESSION['login'] == 1) {
                             $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login."'";
                             $ssh->exec($copy);
 
-                            $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                            $stmt->bind_param('issisiss', $_SESSION['user_id'],$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password);
+                            $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password,map) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            $stmt->bind_param('issisisss', $_SESSION['user_id'],$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map);
                             $stmt->execute();
                             $stmt->close();
 
@@ -183,10 +184,10 @@ if ($_SESSION['login'] == 1) {
 
                    } elseif (isset($_POST['gstart'])) {
 
-                      $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
+                      $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port FROM gameservers WHERE id = ?");
                       $stmt->bind_param('i', $gs_select);
                       $stmt->execute();
-                      $stmt->bind_result($ip,$game,$gs_login,$slots);
+                      $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port);
                       $stmt->fetch();
                       $stmt->close();
 
@@ -215,7 +216,7 @@ if ($_SESSION['login'] == 1) {
                          exit;
                        } else {
                          $ssh->exec('sudo pkill -u '.$gs_login);
-                         $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' +map gm_construct -maxplayers '.$slots);
+                         $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots);
                          echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
                          echo '
                          <div class="alert alert-success" role="alert">
@@ -275,6 +276,12 @@ if ($_SESSION['login'] == 1) {
                       </div>
                     </div>
                     <div class="form-group">
+                      <label class="control-label col-sm-2">Map:</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" name="map" placeholder="gm_flatgrass">
+                      </div>
+                    </div>
+                    <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" name="confirm" class="btn btn-default">Submit</button>
                       </div>
@@ -296,6 +303,8 @@ if ($_SESSION['login'] == 1) {
                           <th>Steuerung</th>
                           <th>IP</th>
                           <th>Port</th>
+                          <th>Slots</th>
+                          <th>Map</th>
                           <th>Login</th>
                           <th>Passwort</th>
                         </tr>
@@ -303,11 +312,11 @@ if ($_SESSION['login'] == 1) {
                       <tbody>
                      <?php
 
-                     $query = "SELECT user_id, user_name, game, ip, port, gs_login, gs_password, id FROM gameservers ORDER by id";
+                     $query = "SELECT user_id, user_name, game, ip, port,slots, gs_login, gs_password, id, map FROM gameservers ORDER by id";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_user_id, $db_user_name,$db_game,$db_ip,$db_port,$db_gs_login,$db_gs_password,$db_gs_id);
+                          $stmt->bind_result($db_user_id, $db_user_name,$db_game,$db_ip,$db_port,$db_slots,$db_gs_login,$db_gs_password,$db_gs_id,$db_map);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
@@ -316,6 +325,8 @@ if ($_SESSION['login'] == 1) {
                             echo '<td> <button type="submit" name="start-'.$db_gs_id.'" class="btn btn-success btn-sm">(Re)Start</button> <button type="submit" name="stop-'.$db_gs_id.'" class="btn btn-danger btn-sm">Stop</button>  </td>';
                             echo "<td>" . $db_ip . "</td>";
                             echo "<td>" . $db_port . "</td>";
+                            echo "<td>" . $db_slots . "</td>";
+                            echo "<td>" . $db_map . "</td>";
                             echo "<td>" . $db_gs_login . "</td>";
                             echo "<td>" . $db_gs_password . "</td>";
                             echo "</tr>";
