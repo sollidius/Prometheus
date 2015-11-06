@@ -10,10 +10,10 @@ if (strlen($_POST['email']) > 3 and strlen($_POST['password']) > 3) {
 
   $password = $_POST['password'];
 
-  $stmt = $mysqli->prepare("SELECT password,id FROM users WHERE email = ?");
+  $stmt = $mysqli->prepare("SELECT password,id,name FROM users WHERE email = ?");
   $stmt->bind_param('s', $_POST['email']);
   $stmt->execute();
-  $stmt->bind_result($password_db,$id);
+  $stmt->bind_result($password_db,$id,$name);
   $stmt->fetch();
   $stmt->close();
 
