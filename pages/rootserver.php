@@ -137,6 +137,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                      $user = $_POST['user']; $password = $_POST['password']; $root = $_POST['root']; $root_password = $_POST['root_password'];
                      $os = $_POST['os'];
 
+
+                     if (exists_entry("name","dedicated","name",$name,$mysqli) == true) { $error = true;}
+                     if (exists_entry("ip","dedicated","ip",$ip,$mysqli) == true) { $error = true;}
+
                      if ($error == false) {
 
                        $ssh = new Net_SSH2($ip,$port);

@@ -109,7 +109,7 @@ if ($_SESSION['login'] == 1) {
                             $ssh->read('passwd: password updated successfully');
                             $ssh->disablePTY();
                             $ssh->read('[prompt]');
-                            $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login."'";
+                            $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login."'";
                             $ssh->exec($copy);
 
                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -171,6 +171,13 @@ if ($_SESSION['login'] == 1) {
                         exit;
                       } else {
                         $ssh->exec('sudo pkill -u '.$gs_login);
+                        echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
+                        echo '
+                        <div class="alert alert-success" role="alert">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Success:</span>
+                          Done
+                        </div>';
                       }
 
 
@@ -209,6 +216,13 @@ if ($_SESSION['login'] == 1) {
                        } else {
                          $ssh->exec('sudo pkill -u '.$gs_login);
                          $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' +map gm_construct -maxplayers '.$slots);
+                         echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
+                         echo '
+                         <div class="alert alert-success" role="alert">
+                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                           <span class="sr-only">Success:</span>
+                           Done
+                         </div>';
                        }
 
                     } else {

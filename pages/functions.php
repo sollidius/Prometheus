@@ -2,7 +2,7 @@
 
 $mysqli = new mysqli("localhost", "Prometheus", "aTFGbJjEC9LtUSN4", "prometheus");
 
-if ($mysqli_connection->connect_error) {
+if ($mysqli->connect_error) {
    echo "Not connected, error: " . $mysqli_connection->connect_error;
    exit;
 }
@@ -60,7 +60,29 @@ function startsWith($haystack, $needle) {
     return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
 }
 
+function exists_entry($spalte,$tabelle,$wo,$was,$mysqli) {
 
+  $query = "SELECT ".$spalte." FROM ".$tabelle." WHERE ".$wo."=?";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("s", $was);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows == 1){
+              return true;
+            } else {
+              return false;
+            }
+          }
+      }
+}
 
 
 

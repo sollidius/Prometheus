@@ -39,12 +39,16 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                        $error = false;
 
+                       $name = $_POST['name'];
+                       $type = $_POST['type'];
+                       $type_name = $_POST['type_name'];
+                       $internal = $_POST['internal'];
+
+
+                       if (exists_entry("name","templates","name",$name,$mysqli) == true) { $error = true;}
+
                        if ($error == false) {
 
-                         $name = $_POST['name'];
-                         $type = $_POST['type'];
-                         $type_name = $_POST['type_name'];
-                         $internal = $_POST['internal'];
 
                          $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal) VALUES (?, ?, ?, ?)");
                          $stmt->bind_param('ssss', $name, $type,$type_name,$internal);
