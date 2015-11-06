@@ -88,7 +88,7 @@ if ($_SESSION['login'] == 1) {
                             $ssh->read('passwd: password updated successfully');
                             $ssh->disablePTY();
                             $ssh->read('[prompt]');
-                            $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";chown -R ".$gs_login.":".$gs_login." /home/".$gs_login."'";
+                            $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login."'";
                             $ssh->exec($copy);
 
                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
