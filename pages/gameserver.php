@@ -3,6 +3,8 @@
 $title = "Gameserver";
 include 'header.php';
 include 'functions.php';
+set_include_path('components/phpseclib');
+include('Net/SSH2.php');
 
 session_start();
 
@@ -47,42 +49,64 @@ if ($_SESSION['login'] == 1) {
 
                        if ($error == false) {
 
-                         $stmt = $mysqli->prepare("SELECT ip FROM dedicated WHERE name = ?");
+                         $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE name = ?");
                          $stmt->bind_param('i', $dedicated);
                          $stmt->execute();
-                         $stmt->bind_result($ip);
+                         $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
                          $stmt->fetch();
                          $stmt->close();
 
-                         $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
-                         $stmt->bind_param('i', $_SESSION['user_id']);
-                         $stmt->execute();
-                         $stmt->bind_result($user_name,$user_u_count);
-                         $stmt->fetch();
-                         $stmt->close();
 
-                         $gs_login = $user_name . "-" . $user_u_count;
-                         $gs_password = "123456";
+                         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                          if (!$ssh->login($dedi_login, $dedi_password)) {
+                            echo '
+                            <div class="alert alert-danger" role="alert">
+                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Error:</span>
+                              Login failed
+                            </div>';
+                            exit;
+                          } else {
 
 
-                         $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                         $stmt->bind_param('issisiss', $_SESSION['user_id'],$user_name,$type,$slots,$ip,$port,$gs_login,$gs_password);
-                         $stmt->execute();
-                         $stmt->close();
 
-                         $user_u_count = $user_u_count +1;
 
-                         $stmt = $mysqli->prepare("UPDATE users SET u_count = ? WHERE id = ?");
-                         $stmt->bind_param('ii', $user_u_count, $_SESSION['user_id']);
-                         $stmt->execute();
-                         $stmt->close();
 
-                         echo '
-                         <div class="alert alert-success" role="alert">
-                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                           <span class="sr-only">Error:</span>
-                           Okay
-                         </div>';
+
+
+
+
+
+                            $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
+                            $stmt->bind_param('i', $_SESSION['user_id']);
+                            $stmt->execute();
+                            $stmt->bind_result($user_name,$user_u_count);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $gs_login = $user_name . "-" . $user_u_count;
+                            $gs_password = "123456";
+
+                            $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                            $stmt->bind_param('issisiss', $_SESSION['user_id'],$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password);
+                            $stmt->execute();
+                            $stmt->close();
+
+                            $user_u_count = $user_u_count +1;
+
+                            $stmt = $mysqli->prepare("UPDATE users SET u_count = ? WHERE id = ?");
+                            $stmt->bind_param('ii', $user_u_count, $_SESSION['user_id']);
+                            $stmt->execute();
+                            $stmt->close();
+
+                            echo '
+                            <div class="alert alert-success" role="alert">
+                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Error:</span>
+                              Okay
+                            </div>';
+
+                          }
 
                      } else {
 
