@@ -44,9 +44,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $name = $_POST['name'];
                          $type = $_POST['type'];
                          $type_name = $_POST['type_name'];
+                         $internal = $_POST['internal'];
 
-                         $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name) VALUES (?, ?, ?)");
-                         $stmt->bind_param('sss', $name, $type,$type_name);
+                         $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal) VALUES (?, ?, ?, ?)");
+                         $stmt->bind_param('ssss', $name, $type,$type_name,$internal);
                          $stmt->execute();
                          $stmt->close();
 
@@ -74,9 +75,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                   <form class="form-horizontal" action="index.php?page=templates" method="post">
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Name:</label>
+                      <label class="control-label col-sm-2">Name/Internal:</label>
                       <div class="col-sm-3">
                         <input type="text" class="form-control" name="name" placeholder="Garrysmod">
+                      </div>
+                      <div class="col-sm-3">
+                        <input type="text" class="form-control" name="internal" placeholder="garrysmod">
                       </div>
                     </div>
                     <div class="form-group">

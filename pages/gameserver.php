@@ -41,6 +41,27 @@ if ($_SESSION['login'] == 1) {
                   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
+                    $query = "SELECT id FROM gameservers ORDER by id";
+
+                    if ($result = $mysqli->query($query)) {
+
+                        /* fetch object array */
+                        while ($row = $result->fetch_row()) {
+                          if (isset($_POST['start-'.$row[0]])) {
+                            $gs_select = $row[0];
+                            $_POST['gstart'] = 1;
+                          }
+                          if (isset($_POST['stop-'.$row[0]])) {
+                            $gs_select = $row[0];
+                            $_POST['gstop'] = 1;
+                          }
+                        }
+
+                        /* free result set */
+                        $result->close();
+                    }
+
+
                      if (isset($_POST['confirm'])) {
 
                        $error = false;
@@ -123,6 +144,73 @@ if ($_SESSION['login'] == 1) {
 
                      }
 
+                   } elseif (isset($_POST['gstop'])) {
+
+                     $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
+                     $stmt->bind_param('i', $gs_select);
+                     $stmt->execute();
+                     $stmt->bind_result($ip,$game,$gs_login,$slots);
+                     $stmt->fetch();
+                     $stmt->close();
+
+                     $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
+                     $stmt->bind_param('s', $ip);
+                     $stmt->execute();
+                     $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                     $stmt->fetch();
+                     $stmt->close();
+
+                     $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                      if (!$ssh->login($dedi_login, $dedi_password)) {
+                        echo '
+                        <div class="alert alert-danger" role="alert">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          Login failed
+                        </div>';
+                        exit;
+                      } else {
+                        $ssh->exec('sudo pkill -u '.$gs_login);
+                      }
+
+
+                   } elseif (isset($_POST['gstart'])) {
+
+                      $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
+                      $stmt->bind_param('i', $gs_select);
+                      $stmt->execute();
+                      $stmt->bind_result($ip,$game,$gs_login,$slots);
+                      $stmt->fetch();
+                      $stmt->close();
+
+                      $stmt = $mysqli->prepare("SELECT name_internal FROM templates WHERE name = ?");
+                      $stmt->bind_param('s', $game);
+                      $stmt->execute();
+                      $stmt->bind_result($name_internal);
+                      $stmt->fetch();
+                      $stmt->close();
+
+                      $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
+                      $stmt->bind_param('s', $ip);
+                      $stmt->execute();
+                      $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                      $stmt->fetch();
+                      $stmt->close();
+
+                      $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                       if (!$ssh->login($dedi_login, $dedi_password)) {
+                         echo '
+                         <div class="alert alert-danger" role="alert">
+                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                           <span class="sr-only">Error:</span>
+                           Login failed
+                         </div>';
+                         exit;
+                       } else {
+                         $ssh->exec('sudo pkill -u '.$gs_login);
+                         $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' +map gm_construct -maxplayers '.$slots);
+                       }
+
                     } else {
 
                   ?>
@@ -191,6 +279,7 @@ if ($_SESSION['login'] == 1) {
                         <tr>
                           <th>Benutzer</th>
                           <th>Game</th>
+                          <th>Steuerung</th>
                           <th>IP</th>
                           <th>Port</th>
                           <th>Login</th>
@@ -200,16 +289,17 @@ if ($_SESSION['login'] == 1) {
                       <tbody>
                      <?php
 
-                     $query = "SELECT user_id, user_name, game, ip, port, gs_login, gs_password FROM gameservers ORDER by id";
+                     $query = "SELECT user_id, user_name, game, ip, port, gs_login, gs_password, id FROM gameservers ORDER by id";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_user_id, $db_user_name,$db_game,$db_ip,$db_port,$db_gs_login,$db_gs_password);
+                          $stmt->bind_result($db_user_id, $db_user_name,$db_game,$db_ip,$db_port,$db_gs_login,$db_gs_password,$db_gs_id);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
                             echo "<td>" . $db_user_name . "</td>";
                             echo "<td>" . $db_game . "</td>";
+                            echo '<td> <button type="submit" name="start-'.$db_gs_id.'" class="btn btn-success btn-sm">(Re)Start</button> <button type="submit" name="stop-'.$db_gs_id.'" class="btn btn-danger btn-sm">Stop</button>  </td>';
                             echo "<td>" . $db_ip . "</td>";
                             echo "<td>" . $db_port . "</td>";
                             echo "<td>" . $db_gs_login . "</td>";
