@@ -78,7 +78,7 @@ if ($_SESSION['login'] == 1) {
                             exit;
                           } else {
 
-                            $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login); 
+                            $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login);
                             $ssh->enablePTY();
                             $ssh->exec('sudo passwd '.$gs_login);
                             $ssh->read('Enter new UNIX password:');
@@ -87,6 +87,9 @@ if ($_SESSION['login'] == 1) {
                             $ssh->write($gs_password . "\n");
                             $ssh->read('passwd: password updated successfully');
                             $ssh->disablePTY();
+                            $ssh->read('[prompt]');
+                            $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";chown -R ".$gs_login.":".$gs_login." /home/".$gs_login."'";
+                            $ssh->exec($copy);
 
                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                             $stmt->bind_param('issisiss', $_SESSION['user_id'],$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password);
@@ -104,7 +107,7 @@ if ($_SESSION['login'] == 1) {
                             <div class="alert alert-success" role="alert">
                               <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                               <span class="sr-only">Error:</span>
-                              Okay
+                              Der Gameserver wird installiert, das kann etwas dauern
                             </div>';
 
                           }
