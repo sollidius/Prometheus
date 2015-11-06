@@ -161,6 +161,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install sudo');
                             $ssh->exec('apt-get -y install screen');
                             $ssh->exec('apt-get -y install ia32-libs');
+                            $ssh->exec('apt-get -y install libtinfo5 libncurses5');
+
 
                           } elseif ($os == "Debian 8") {
 
@@ -169,7 +171,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get update');
                             $ssh->exec('apt-get -y install sudo');
                             $ssh->exec('apt-get -y install screen');
-                            $ssh->exec('apt-get install libc6:i386');
+                            $ssh->exec('apt-get -y install libc6:i386');
+                            $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
 
                           }
 
