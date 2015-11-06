@@ -180,6 +180,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->disablePTY();
                           $ssh->read('[prompt]');
                           $ssh->exec("usermod -a -G sudo ".$user);
+                          $ssh->exec('echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers');
                           $ssh->read('[prompt]');
 
                           $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status) VALUES (?, ?, ?, ? ,? ,? ,?)");

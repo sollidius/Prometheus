@@ -56,6 +56,16 @@ if ($_SESSION['login'] == 1) {
                          $stmt->fetch();
                          $stmt->close();
 
+                         $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
+                         $stmt->bind_param('i', $_SESSION['user_id']);
+                         $stmt->execute();
+                         $stmt->bind_result($user_name,$user_u_count);
+                         $stmt->fetch();
+                         $stmt->close();
+
+                         $gs_login = $user_name . "-" . $user_u_count;
+                         $gs_password = "123456";
+
 
                          $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                           if (!$ssh->login($dedi_login, $dedi_password)) {
@@ -68,24 +78,15 @@ if ($_SESSION['login'] == 1) {
                             exit;
                           } else {
 
-
-
-
-
-
-
-
-
-
-                            $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
-                            $stmt->bind_param('i', $_SESSION['user_id']);
-                            $stmt->execute();
-                            $stmt->bind_result($user_name,$user_u_count);
-                            $stmt->fetch();
-                            $stmt->close();
-
-                            $gs_login = $user_name . "-" . $user_u_count;
-                            $gs_password = "123456";
+                            $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login); 
+                            $ssh->enablePTY();
+                            $ssh->exec('sudo passwd '.$gs_login);
+                            $ssh->read('Enter new UNIX password:');
+                            $ssh->write($gs_password . "\n");
+                            $ssh->read('Retype new UNIX password:');
+                            $ssh->write($gs_password . "\n");
+                            $ssh->read('passwd: password updated successfully');
+                            $ssh->disablePTY();
 
                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                             $stmt->bind_param('issisiss', $_SESSION['user_id'],$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password);
