@@ -135,6 +135,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                      $name = $_POST['name']; $ip = $_POST['ip']; $port = $_POST['port'];
                      $user = $_POST['user']; $password = $_POST['password']; $root = $_POST['root']; $root_password = $_POST['root_password'];
+                     $os = $_POST['os'];
 
                      if ($error == false) {
 
@@ -148,14 +149,27 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           </div>';
                           exit;
                         } else {
-                          $ssh->setTimeout(30);
-                          $ssh->exec('dpkg --add-architecture i386');
-                          $ssh->exec('apt-get update');
-                          $ssh->exec('apt-get -y install sudo');
-                          $ssh->exec('apt-get -y install screen');
-                          $ssh->exec('apt-get -y install ia32-libs');
-                          $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
+                          if ($os == "Debian 7") {
 
+                            $ssh->exec('dpkg --add-architecture i386');
+                            $ssh->setTimeout(45);
+                            $ssh->exec('apt-get update');
+                            $ssh->exec('apt-get -y install sudo');
+                            $ssh->exec('apt-get -y install screen');
+                            $ssh->exec('apt-get -y install ia32-libs');
+
+                          } elseif ($os == "Debian 8") {
+
+                            $ssh->exec('dpkg --add-architecture i386');
+                            $ssh->setTimeout(45);
+                            $ssh->exec('apt-get update');
+                            $ssh->exec('apt-get -y install sudo');
+                            $ssh->exec('apt-get -y install screen');
+                            $ssh->exec('apt-get install libc6:i386');
+
+                          }
+
+                          $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
                           $ssh->enablePTY();
                           $ssh->exec('sudo passwd '.$user);
                           $ssh->read('Enter new UNIX password:');
@@ -164,10 +178,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->write($password . "\n");
                           $ssh->read('passwd: password updated successfully');
                           $ssh->disablePTY();
+                          $ssh->read('[prompt]');
                           $ssh->exec("usermod -a -G sudo ".$user);
+                          $ssh->read('[prompt]');
 
-                          $stmt = $mysqli->prepare("INSERT INTO dedicated(name,ip,port,user,password,status) VALUES (?, ?, ?, ? ,? ,?)");
-                          $stmt->bind_param('ssissi', $name,$ip,$port,$user,$password,$status);
+                          $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status) VALUES (?, ?, ?, ? ,? ,? ,?)");
+                          $stmt->bind_param('sssissi', $name,$os,$ip,$port,$user,$password,$status);
                           $stmt->execute();
                           $stmt->close();
 
@@ -239,8 +255,14 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 <form class="form-horizontal" action="index.php?page=rootserver" method="post">
                   <div class="form-group">
                     <label class="control-label col-sm-2">Name:</label>
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
                       <input type="text" class="form-control" name="name" placeholder="Chewbacca">
+                    </div>
+                    <div class="col-sm-2">
+                      <select class="form-control" name="os">
+                        <option>Debian 7</option>
+                        <option>Debian 8</option>
+                      </select>
                     </div>
                   </div>
                   <div class="form-group">
