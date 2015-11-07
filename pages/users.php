@@ -41,18 +41,18 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                      if (isset($_POST['confirm'])) {
 
-                       $error = false;
+                       $error = false; $msg ="";
                        $rank = 2;
                        $name = $_POST['name']; $email = $_POST['email']; $password = $_POST['pwd1'];
 
                        if (isset($_POST['administrator'])) { $rank = 1;}
 
-                       if ($_POST['pwd1'] != $_POST['pwd2']) {$error = true;}
-                       if (user_exists($name,$mysqli) == true) { $error = true;}
-                       if (email_exists($email,$mysqli) == true) { $error = true;}
-                       if (strlen($name) >= 3) {$error = true;}
-                       if (strlen($email) >= 5) {$error = true;}
-                       if (strlen($password) >= 8) {$error = true;}
+                       if ($_POST['pwd1'] != $_POST['pwd2']) {$error = true;$msg="Passwort ungleich";}
+                       if (user_exists($name,$mysqli) == true) { $error = true;$msg="User exestiert";}
+                       if (email_exists($email,$mysqli) == true) { $error = true;$msg="E-Mail exestiert";}
+                       if (strlen($name) <= 2) {$error = true; $msg="Name zu Kurz";}
+                       if (strlen($email) <= 5) {$error = true; $msg="E-Mail zu kurz";}
+                       if (strlen($password) <= 8) {$error = true; $msg="Passwort zu Kurz";}
 
                        if ($error == false) {
 
@@ -76,7 +76,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        <div class="alert alert-danger" role="alert">
                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                          <span class="sr-only">Error:</span>
-                         Something went wrong
+                         '.$msg.'
                        </div>';
 
                      }
