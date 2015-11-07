@@ -69,14 +69,27 @@ if ($_SESSION['login'] == 1) {
                        $dedicated = $_POST['dedicated']; $type = $_POST['type'];
                        $map = $_POST['map'];
 
-                       if ($error == false) {
 
-                         $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE name = ?");
-                         $stmt->bind_param('i', $dedicated);
-                         $stmt->execute();
-                         $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
-                         $stmt->fetch();
-                         $stmt->close();
+                       $stmt = $mysqli->prepare("SELECT ip,port,user,password,id FROM dedicated WHERE name = ?");
+                       $stmt->bind_param('i', $dedicated);
+                       $stmt->execute();
+                       $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id);
+                       $stmt->fetch();
+                       $stmt->close();
+
+                       $result_id = 0;
+                       $type_t = "template";
+                       $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
+                       $stmt->bind_param('iss', $dedi_id,$type_t,$type);
+                       $stmt->execute();
+                       $stmt->bind_result($result_id);
+                       $stmt->fetch();
+                       $stmt->close();
+
+                       if ($result_id != 0) { $error = true;}
+
+
+                       if ($error == false) {
 
                          $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
                          $stmt->bind_param('i', $_SESSION['user_id']);
