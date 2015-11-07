@@ -64,7 +64,7 @@ if ($_SESSION['login'] == 1) {
 
                      if (isset($_POST['confirm'])) {
 
-                       $error = false;
+                       $error = false; $msg = "";
                        $port = $_POST['port']; $slots = $_POST['slots'];
                        $dedicated = $_POST['dedicated']; $type = $_POST['type'];
                        $map = $_POST['map'];
@@ -86,7 +86,7 @@ if ($_SESSION['login'] == 1) {
                        $stmt->fetch();
                        $stmt->close();
 
-                       if ($result_id != 0) { $error = true;}
+                       if ($result_id != 0) { $error = true;$msg = "Installation läuft noch";}
 
 
                        if ($error == false) {
@@ -153,7 +153,7 @@ if ($_SESSION['login'] == 1) {
                        <div class="alert alert-danger" role="alert">
                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                          <span class="sr-only">Error:</span>
-                         Something went wrong
+                         Something went wrong, '.$msg.'
                        </div>';
 
                      }
