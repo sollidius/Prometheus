@@ -50,9 +50,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        if ($_POST['pwd1'] != $_POST['pwd2']) {$error = true;}
                        if (user_exists($name,$mysqli) == true) { $error = true;}
                        if (email_exists($email,$mysqli) == true) { $error = true;}
-                       if (strlen($name) <= 3) {$error = true;}
-                       if (strlen($email) <= 3) {$error = true;}
-                       if (strlen($password) <= 7) {$error = true;}
+                       if (strlen($name) >= 3) {$error = true;}
+                       if (strlen($email) >= 5) {$error = true;}
+                       if (strlen($password) >= 8) {$error = true;}
 
                        if ($error == false) {
 
