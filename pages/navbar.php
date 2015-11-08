@@ -57,7 +57,7 @@
                 <li>
                     <a href="index.php?page=gameserver"><i class="fa fa-edit fa-fw"></i> Gameserver</a>
                 </li>
-                <li>
+            <!--    <li>
                     <a href="#"><i class="fa fa-wrench fa-fw"></i> UI Elements<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
@@ -67,8 +67,7 @@
                             <a href="buttons.html">Buttons</a>
                         </li>
                     </ul>
-                    <!-- /.nav-second-level -->
-                </li>
+                </li> -->
             </ul>
         </div>
         <!-- /.sidebar-collapse -->

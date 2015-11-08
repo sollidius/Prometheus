@@ -227,7 +227,7 @@ if ($_SESSION['login'] == 1) {
 
                      }
                 }
-                 if ($page == "gameserver?add") {
+                if ($page == "gameserver?add") {
 
                   ?>
                   <form class="form-horizontal" action="index.php?page=gameserver" method="post">
@@ -303,6 +303,7 @@ if ($_SESSION['login'] == 1) {
                           <th>Login</th>
                           <th>Passwort</th>
                           <th>Start/Stop</th>
+                          <th>Aktion</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -325,6 +326,7 @@ if ($_SESSION['login'] == 1) {
                             echo "<td>" . $db_gs_login . "</td>";
                             echo "<td>" . $db_gs_password . "</td>";
                             echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-sm">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-sm">Stop</a>  </td>';
+                            echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-sm">Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-sm">Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-sm">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-sm">X</a>  </td>';
                             echo "</tr>";
                           }
                           $stmt->close();
