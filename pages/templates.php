@@ -61,6 +61,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        $type = $_POST['type'];
                        $type_name = $_POST['type_name'];
                        $internal = $_POST['internal'];
+                       if(!preg_match("/[a-zA-Z0-9]/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/[a-zA-Z0-9]/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/[a-zA-Z0-9]/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/[a-zA-Z0-9]/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
 
 
                        if (exists_entry("name","templates","name",$name) == true) { $error = true;}
@@ -86,7 +90,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        <div class="alert alert-danger" role="alert">
                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                          <span class="sr-only">Error:</span>
-                         Something went wrong
+                         Something went wrong, '.$msg.'
                        </div>';
 
                      }

@@ -38,5 +38,42 @@ if ($result = $mysqli->query($query)) {
     $result->close();
 }
 
+$query = "SELECT gs_login,dedi_id,status,id FROM gameservers ORDER by id";
+
+if ($result = $mysqli->query($query)) {
+
+    /* fetch object array */
+    while ($row = $result->fetch_row()) {
+
+      if ($row[2] == 1) {
+      $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+      $stmt->bind_param('i', $row[1]);
+      $stmt->execute();
+      $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+      $stmt->fetch();
+      $stmt->close();
+
+      $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+       if (!$ssh->login($dedi_login, $dedi_password)) {
+         exit;
+       } else {
+         $status = $ssh->exec("ps -ef | grep -i cp".$row[0]." | grep -v grep; echo $?");
+         if ($status == 1) {
+
+           $status = 0;
+           $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?  WHERE id = ?");
+           $stmt->bind_param('ii',$status,$row[3]);
+           $stmt->execute();
+           $stmt->close();
+
+         }
+      }
+    }
+    }
+
+    /* free result set */
+    $result->close();
+}
+
 
  ?>

@@ -50,6 +50,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        if (user_exists($name) == true) { $error = true;$msg="User exestiert";}
                        if (email_exists($email) == true) { $error = true;$msg="E-Mail exestiert";}
                        if (strlen($name) <= 2) {$error = true; $msg="Name zu Kurz";}
+                       if(!preg_match("/[a-zA-Z0-9]/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/([0-9a-zA-Z])@(\w+)\.(\w+)/",$email)){ $msg = "Die E-Mail ist nicht g&uuml;ltig<br>";  $error = true;}
                        if (strlen($email) <= 5) {$error = true; $msg="E-Mail zu kurz";}
                        if (strlen($password) <= 8) {$error = true; $msg="Passwort zu Kurz";}
 
