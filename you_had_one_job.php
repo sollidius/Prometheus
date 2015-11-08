@@ -37,7 +37,7 @@ if ($result = $mysqli->query($query)) {
         } elseif ($status != 1) {
 
           $stmt = $mysqli->prepare("SELECT type,type_name FROM templates WHERE name = ?");
-          $stmt->bind_param('i', $row[1]);
+          $stmt->bind_param('s', $row[1]);
           $stmt->execute();
           $stmt->bind_result($db_type,$db_type_name);
           $stmt->fetch();

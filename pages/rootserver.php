@@ -47,7 +47,6 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         while ($row = $result->fetch_row()) {
                           if (isset($_POST['game_'.$row[0]])) {
 
-
                             $id = $_POST['send_root_id'];
 
                             $stmtz = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
@@ -173,6 +172,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install screen');
                             $ssh->exec('apt-get -y install ia32-libs');
                             $ssh->exec('apt-get -y install libtinfo5 libncurses5');
+                            $ssh->exec('apt-get -y install lib32stdc++6');
+
 
 
                           } elseif ($os == "Debian 8") {
@@ -184,6 +185,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install screen');
                             $ssh->exec('apt-get -y install libc6:i386');
                             $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
+                            $ssh->exec('apt-get -y install lib32stdc++6');
 
                           }
 
