@@ -125,7 +125,7 @@ if ($_SESSION['login'] == 1) {
                              }
                              break;
                           }
-                            if ($page == "gameserver?delete-".$row[0]) {
+                          if ($page == "gameserver?delete-".$row[0]) {
 
                               $gs_select = $row[0];
 
@@ -181,6 +181,10 @@ if ($_SESSION['login'] == 1) {
                        $port = $_POST['port']; $slots = $_POST['slots'];
                        $dedicated = $_POST['dedicated']; $type = $_POST['type'];
                        $map = $_POST['map'];
+
+                       if(!preg_match("/[0-9]/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/[0-9]/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/[a-zA-Z0-9]/",$type)){ $msg = "Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
 
 
                        $stmt = $mysqli->prepare("SELECT ip,port,user,password,id FROM dedicated WHERE name = ?");
