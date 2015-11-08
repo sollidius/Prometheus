@@ -208,6 +208,51 @@ if ($_SESSION['login'] == 1) {
 
                        if ($error == false) {
 
+                         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                          if (!$ssh->login($dedi_login, $dedi_password)) {
+                            echo '
+                            <div class="alert alert-danger" role="alert">
+                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Success:</span>
+                              Login failed
+                            </div>';
+                            exit;
+                          } else {
+
+                            $output =  $ssh->exec('if ! test -d /home/'.$dedi_login.'/templates/'.$type.'; then echo "1"; fi');
+                            if ($output == 1) {
+                                $error = true;
+                                $msg = "Template ist nicht installiert";
+                            }
+                          }
+
+                          if ($error == false) {
+
+                         $stmt = $mysqli->prepare("SELECT ip,port,user,password,id FROM dedicated WHERE name = ?");
+                         $stmt->bind_param('s', $dedicated);
+                         $stmt->execute();
+                         $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id);
+                         $stmt->fetch();
+                         $stmt->close();
+
+                         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                          if (!$ssh->login($dedi_login, $dedi_password)) {
+                            echo '
+                            <div class="alert alert-danger" role="alert">
+                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Success:</span>
+                              Login failed
+                            </div>';
+                            exit;
+                          } else {
+
+                            $output =  $ssh->exec('if ! test -d /home/'.$dedi_login.'/templates/'.$type.'; then echo "1"; fi');
+                            if ($output == 1) {
+                                $error = true;
+                                $msg = "Template ist nicht installiert";
+                            }
+                          }
+
                          $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
                          $stmt->bind_param('i', $_SESSION['user_id']);
                          $stmt->execute();
@@ -274,6 +319,17 @@ if ($_SESSION['login'] == 1) {
                        </div>';
 
                      }
+                    } else {
+
+                      echo '
+                      <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        Something went wrong, '.$msg.'
+                      </div>';
+
+                    }
+
                 }
                 if ($page == "gameserver?add") {
 
