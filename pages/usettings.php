@@ -16,9 +16,40 @@ $stmt->close();
 
 if ($_SESSION['login'] == 1) {
 
+  $msg = "";
 
 
+ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+   $old_pw = $_POST['old_pw'];
+   $pw = $_POST['new_pw'];
+   $pw2 = $_POST['new_pw2'];
+
+
+   $stmt = $mysqli->prepare("SELECT password,id,name FROM users WHERE id = ?");
+   $stmt->bind_param('i', $_SESSION['user_id']);
+   $stmt->execute();
+   $stmt->bind_result($password_db,$id,$name);
+   $stmt->fetch();
+   $stmt->close();
+
+   if ($pw == $pw2) {
+     if (password_verify($old_pw, $password_db)) {
+
+       $hash = password_hash($pw, PASSWORD_DEFAULT);
+
+       $stmt = $mysqli->prepare("UPDATE users SET password = ?  WHERE id = ?");
+       $stmt->bind_param('si',$hash,$_SESSION['user_id']);
+       $stmt->execute();
+       $stmt->close();
+
+       $msg = "Okay";
+
+     } else {
+       $msg = "Altes Passwort falsch";
+     }
+   }
+ }
 
 ?>
 <div id="wrapper">
@@ -34,8 +65,45 @@ if ($_SESSION['login'] == 1) {
            </div>
            <div class="row">
                <div class="col-lg-8">
+                 <?php
+                 if ($msg != "") {
 
-
+                   echo '
+                   <div class="alert alert-danger" role="alert">
+                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                     <span class="sr-only">Error:</span>
+                     Something went wrong, '.$msg.'
+                   </div>';
+                 }
+                  ?>
+                 <form class="form-horizontal" action="index.php?page=usettings" method="post">
+                 <div class="form-group">
+                  <div class="col-lg-8">
+                   <label class="control-label col-sm-3">Altes Passwort:</label>
+                   <div class="col-sm-3">
+                     <input type="password" class="form-control" name="old_pw">
+                   </div>
+                 </div>
+                     <div style="margin-top:2px;" class="col-lg-8">
+                   <label class="control-label col-sm-3">Neues Passwort:</label>
+                   <div class="col-sm-3">
+                     <input type="password" class="form-control" name="new_pw">
+                   </div>
+                 </div>
+                     <div style="margin-top:2px;" class="col-lg-8">
+                   <label class="control-label col-sm-3">Wiederholen:</label>
+                   <div class="col-sm-3">
+                     <input type="password" class="form-control" name="new_pw2">
+                   </div>
+                 </div>
+                      <div style="margin-top:2px;" class="col-lg-8">
+                      <div style="margin-top:2px;" class="col-lg-6">
+                        <button type="submit" name="confirm" class="btn pull-right btn-success">Abschicken</button
+                        </div>
+                        </div>
+                 </div>
+               </form>
+                 </div>
 
 
                </div>
