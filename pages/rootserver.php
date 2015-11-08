@@ -146,10 +146,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                      if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = "Exestiert bereits";}
                      if (exists_entry("ip","dedicated","ip",$ip) == true) { $error = true; $msg = "Exestiert bereits";}
-                     if(!preg_match("/[a-zA-Z0-9]/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/[a-zA-Z0-9]/",$user)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/[a-zA-Z0-9]/",$root)){ $msg = "Der Root Benutzer enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/[0-9]/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[a-zA-Z0-9]+$/",$user)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[a-zA-Z0-9]+$/",$root)){ $msg = "Der Root Benutzer enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
 
                      if ($error == false) {
 

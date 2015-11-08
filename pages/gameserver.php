@@ -182,9 +182,9 @@ if ($_SESSION['login'] == 1) {
                        $dedicated = $_POST['dedicated']; $type = $_POST['type'];
                        $map = $_POST['map'];
 
-                       if(!preg_match("/[0-9]/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/[0-9]/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/[a-zA-Z0-9]/",$type)){ $msg = "Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
 
 
                        $stmt = $mysqli->prepare("SELECT ip,port,user,password,id FROM dedicated WHERE name = ?");
@@ -285,7 +285,7 @@ if ($_SESSION['login'] == 1) {
                               $ssh->write($gs_password . "\n");
                               $ssh->read('passwd: Passwort erfolgreich geändert');
                             } elseif ($dedi_language == "Englisch") {
-                              $ssh->read('Enter new UNIX password:');
+                              echo  $ssh->read('Enter new UNIX password:');
                               $ssh->write($gs_password . "\n");
                               $ssh->read('Retype new UNIX password:');
                               $ssh->write($gs_password . "\n");
