@@ -142,6 +142,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                      $name = $_POST['name']; $ip = $_POST['ip']; $port = $_POST['port'];
                      $user = $_POST['user']; $password = $_POST['password']; $root = $_POST['root']; $root_password = $_POST['root_password'];
                      $os = $_POST['os'];
+                     $language = $_POST['language'];
 
 
                      if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = "Exestiert bereits";}
@@ -189,11 +190,19 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
                           $ssh->enablePTY();
                           $ssh->exec('sudo passwd '.$user);
+                          if ($language == "Englisch") {
                           $ssh->read('Enter new UNIX password:');
                           $ssh->write($password . "\n");
                           $ssh->read('Retype new UNIX password:');
                           $ssh->write($password . "\n");
                           $ssh->read('passwd: password updated successfully');
+                          } elseif ($language == "Deutsch") {
+                            $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
+                            $ssh->write($password . "\n");
+                            $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
+                            $ssh->write($password . "\n");
+                            $ssh->read('passwd: Passwort erfolgreich geändert');
+                          }
                           $ssh->disablePTY();
                           $ssh->read('[prompt]');
                           $ssh->exec("usermod -a -G sudo ".$user);
@@ -285,11 +294,17 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   </div>
                   <div class="form-group">
                     <label class="control-label col-sm-2" for="email">IP/Port:</label>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                       <input type="text" class="form-control" name="ip" placeholder="127.0.0.1">
                     </div>
                     <div class="col-sm-2">
                       <input type="text" class="form-control" name="port" placeholder="22">
+                    </div>
+                    <div class="col-sm-2">
+                      <select class="form-control" name="language">
+                        <option>Englisch</option>
+                        <option>Deutsch</option>
+                      </select>
                     </div>
                   </div>
                   <div class="form-group">
