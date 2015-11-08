@@ -2,7 +2,6 @@
 //header
 $title = "Gameserver";
 include 'header.php';
-include 'functions.php';
 set_include_path('components/phpseclib');
 include('Net/SSH2.php');
 
@@ -19,10 +18,6 @@ $stmt->close();
 
 if ($_SESSION['login'] == 1) {
 
-
-
-
-
 ?>
 <div id="wrapper">
 
@@ -38,7 +33,7 @@ if ($_SESSION['login'] == 1) {
            <div class="row">
                <div class="col-lg-8">
                  <?php
-                  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            //      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                     $query = "SELECT id FROM gameservers ORDER by id";
@@ -47,22 +42,96 @@ if ($_SESSION['login'] == 1) {
 
                         /* fetch object array */
                         while ($row = $result->fetch_row()) {
-                          if (isset($_POST['start-'.$row[0]])) {
+                          if ($page == "gameserver?start-".$row[0]) {
                             $gs_select = $row[0];
-                            $_POST['gstart'] = 1;
+
+                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port FROM gameservers WHERE id = ?");
+                             $stmt->bind_param('i', $gs_select);
+                             $stmt->execute();
+                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port);
+                             $stmt->fetch();
+                             $stmt->close();
+
+                             $stmt = $mysqli->prepare("SELECT name_internal FROM templates WHERE name = ?");
+                             $stmt->bind_param('s', $game);
+                             $stmt->execute();
+                             $stmt->bind_result($name_internal);
+                             $stmt->fetch();
+                             $stmt->close();
+
+                             $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
+                             $stmt->bind_param('s', $ip);
+                             $stmt->execute();
+                             $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                             $stmt->fetch();
+                             $stmt->close();
+
+                             $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                              if (!$ssh->login($dedi_login, $dedi_password)) {
+                                echo '
+                                <div class="alert alert-danger" role="alert">
+                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                  <span class="sr-only">Error:</span>
+                                  Login failed
+                                </div>';
+                                exit;
+                              } else {
+                                $ssh->exec('sudo pkill -u '.$gs_login);
+                                $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots);
+                                echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
+                                echo '
+                                <div class="alert alert-success" role="alert">
+                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                  <span class="sr-only">Success:</span>
+                                  Done
+                                </div>';
+                              }
+                              break;
                           }
-                          if (isset($_POST['stop-'.$row[0]])) {
+                          if ($page == "gameserver?stop-".$row[0]) {
                             $gs_select = $row[0];
-                            $_POST['gstop'] = 1;
+
+
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
+                            $stmt->bind_param('i', $gs_select);
+                            $stmt->execute();
+                            $stmt->bind_result($ip,$game,$gs_login,$slots);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
+                            $stmt->bind_param('s', $ip);
+                            $stmt->execute();
+                            $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                             if (!$ssh->login($dedi_login, $dedi_password)) {
+                               echo '
+                               <div class="alert alert-danger" role="alert">
+                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                 <span class="sr-only">Error:</span>
+                                 Login failed
+                               </div>';
+                               exit;
+                             } else {
+                               $ssh->exec('sudo pkill -u '.$gs_login);
+                               echo '
+                               <div class="alert alert-success" role="alert">
+                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                 <span class="sr-only">Success:</span>
+                                 Done
+                               </div>';
+                             }
+                             break;
                           }
                         }
-
                         /* free result set */
                         $result->close();
                     }
 
-
-                     if (isset($_POST['confirm'])) {
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
 
                        $error = false; $msg = "";
                        $port = $_POST['port']; $slots = $_POST['slots'];
@@ -157,92 +226,10 @@ if ($_SESSION['login'] == 1) {
                        </div>';
 
                      }
-
-                   } elseif (isset($_POST['gstop'])) {
-
-                     $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
-                     $stmt->bind_param('i', $gs_select);
-                     $stmt->execute();
-                     $stmt->bind_result($ip,$game,$gs_login,$slots);
-                     $stmt->fetch();
-                     $stmt->close();
-
-                     $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
-                     $stmt->bind_param('s', $ip);
-                     $stmt->execute();
-                     $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
-                     $stmt->fetch();
-                     $stmt->close();
-
-                     $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                      if (!$ssh->login($dedi_login, $dedi_password)) {
-                        echo '
-                        <div class="alert alert-danger" role="alert">
-                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                          <span class="sr-only">Error:</span>
-                          Login failed
-                        </div>';
-                        exit;
-                      } else {
-                        $ssh->exec('sudo pkill -u '.$gs_login);
-                        echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
-                        echo '
-                        <div class="alert alert-success" role="alert">
-                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                          <span class="sr-only">Success:</span>
-                          Done
-                        </div>';
-                      }
-
-
-                   } elseif (isset($_POST['gstart'])) {
-
-                      $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port FROM gameservers WHERE id = ?");
-                      $stmt->bind_param('i', $gs_select);
-                      $stmt->execute();
-                      $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port);
-                      $stmt->fetch();
-                      $stmt->close();
-
-                      $stmt = $mysqli->prepare("SELECT name_internal FROM templates WHERE name = ?");
-                      $stmt->bind_param('s', $game);
-                      $stmt->execute();
-                      $stmt->bind_result($name_internal);
-                      $stmt->fetch();
-                      $stmt->close();
-
-                      $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
-                      $stmt->bind_param('s', $ip);
-                      $stmt->execute();
-                      $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
-                      $stmt->fetch();
-                      $stmt->close();
-
-                      $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                       if (!$ssh->login($dedi_login, $dedi_password)) {
-                         echo '
-                         <div class="alert alert-danger" role="alert">
-                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                           <span class="sr-only">Error:</span>
-                           Login failed
-                         </div>';
-                         exit;
-                       } else {
-                         $ssh->exec('sudo pkill -u '.$gs_login);
-                         $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots);
-                         echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
-                         echo '
-                         <div class="alert alert-success" role="alert">
-                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                           <span class="sr-only">Success:</span>
-                           Done
-                         </div>';
-                       }
-
-                    } else {
+                }
+                 if ($page == "gameserver?add") {
 
                   ?>
-
                   <form class="form-horizontal" action="index.php?page=gameserver" method="post">
                     <div class="form-group">
                       <label class="control-label col-sm-2">Type/Root:</label>
@@ -300,26 +287,22 @@ if ($_SESSION['login'] == 1) {
                       </div>
                     </div>
                   </form>
-
-
-
-                  <?php }
-                  } else {
+           <?php } elseif ($page == "gameserver") {
                     ?>
                     <form action="index.php?page=gameserver" method="post">
-                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success">+</button>
+                    <a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success">+</a>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
                           <th>Benutzer</th>
                           <th>Game</th>
-                          <th>Steuerung</th>
                           <th>IP</th>
                           <th>Port</th>
                           <th>Slots</th>
                           <th>Map</th>
                           <th>Login</th>
                           <th>Passwort</th>
+                          <th>Start/Stop</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -335,13 +318,13 @@ if ($_SESSION['login'] == 1) {
                             echo "<tr>";
                             echo "<td>" . $db_user_name . "</td>";
                             echo "<td>" . $db_game . "</td>";
-                            echo '<td> <button type="submit" name="start-'.$db_gs_id.'" class="btn btn-success btn-sm">(Re)Start</button> <button type="submit" name="stop-'.$db_gs_id.'" class="btn btn-danger btn-sm">Stop</button>  </td>';
                             echo "<td>" . $db_ip . "</td>";
                             echo "<td>" . $db_port . "</td>";
                             echo "<td>" . $db_slots . "</td>";
                             echo "<td>" . $db_map . "</td>";
                             echo "<td>" . $db_gs_login . "</td>";
                             echo "<td>" . $db_gs_password . "</td>";
+                            echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-sm">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-sm">Stop</a>  </td>';
                             echo "</tr>";
                           }
                           $stmt->close();

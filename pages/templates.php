@@ -2,7 +2,6 @@
 //header
 $title = "Gameserver Vorlagen";
 include 'header.php';
-include 'functions.php';
 
 session_start();
 
@@ -114,6 +113,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       <thead>
                         <tr>
                           <th>Name</th>
+                          <th>Internal</th>
                           <th>Type</th>
                           <th>Type Name</th>
                         </tr>
@@ -121,15 +121,16 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       <tbody>
                      <?php
 
-                     $query = "SELECT name, type,type_name FROM templates ORDER by id";
+                     $query = "SELECT name, type,type_name,name_internal FROM templates ORDER by id";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_name, $db_type,$db_type_name);
+                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
                             echo "<td>" . $db_name . "</td>";
+                            echo "<td>" . $db_name_internal . "</td>";
                             echo "<td>" . $db_type . "</td>";
                             echo "<td>" . $db_type_name . "</td>";
                             echo "</tr>";

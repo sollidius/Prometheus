@@ -2,7 +2,6 @@
 //header
 $title = "Benutzer";
 include 'header.php';
-include 'functions.php';
 
 session_start();
 

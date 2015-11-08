@@ -1,8 +1,7 @@
 <?php
 //header
 $title = "Login";
-include 'header.php';
-include 'functions.php';
+include 'header.php';;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

@@ -1,5 +1,7 @@
 <?php
 
+include 'pages/functions.php';
+
 if (isset($_GET["page"])) {
 $page = $_GET["page"];
 }
@@ -43,7 +45,7 @@ if ($page=="templates") {
 }
 
 //Rootserver
-if ($page=="gameserver") {
+if (startsWith($page, "gameserver")) {
  include 'pages/gameserver.php';
 }
 

@@ -2,7 +2,6 @@
 //header
 $title = "Dashboard";
 include 'header.php';
-include 'functions.php';
 
 session_start();
 

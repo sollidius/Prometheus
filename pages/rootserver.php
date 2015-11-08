@@ -2,7 +2,6 @@
 //header
 $title = "Rootserver";
 include 'header.php';
-include 'functions.php';
 set_include_path('components/phpseclib');
 include('Net/SSH2.php');
 
