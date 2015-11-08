@@ -91,7 +91,6 @@ if ($_SESSION['login'] == 1) {
                           if ($page == "gameserver?stop-".$row[0]) {
                             $gs_select = $row[0];
 
-
                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $gs_select);
                             $stmt->execute();
@@ -126,6 +125,51 @@ if ($_SESSION['login'] == 1) {
                              }
                              break;
                           }
+                            if ($page == "gameserver?delete-".$row[0]) {
+
+                              $gs_select = $row[0];
+
+                              $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
+                              $stmt->bind_param('i', $gs_select);
+                              $stmt->execute();
+                              $stmt->bind_result($ip,$game,$gs_login,$slots);
+                              $stmt->fetch();
+                              $stmt->close();
+
+                              $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
+                              $stmt->bind_param('s', $ip);
+                              $stmt->execute();
+                              $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                              $stmt->fetch();
+                              $stmt->close();
+
+                              $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                               if (!$ssh->login($dedi_login, $dedi_password)) {
+                                 echo '
+                                 <div class="alert alert-danger" role="alert">
+                                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                   <span class="sr-only">Error:</span>
+                                   Login failed
+                                 </div>';
+                                 exit;
+                               } else {
+                                 $ssh->exec('sudo pkill -u '.$gs_login);
+                                 $ssh->exec('sudo userdel -r '.$gs_login);
+
+                                 $stmt = $mysqli->prepare("DELETE FROM gameservers WHERE id = ?");
+                                 $stmt->bind_param('i', $gs_select);
+                                 $stmt->execute();
+                                 $stmt->close();
+
+                                 echo '
+                                 <div class="alert alert-success" role="alert">
+                                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                   <span class="sr-only">Success:</span>
+                                   Done
+                                 </div>';
+                               }
+                               break;
+                            }
                         }
                         /* free result set */
                         $result->close();
