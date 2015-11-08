@@ -188,7 +188,7 @@ if ($_SESSION['login'] == 1) {
 
 
                        $stmt = $mysqli->prepare("SELECT ip,port,user,password,id FROM dedicated WHERE name = ?");
-                       $stmt->bind_param('i', $dedicated);
+                       $stmt->bind_param('s', $dedicated);
                        $stmt->execute();
                        $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id);
                        $stmt->fetch();
@@ -307,7 +307,7 @@ if ($_SESSION['login'] == 1) {
                              $stmt->bind_result($db_name);
 
                              while ($stmt->fetch()) {
-                               echo "<option>" . $db_name . "</option>";
+                               echo '<option value="'. $db_name .'">'. $db_name .'</option>';
                              }
                              $stmt->close();
                          }  ?>
