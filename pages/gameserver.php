@@ -36,13 +36,13 @@ if ($_SESSION['login'] == 1) {
             //      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
-                    $query = "SELECT id FROM gameservers ORDER by id";
+                    $query = "SELECT id,status FROM gameservers ORDER by id";
 
                     if ($result = $mysqli->query($query)) {
 
                         /* fetch object array */
                         while ($row = $result->fetch_row()) {
-                          if ($page == "gameserver?start-".$row[0]) {
+                          if ($page == "gameserver?start-".$row[0] AND $row[1] == 0) {
                             $gs_select = $row[0];
 
                              $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port FROM gameservers WHERE id = ?");
@@ -88,7 +88,7 @@ if ($_SESSION['login'] == 1) {
                               }
                               break;
                           }
-                          if ($page == "gameserver?stop-".$row[0]) {
+                          if ($page == "gameserver?stop-".$row[0]  AND $row[1] == 0) {
                             $gs_select = $row[0];
 
                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
@@ -125,7 +125,7 @@ if ($_SESSION['login'] == 1) {
                              }
                              break;
                           }
-                          if ($page == "gameserver?delete-".$row[0]) {
+                          if ($page == "gameserver?delete-".$row[0]  AND $row[1] == 0) {
 
                               $gs_select = $row[0];
 
