@@ -31,6 +31,25 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
            <div class="row">
                <div class="col-lg-8">
                  <?php
+
+                     $query = "SELECT id FROM templates ORDER by id";
+
+                        if ($result = $mysqli->query($query)) {
+
+                         /* fetch object array */
+                        while ($row = $result->fetch_row()) {
+
+                          if ($page == "templates?delete-".$row[0]) {
+                            $stmt = $mysqli->prepare("DELETE FROM templates WHERE id = ?");
+                            $stmt->bind_param('i', $row[0]);
+                            $stmt->execute();
+                            $stmt->close();
+                          }
+                        }
+                        /* free result set */
+                        $result->close();
+                        }
+
                   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
@@ -44,7 +63,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        $internal = $_POST['internal'];
 
 
-                       if (exists_entry("name","templates","name",$name,$mysqli) == true) { $error = true;}
+                       if (exists_entry("name","templates","name",$name) == true) { $error = true;}
 
                        if ($error == false) {
 
@@ -116,16 +135,17 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           <th>Internal</th>
                           <th>Type</th>
                           <th>Type Name</th>
+                          <th>Aktion</th>
                         </tr>
                       </thead>
                       <tbody>
                      <?php
 
-                     $query = "SELECT name, type,type_name,name_internal FROM templates ORDER by id";
+                     $query = "SELECT name, type,type_name,name_internal,id FROM templates ORDER by id";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal);
+                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal,$db_id);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
@@ -133,6 +153,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             echo "<td>" . $db_name_internal . "</td>";
                             echo "<td>" . $db_type . "</td>";
                             echo "<td>" . $db_type_name . "</td>";
+                            echo '<td> <a href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-sm">X</a></td>';
                             echo "</tr>";
                           }
                           $stmt->close();

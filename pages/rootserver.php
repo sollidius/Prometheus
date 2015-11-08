@@ -144,8 +144,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                      $os = $_POST['os'];
 
 
-                     if (exists_entry("name","dedicated","name",$name,$mysqli) == true) { $error = true;}
-                     if (exists_entry("ip","dedicated","ip",$ip,$mysqli) == true) { $error = true;}
+                     if (exists_entry("name","dedicated","name",$name) == true) { $error = true;}
+                     if (exists_entry("ip","dedicated","ip",$ip) == true) { $error = true;}
 
                      if ($error == false) {
 

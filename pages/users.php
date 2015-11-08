@@ -47,8 +47,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        if (isset($_POST['administrator'])) { $rank = 1;}
 
                        if ($_POST['pwd1'] != $_POST['pwd2']) {$error = true;$msg="Passwort ungleich";}
-                       if (user_exists($name,$mysqli) == true) { $error = true;$msg="User exestiert";}
-                       if (email_exists($email,$mysqli) == true) { $error = true;$msg="E-Mail exestiert";}
+                       if (user_exists($name) == true) { $error = true;$msg="User exestiert";}
+                       if (email_exists($email) == true) { $error = true;$msg="E-Mail exestiert";}
                        if (strlen($name) <= 2) {$error = true; $msg="Name zu Kurz";}
                        if (strlen($email) <= 5) {$error = true; $msg="E-Mail zu kurz";}
                        if (strlen($password) <= 8) {$error = true; $msg="Passwort zu Kurz";}

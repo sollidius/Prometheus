@@ -40,7 +40,7 @@ if ($page=="rootserver") {
 }
 
 //Rootserver
-if ($page=="templates") {
+if (startsWith($page, "templates")) {
  include 'pages/templates.php';
 }
 
