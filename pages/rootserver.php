@@ -209,8 +209,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers');
                           $ssh->read('[prompt]');
 
-                          $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status) VALUES (?, ?, ?, ? ,? ,? ,?)");
-                          $stmt->bind_param('sssissi', $name,$os,$ip,$port,$user,$password,$status);
+                          $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status,language) VALUES (?, ?, ?, ? ,? ,? ,?, ?)");
+                          $stmt->bind_param('sssissis', $name,$os,$ip,$port,$user,$password,$status,$language);
                           $stmt->execute();
                           $stmt->close();
 

@@ -228,10 +228,10 @@ if ($_SESSION['login'] == 1) {
 
                           if ($error == false) {
 
-                         $stmt = $mysqli->prepare("SELECT ip,port,user,password,id FROM dedicated WHERE name = ?");
+                         $stmt = $mysqli->prepare("SELECT ip,port,user,password,id,language FROM dedicated WHERE name = ?");
                          $stmt->bind_param('s', $dedicated);
                          $stmt->execute();
-                         $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id);
+                         $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id,$dedi_language);
                          $stmt->fetch();
                          $stmt->close();
 
@@ -278,11 +278,19 @@ if ($_SESSION['login'] == 1) {
                             $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login);
                             $ssh->enablePTY();
                             $ssh->exec('sudo passwd '.$gs_login);
-                            $ssh->read('Enter new UNIX password:');
-                            $ssh->write($gs_password . "\n");
-                            $ssh->read('Retype new UNIX password:');
-                            $ssh->write($gs_password . "\n");
-                            $ssh->read('passwd: password updated successfully');
+                            if ($dedi_language == "Deutsch") {
+                              $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
+                              $ssh->write($gs_password . "\n");
+                              $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
+                              $ssh->write($gs_password . "\n");
+                              $ssh->read('passwd: Passwort erfolgreich geändert');
+                            } elseif ($dedi_language == "Englisch") {
+                              $ssh->read('Enter new UNIX password:');
+                              $ssh->write($gs_password . "\n");
+                              $ssh->read('Retype new UNIX password:');
+                              $ssh->write($gs_password . "\n");
+                              $ssh->read('passwd: password updated successfully');
+                            }
                             $ssh->disablePTY();
                             $ssh->read('[prompt]');
                             $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login."'";
