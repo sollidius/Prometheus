@@ -22,14 +22,29 @@ if ($result = $mysqli->query($query)) {
        if (!$ssh->login($user, $password)) {
          exit;
        } else {
-        $status = $ssh->exec("ps -ef | grep -i install".$row[1]." | grep -v grep; echo $?");
+        $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x402 after update job" ; echo $?');
+        echo $status;
         if ($status == 1) {
+            $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "Success!" ; echo $?');
+            if ($status != 1) {
 
-          $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
-          $stmt->bind_param('i', $row[2]);
+              $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
+              $stmt->bind_param('i', $row[2]);
+              $stmt->execute();
+              $stmt->close();
+
+            }
+        } elseif ($status != 1) {
+
+          $stmt = $mysqli->prepare("SELECT type,type_name FROM templates WHERE name = ?");
+          $stmt->bind_param('i', $row[1]);
           $stmt->execute();
+          $stmt->bind_result($db_type,$db_type_name);
+          $stmt->fetch();
           $stmt->close();
 
+          $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+          
         }
        }
     }
@@ -74,6 +89,6 @@ if ($result = $mysqli->query($query)) {
     /* free result set */
     $result->close();
 }
-
+echo "ok";
 
  ?>

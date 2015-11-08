@@ -79,7 +79,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                   //$ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
                                   $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
                                   $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';tar xvf steamcmd_linux.tar.gz');
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';screen -adms install'.$row[1].' /home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$row[3].' validate +quit');
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$row[3].' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
 
                                   $template = "template";
                                   $stmt = $mysqli->prepare("INSERT INTO jobs(dedicated_id,type,type_id) VALUES (?, ?, ?)");
