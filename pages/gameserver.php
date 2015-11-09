@@ -261,7 +261,7 @@ if ($_SESSION['login'] == 1) {
                          $stmt->close();
 
                          $gs_login = $user_name . "-" . $user_u_count;
-                         $gs_password = "123456";
+                         $gs_password = generatePassword();
 
 
                          $ssh = new Net_SSH2($dedi_ip,$dedi_port);

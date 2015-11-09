@@ -84,6 +84,17 @@ function exists_entry($spalte,$tabelle,$wo,$was) {
       }
 }
 
+function generatePassword($pwlen=12)
+{
+	mt_srand();
+	$salt = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  $pw = "";
+	for($i=0;$i<$pwlen;$i++)
+	{
+		$pw .= $salt[mt_rand(0, strlen($salt)-1)];
+	}
 
+	return $pw;
+}
 
  ?>
