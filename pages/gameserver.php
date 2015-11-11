@@ -380,7 +380,7 @@ if ($_SESSION['login'] == 1) {
                     }
 
                 }
-                if ($page == "gameserver?add") {
+                if ($page == "gameserver?add" and $db_rank == 1) {
 
                   ?>
                   <form class="form-horizontal" action="index.php?page=gameserver" method="post">
@@ -459,7 +459,7 @@ if ($_SESSION['login'] == 1) {
            <?php } elseif ($page == "gameserver") {
                     ?>
                     <form action="index.php?page=gameserver" method="post">
-                    <a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success">+</a>
+                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success">+</a>';}  ?>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
