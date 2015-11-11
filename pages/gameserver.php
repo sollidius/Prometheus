@@ -125,7 +125,7 @@ if ($_SESSION['login'] == 1) {
                              }
                              break;
                           }
-                          if ($page == "gameserver?delete-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?delete-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
+                          if ($page == "gameserver?delete-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
 
                               $gs_select = $row[0];
 
@@ -503,7 +503,7 @@ if ($_SESSION['login'] == 1) {
                                 echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-sm" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-sm" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-sm" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-sm" disabled>X</a>  </td>';
                               }
                               echo "</tr>";
-                            } elseif ($db_rank == 2 AND $user_id == $_SESSION['user_id']) {
+                            } elseif ($db_rank == 2 AND $db_user_id == $_SESSION['user_id']) {
                               echo "<tr>";
                               echo "<td>" . $db_user_name . "</td>";
                               echo "<td>" . $db_game . "</td>";
