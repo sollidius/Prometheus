@@ -42,13 +42,13 @@ if ($_SESSION['login'] == 1) {
 
                         /* fetch object array */
                         while ($row = $result->fetch_row()) {
-                          if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 2) {
+                          if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
                             $gs_select = $row[0];
 
-                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port FROM gameservers WHERE id = ?");
+                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter FROM gameservers WHERE id = ?");
                              $stmt->bind_param('i', $gs_select);
                              $stmt->execute();
-                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port);
+                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -77,7 +77,7 @@ if ($_SESSION['login'] == 1) {
                                 exit;
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
-                                $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots);
+                                $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
                                 echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
                                 echo '
                                 <div class="alert alert-success" role="alert">
@@ -88,7 +88,7 @@ if ($_SESSION['login'] == 1) {
                               }
                               break;
                           }
-                          if ($page == "gameserver?stop-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?stop-".$row[0] AND $row[1] == 0 AND $db_rank == 2) {
+                          if ($page == "gameserver?stop-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?stop-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
                             $gs_select = $row[0];
 
                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
@@ -125,7 +125,7 @@ if ($_SESSION['login'] == 1) {
                              }
                              break;
                           }
-                          if ($page == "gameserver?delete-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?delete-".$row[0] AND $row[1] == 0 AND $db_rank == 2) {
+                          if ($page == "gameserver?delete-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?delete-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
 
                               $gs_select = $row[0];
 
@@ -170,6 +170,52 @@ if ($_SESSION['login'] == 1) {
                                }
                                break;
                             }
+                          if ($page == "gameserver?settings-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?settings-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
+
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm-settings'])) {
+
+                            $map = htmlentities($_POST['map']);
+                            $parameter = htmlentities($_POST['parameter']);
+
+                            $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
+                            $stmt->bind_param('ssi',$map,$parameter,$row[0]);
+                            $stmt->execute();
+                            $stmt->close();
+
+                            }
+
+                            $stmt = $mysqli->prepare("SELECT map,parameter FROM gameservers WHERE id = ?");
+                            $stmt->bind_param('i', $row[0]);
+                            $stmt->execute();
+                            $stmt->bind_result($db_map,$db_parameter);
+                            $stmt->fetch();
+                            $stmt->close();
+                            ?>
+                            <form class="form-horizontal" action="<?php echo "index.php?page=gameserver?settings-".$row[0]; ?>" method="post">
+                              <div class="form-group">
+                                <label class="control-label col-sm-2">Map:</label>
+                                <div class="col-sm-4">
+                                  <input type="text" class="form-control" name="map" value="<?php echo $db_map;?>">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="control-label col-sm-2">Paramter:</label>
+                                <div class="col-sm-8">
+                                  <input type="text" class="form-control" name="parameter" value="<?php echo $db_parameter;?>">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                  <button type="submit" name="confirm-settings" class="btn btn-default">Submit</button>
+                                </div>
+                              </div>
+                            </form>
+
+
+
+
+                            <?php
+                          }
                         }
                         /* free result set */
                         $result->close();
@@ -178,19 +224,22 @@ if ($_SESSION['login'] == 1) {
                     if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
 
                        $error = false; $msg = "";
-                       $port = $_POST['port']; $slots = $_POST['slots'];
-                       $dedicated = $_POST['dedicated']; $type = $_POST['type'];
-                       $map = $_POST['map'];
+                       $port = htmlentities($_POST['port']); $slots = htmlentities($_POST['slots']);
+                       $dedicated = htmlentities($_POST['dedicated']); $type = htmlentities($_POST['type']);
+                       $map = htmlentities($_POST['map']);
+                       $user_gs = htmlentities($_POST['users']);
 
                        if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
                        if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/^[0-9]+$/",$dedicated)){ $msg = "Dedicated enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                       if(!preg_match("/^[0-9]+$/",$user_gs)){ $msg = "User enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
                        if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
 
 
-                       $stmt = $mysqli->prepare("SELECT ip,port,user,password,id FROM dedicated WHERE name = ?");
-                       $stmt->bind_param('s', $dedicated);
+                       $stmt = $mysqli->prepare("SELECT ip,port,user,password,id,language FROM dedicated WHERE id = ?");
+                       $stmt->bind_param('i', $dedicated);
                        $stmt->execute();
-                       $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id);
+                       $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id,$dedi_language);
                        $stmt->fetch();
                        $stmt->close();
 
@@ -228,13 +277,6 @@ if ($_SESSION['login'] == 1) {
 
                           if ($error == false) {
 
-                         $stmt = $mysqli->prepare("SELECT ip,port,user,password,id,language FROM dedicated WHERE name = ?");
-                         $stmt->bind_param('s', $dedicated);
-                         $stmt->execute();
-                         $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id,$dedi_language);
-                         $stmt->fetch();
-                         $stmt->close();
-
                          $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                           if (!$ssh->login($dedi_login, $dedi_password)) {
                             echo '
@@ -254,7 +296,7 @@ if ($_SESSION['login'] == 1) {
                           }
 
                          $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
-                         $stmt->bind_param('i', $_SESSION['user_id']);
+                         $stmt->bind_param('i', $user_gs);
                          $stmt->execute();
                          $stmt->bind_result($user_name,$user_u_count);
                          $stmt->fetch();
@@ -262,7 +304,6 @@ if ($_SESSION['login'] == 1) {
 
                          $gs_login = $user_name . "-" . $user_u_count;
                          $gs_password = generatePassword();
-
 
                          $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                           if (!$ssh->login($dedi_login, $dedi_password)) {
@@ -279,13 +320,13 @@ if ($_SESSION['login'] == 1) {
                             $ssh->enablePTY();
                             $ssh->exec('sudo passwd '.$gs_login);
                             if ($dedi_language == "Deutsch") {
-                              $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
-                              $ssh->write($gs_password . "\n");
-                              $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
-                              $ssh->write($gs_password . "\n");
-                              $ssh->read('passwd: Passwort erfolgreich geändert');
+                             $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
+                             $ssh->write($gs_password . "\n");
+                             $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
+                             $ssh->write($gs_password . "\n");
+                             $ssh->read('passwd: Passwort erfolgreich geändert');
                             } elseif ($dedi_language == "Englisch") {
-                              echo  $ssh->read('Enter new UNIX password:');
+                              $ssh->read('Enter new UNIX password:');
                               $ssh->write($gs_password . "\n");
                               $ssh->read('Retype new UNIX password:');
                               $ssh->write($gs_password . "\n");
@@ -297,14 +338,14 @@ if ($_SESSION['login'] == 1) {
                             $ssh->exec($copy);
 
                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
-                            $stmt->bind_param('issisisssi', $_SESSION['user_id'],$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
+                            $stmt->bind_param('issisisssi', $user_gs,$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
                             $stmt->execute();
                             $stmt->close();
 
                             $user_u_count = $user_u_count +1;
 
                             $stmt = $mysqli->prepare("UPDATE users SET u_count = ? WHERE id = ?");
-                            $stmt->bind_param('ii', $user_u_count, $_SESSION['user_id']);
+                            $stmt->bind_param('ii', $user_u_count, $user_gs);
                             $stmt->execute();
                             $stmt->close();
 
@@ -364,14 +405,36 @@ if ($_SESSION['login'] == 1) {
                       <div class="col-sm-4">
                         <select class="form-control" name="dedicated">
                         <?php
-                        $query = "SELECT name FROM dedicated ORDER by id";
+                        $query = "SELECT id,name FROM dedicated ORDER by id";
 
                          if ($stmt = $mysqli->prepare($query)) {
                              $stmt->execute();
-                             $stmt->bind_result($db_name);
+                             $stmt->bind_result($db_id,$db_name);
 
                              while ($stmt->fetch()) {
-                               echo '<option value="'. $db_name .'">'. $db_name .'</option>';
+                               echo '<option value="'. $db_id .'">'. $db_name .'</option>';
+                             }
+                             $stmt->close();
+                         }  ?>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-sm-2">Map/Benutzer:</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" name="map" placeholder="gm_flatgrass">
+                      </div>
+                      <div class="col-sm-4">
+                        <select class="form-control" name="users">
+                        <?php
+                        $query = "SELECT id,name FROM users ORDER by id";
+
+                         if ($stmt = $mysqli->prepare($query)) {
+                             $stmt->execute();
+                             $stmt->bind_result($db_id,$db_name);
+
+                             while ($stmt->fetch()) {
+                               echo '<option value="'. $db_id .'">'. $db_name .'</option>';
                              }
                              $stmt->close();
                          }  ?>
@@ -385,12 +448,6 @@ if ($_SESSION['login'] == 1) {
                       </div>
                       <div class="col-sm-4">
                         <input type="text" class="form-control" name="slots" placeholder="14">
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label class="control-label col-sm-2">Map:</label>
-                      <div class="col-sm-4">
-                        <input type="text" class="form-control" name="map" placeholder="gm_flatgrass">
                       </div>
                     </div>
                     <div class="form-group">
