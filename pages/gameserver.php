@@ -42,6 +42,68 @@ if ($_SESSION['login'] == 1) {
 
                         /* fetch object array */
                         while ($row = $result->fetch_row()) {
+                          if ($page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
+
+                            $gs_select = $row[0];
+
+                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter FROM gameservers WHERE id = ?");
+                             $stmt->bind_param('i', $gs_select);
+                             $stmt->execute();
+                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter);
+                             $stmt->fetch();
+                             $stmt->close();
+
+                             $stmt = $mysqli->prepare("SELECT name_internal FROM templates WHERE name = ?");
+                             $stmt->bind_param('s', $game);
+                             $stmt->execute();
+                             $stmt->bind_result($name_internal);
+                             $stmt->fetch();
+                             $stmt->close();
+
+                             $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
+                             $stmt->bind_param('s', $ip);
+                             $stmt->execute();
+                             $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                             $stmt->fetch();
+                             $stmt->close();
+
+                             $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                              if (!$ssh->login($dedi_login, $dedi_password)) {
+                                echo '
+                                <div class="alert alert-danger" role="alert">
+                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                  <span class="sr-only">Error:</span>
+                                  Login failed
+                                </div>';
+                              } else {
+
+                                $stmt = $mysqli->prepare("SELECT type_name FROM templates WHERE name = ?");
+                                $stmt->bind_param('s',$game);
+                                $stmt->execute();
+                                $stmt->bind_result($type_name);
+                                $stmt->fetch();
+                                $stmt->close();
+
+                                $status = 1;
+                                $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?  WHERE id = ?");
+                                $stmt->bind_param('iii',$status,$status,$gs_select);
+                                $stmt->execute();
+                                $stmt->close();
+
+                                $ssh->exec('sudo pkill -u '.$gs_login);
+                                $ssh->exec('sudo rm /home/'.$gs_login.'/game/steam.log');
+                                $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
+                                $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
+                                $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                                echo '
+                                <div class="alert alert-success" role="alert">
+                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                  <span class="sr-only">Success:</span>
+                                  Done
+                                </div>';
+
+                              }
+                          }
                           if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
                             $gs_select = $row[0];
 
@@ -74,11 +136,9 @@ if ($_SESSION['login'] == 1) {
                                   <span class="sr-only">Error:</span>
                                   Login failed
                                 </div>';
-                                exit;
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
                                 $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
-                                echo '<meta http-equiv="refresh" content="2; URL=index.php?page=gameserver">';
                                 echo '
                                 <div class="alert alert-success" role="alert">
                                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -113,7 +173,6 @@ if ($_SESSION['login'] == 1) {
                                  <span class="sr-only">Error:</span>
                                  Login failed
                                </div>';
-                               exit;
                              } else {
                                $ssh->exec('sudo pkill -u '.$gs_login);
                                echo '
@@ -151,7 +210,6 @@ if ($_SESSION['login'] == 1) {
                                    <span class="sr-only">Error:</span>
                                    Login failed
                                  </div>';
-                                 exit;
                                } else {
                                  $ssh->exec('sudo pkill -u '.$gs_login);
                                  $ssh->exec('sudo userdel -r '.$gs_login);
@@ -456,7 +514,7 @@ if ($_SESSION['login'] == 1) {
                       </div>
                     </div>
                   </form>
-           <?php } elseif ($page == "gameserver") {
+           <?php } elseif (startsWith($page, "gameserver")) {
                     ?>
                     <form action="index.php?page=gameserver" method="post">
                   <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success">+</a>';}  ?>
