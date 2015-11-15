@@ -42,6 +42,54 @@ if ($_SESSION['login'] == 1) {
 
                         /* fetch object array */
                         while ($row = $result->fetch_row()) {
+                          if ($page == "gameserver?reinstall-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?reinstall-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
+
+                            $gs_select = $row[0];
+
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter FROM gameservers WHERE id = ?");
+                            $stmt->bind_param('i', $gs_select);
+                            $stmt->execute();
+                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
+                            $stmt->bind_param('s', $ip);
+                            $stmt->execute();
+                            $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                             if (!$ssh->login($dedi_login, $dedi_password)) {
+                               echo '
+                               <div class="alert alert-danger" role="alert">
+                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                 <span class="sr-only">Error:</span>
+                                 Login failed
+                               </div>';
+                             } else {
+
+                               $ssh->exec('sudo pkill -u '.$gs_login);
+                               $ssh->exec('sudo rm -r /home/'.$gs_login.'/*');
+                               $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login."'";
+                               $ssh->exec($copy);
+
+                               $status = 1;
+                               $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?  WHERE id = ?");
+                               $stmt->bind_param('ii',$status,$gs_select);
+                               $stmt->execute();
+                               $stmt->close();
+
+
+                               echo '
+                               <div class="alert alert-success" role="alert">
+                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                 <span class="sr-only">Success:</span>
+                                 Done
+                               </div>';
+                             }
+                          }
                           if ($page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
 
                             $gs_select = $row[0];
