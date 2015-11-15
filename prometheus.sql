@@ -9,20 +9,32 @@ CREATE TABLE `dedicated` (
   `port` int(6) NOT NULL,
   `user` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '0'
+  `status` int(11) NOT NULL DEFAULT '0',
+  `language` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `gameservers` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `dedi_id` int(15) NOT NULL DEFAULT '0',
   `user_name` varchar(50) NOT NULL,
   `game` varchar(50) NOT NULL,
   `slots` int(2) NOT NULL,
   `map` varchar(30) NOT NULL,
+  `parameter` varchar(150) NOT NULL,
   `ip` varchar(15) NOT NULL,
   `port` varchar(6) NOT NULL,
   `gs_login` varchar(25) NOT NULL,
-  `gs_password` varchar(50) NOT NULL
+  `gs_password` varchar(50) NOT NULL,
+  `status` int(1) NOT NULL DEFAULT '1',
+  `status_update` int(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `jobs` (
+  `id` int(11) NOT NULL,
+  `dedicated_id` int(11) NOT NULL,
+  `type` varchar(25) NOT NULL,
+  `type_id` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `templates` (
@@ -44,23 +56,33 @@ CREATE TABLE `users` (
 
 
 ALTER TABLE `dedicated`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `ip` (`ip`);
 
 ALTER TABLE `gameservers`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `templates`
+ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`);
 
+ALTER TABLE `templates`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `email` (`email`);
 
 
 ALTER TABLE `dedicated`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 ALTER TABLE `gameservers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+ALTER TABLE `jobs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 ALTER TABLE `templates`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
