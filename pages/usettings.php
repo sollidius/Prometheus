@@ -76,12 +76,7 @@ if ($_SESSION['login'] == 1) {
                      Something went wrong, '.$msg.'
                    </div>';
                  } elseif ($msg != "" and $success == true) {
-                   echo '
-                   <div class="alert alert-success" role="alert">
-                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                     <span class="sr-only">Success:</span>
-                     '.$msg.'
-                   </div>';
+                   msg_okay($msg);
                  }
                   ?>
                  <form class="form-horizontal" action="index.php?page=usettings" method="post">

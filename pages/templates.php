@@ -77,12 +77,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $stmt->execute();
                          $stmt->close();
 
-                         echo '
-                         <div class="alert alert-success" role="alert">
-                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                           <span class="sr-only">Error:</span>
-                           Okay
-                         </div>';
+                        msg_okay("Done");
 
                      } else {
 

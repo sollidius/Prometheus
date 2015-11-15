@@ -84,8 +84,7 @@ function exists_entry($spalte,$tabelle,$wo,$was) {
       }
 }
 
-function generatePassword($pwlen=12)
-{
+function generatePassword($pwlen=12) {
 	mt_srand();
 	$salt = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   $pw = "";
@@ -96,5 +95,20 @@ function generatePassword($pwlen=12)
 
 	return $pw;
 }
+
+function msg_okay($msg) {
+
+$tmp = '
+<div class="alert alert-success" role="alert">
+ <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+ <span class="sr-only">Success:</span>
+ '.$msg.'
+ </div>';
+
+echo $tmp;
+}
+
+
+
 
  ?>

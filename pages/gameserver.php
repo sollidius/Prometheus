@@ -81,13 +81,8 @@ if ($_SESSION['login'] == 1) {
                                $stmt->execute();
                                $stmt->close();
 
+                               msg_okay("Done");
 
-                               echo '
-                               <div class="alert alert-success" role="alert">
-                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                 <span class="sr-only">Success:</span>
-                                 Done
-                               </div>';
                              }
                           }
                           if ($page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
@@ -143,13 +138,7 @@ if ($_SESSION['login'] == 1) {
                                 $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
                                 $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
                                 $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
-                                echo '
-                                <div class="alert alert-success" role="alert">
-                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                  <span class="sr-only">Success:</span>
-                                  Done
-                                </div>';
-
+                                msg_okay("Done");
                               }
                           }
                           if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
@@ -187,12 +176,7 @@ if ($_SESSION['login'] == 1) {
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
                                 $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
-                                echo '
-                                <div class="alert alert-success" role="alert">
-                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                  <span class="sr-only">Success:</span>
-                                  Done
-                                </div>';
+                                msg_okay("Done");
                               }
                               break;
                           }
@@ -223,12 +207,7 @@ if ($_SESSION['login'] == 1) {
                                </div>';
                              } else {
                                $ssh->exec('sudo pkill -u '.$gs_login);
-                               echo '
-                               <div class="alert alert-success" role="alert">
-                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                 <span class="sr-only">Success:</span>
-                                 Done
-                               </div>';
+                               msg_okay("Done");
                              }
                              break;
                           }
@@ -266,13 +245,7 @@ if ($_SESSION['login'] == 1) {
                                  $stmt->bind_param('i', $gs_select);
                                  $stmt->execute();
                                  $stmt->close();
-
-                                 echo '
-                                 <div class="alert alert-success" role="alert">
-                                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                   <span class="sr-only">Success:</span>
-                                   Done
-                                 </div>';
+                                 msg_okay("Done");
                                }
                                break;
                             }
@@ -383,24 +356,6 @@ if ($_SESSION['login'] == 1) {
 
                           if ($error == false) {
 
-                         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                          if (!$ssh->login($dedi_login, $dedi_password)) {
-                            echo '
-                            <div class="alert alert-danger" role="alert">
-                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                              <span class="sr-only">Success:</span>
-                              Login failed
-                            </div>';
-                            exit;
-                          } else {
-
-                            $output =  $ssh->exec('if ! test -d /home/'.$dedi_login.'/templates/'.$type.'; then echo "1"; fi');
-                            if ($output == 1) {
-                                $error = true;
-                                $msg = "Template ist nicht installiert";
-                            }
-                          }
-
                          $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
                          $stmt->bind_param('i', $user_gs);
                          $stmt->execute();
@@ -455,12 +410,7 @@ if ($_SESSION['login'] == 1) {
                             $stmt->execute();
                             $stmt->close();
 
-                            echo '
-                            <div class="alert alert-success" role="alert">
-                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                              <span class="sr-only">Error:</span>
-                              Der Gameserver wird installiert, das kann etwas dauern
-                            </div>';
+                            msg_okay("Der Gameserver wird installiert, das kann etwas dauern");
 
                           }
 
