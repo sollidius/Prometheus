@@ -14,17 +14,51 @@
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-            <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+            <i class="fa fa-gears fa-fw"></i>  <i class="fa fa-caret-down"></i>
         </a>
         <ul class="dropdown-menu dropdown-user">
-            <li><a href="index.php?page=usettings"><i class="fa fa-gear fa-fw"></i> Settings</a>
-            </li>
-            <li class="divider"></li>
-            <li><a href="index.php?page=logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-            </li>
+          <li>
+              <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+          </li>
+          <?php if  ($db_rank == 1) { echo '
+          <li>
+              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Einstellungen</a>
+          </li>
+           '; } ?>
+          <?php if  ($db_rank == 1) { echo '
+          <li>
+              <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
+          </li>
+           '; } ?>
+           <?php if  ($db_rank == 1) { echo '
+          <li>
+              <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> Rootserver</a>
+          </li>
+           '; } ?>
+           <?php if  ($db_rank == 1) { echo '
+          <li>
+              <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> Vorlagen</a>
+          </li>
+           '; } ?>
+          <li>
+              <a href="index.php?page=gameserver"><i class="fa fa-list fa-fw"></i> Gameserver</a>
+          </li>
         </ul>
         <!-- /.dropdown-user -->
-  </li>
+      </li>
+      <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+      </a>
+      <ul class="dropdown-menu dropdown-user">
+          <li><a href="index.php?page=usettings"><i class="fa fa-gear fa-fw"></i> Settings</a>
+          </li>
+          <li class="divider"></li>
+          <li><a href="index.php?page=logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+          </li>
+      </ul>
+      <!-- /.dropdown-user -->
+    </li>
       </ul>
     </div>
   </div>
@@ -39,26 +73,26 @@
           </li>
           <?php if  ($db_rank == 1) { echo '
           <li>
-              <a href="index.php?page=settings"><i class="fa fa-table fa-fw"></i> Einstellungen</a>
+              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Einstellungen</a>
           </li>
            '; } ?>
           <?php if  ($db_rank == 1) { echo '
           <li>
-              <a href="index.php?page=users"><i class="fa fa-table fa-fw"></i> Benutzer</a>
+              <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
           </li>
            '; } ?>
            <?php if  ($db_rank == 1) { echo '
           <li>
-              <a href="index.php?page=rootserver"><i class="fa fa-edit fa-fw"></i> Rootserver</a>
+              <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> Rootserver</a>
           </li>
            '; } ?>
            <?php if  ($db_rank == 1) { echo '
           <li>
-              <a href="index.php?page=templates"><i class="fa fa-edit fa-fw"></i> Vorlagen</a>
+              <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> Vorlagen</a>
           </li>
            '; } ?>
           <li>
-              <a href="index.php?page=gameserver"><i class="fa fa-edit fa-fw"></i> Gameserver</a>
+              <a href="index.php?page=gameserver"><i class="fa fa-list fa-fw"></i> Gameserver</a>
           </li>
         </ul>
       </div>
