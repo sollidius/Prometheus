@@ -96,16 +96,31 @@ function generatePassword($pwlen=12) {
 	return $pw;
 }
 
-function msg_okay($msg) {
-
-$tmp = '
-<div class="alert alert-success" role="alert">
- <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
- <span class="sr-only">Success:</span>
- '.$msg.'
+function msg_warning($msg) {
+  echo'
+  <div class="alert alert-dismissible alert-warning">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <h4>Warnung!</h4>
+    <p>'.$msg.'</p>
  </div>';
+}
 
-echo $tmp;
+function msg_okay($msg) {
+  echo'
+  <div class="alert alert-dismissible alert-success">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <h4>Okay!</h4>
+    <p>'.$msg.'</p>
+ </div>';
+}
+
+function msg_error($msg) {
+  echo'
+  <div class="alert alert-dismissible alert-danger">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <h4>Error!</h4>
+    <p>'.$msg.'</p>
+ </div>';
 }
 
 

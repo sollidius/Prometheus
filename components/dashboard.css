@@ -103,3 +103,12 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+.sidebar {
+top: 38px;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+    padding-top:5px !important; padding-bottom:0 !important;
+    height: 35px;
+}
+.navbar {min-height:35px !important;}

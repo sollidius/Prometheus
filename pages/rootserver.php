@@ -58,12 +58,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                             $ssh = new Net_SSH2($ip,$port);
                              if (!$ssh->login($user, $password)) {
-                               echo '
-                               <div class="alert alert-danger" role="alert">
-                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                 <span class="sr-only">Success:</span>
-                                 Login failed
-                               </div>';
+                               msg_error('Login failed');
                                exit;
                              } else {
 
@@ -86,25 +81,13 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                   $stmt->execute();
                                   $stmt->close();
 
-
-                                  echo '
-                                  <div class="alert alert-success" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                    <span class="sr-only">Error:</span>
-                                    Template wird erstellt, das kann etwas dauern :)
-                                  </div>';
+                                  msg_okay("Das Template wird erstellt, das kann etwas dauern :)");
 
                                 }
 
 
                               } else {
-                                echo '
-                                <div class="alert alert-danger" role="alert">
-                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                  <span class="sr-only">Success:</span>
-                                  Spiel ist bereits installiert
-                                </div>';
-
+                                msg_error('Spiel ist bereits installiert');
                               }
                              }
                           }
@@ -155,12 +138,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                        $ssh = new Net_SSH2($ip,$port);
                         if (!$ssh->login($root, $root_password)) {
-                          echo '
-                          <div class="alert alert-danger" role="alert">
-                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                            <span class="sr-only">Error:</span>
-                            Login failed
-                          </div>';
+                          msg_error('Login failed');
                           exit;
                         } else {
                           if ($os == "Debian 7") {
@@ -221,17 +199,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                         }
 
-                        msg_okay("Done");
+                        msg_okay("Der Rootserver wurde angelegt.");
 
                    } else {
-
-                     echo '
-                     <div class="alert alert-danger" role="alert">
-                       <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                       <span class="sr-only">Error:</span>
-                       Something went wrong, '.$msg.'
-                     </div>';
-
+                     msg_error('Something went wrong, '.$msg);
                    }
 
                  } else if (isset($_POST['add_games'])) {
@@ -334,7 +305,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 } else {
                   ?>
                   <form action="index.php?page=rootserver" method="post">
-                  <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success">+</button>
+                  <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-sm">+</button>
                   <table class="table table-bordered">
                     <thead>
                       <tr>

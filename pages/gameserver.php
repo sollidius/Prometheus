@@ -81,7 +81,7 @@ if ($_SESSION['login'] == 1) {
                                $stmt->execute();
                                $stmt->close();
 
-                               msg_okay("Done");
+                               msg_okay("Der Gameserver wird neuinstalliert.");
 
                              }
                           }
@@ -138,7 +138,7 @@ if ($_SESSION['login'] == 1) {
                                 $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
                                 $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
                                 $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
-                                msg_okay("Done");
+                                msg_okay("Der Gameserver wird aktualisiert.");
                               }
                           }
                           if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
@@ -176,7 +176,7 @@ if ($_SESSION['login'] == 1) {
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
                                 $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
-                                msg_okay("Done");
+                                msg_okay("Der Gamesever wurde gestartet.");
                               }
                               break;
                           }
@@ -207,7 +207,7 @@ if ($_SESSION['login'] == 1) {
                                </div>';
                              } else {
                                $ssh->exec('sudo pkill -u '.$gs_login);
-                               msg_okay("Done");
+                               msg_okay("Der Gameserver wurde angehalten.");
                              }
                              break;
                           }
@@ -245,7 +245,7 @@ if ($_SESSION['login'] == 1) {
                                  $stmt->bind_param('i', $gs_select);
                                  $stmt->execute();
                                  $stmt->close();
-                                 msg_okay("Done");
+                                 msg_okay("Der Gameserver wurde gelöscht.");
                                }
                                break;
                             }
@@ -338,12 +338,7 @@ if ($_SESSION['login'] == 1) {
 
                          $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                           if (!$ssh->login($dedi_login, $dedi_password)) {
-                            echo '
-                            <div class="alert alert-danger" role="alert">
-                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                              <span class="sr-only">Success:</span>
-                              Login failed
-                            </div>';
+                            msg_error("Login failed");
                             exit;
                           } else {
 
@@ -368,12 +363,7 @@ if ($_SESSION['login'] == 1) {
 
                          $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                           if (!$ssh->login($dedi_login, $dedi_password)) {
-                            echo '
-                            <div class="alert alert-danger" role="alert">
-                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                              <span class="sr-only">Error:</span>
-                              Login failed
-                            </div>';
+                            msg_error("Login failed");
                             exit;
                           } else {
 
@@ -410,29 +400,15 @@ if ($_SESSION['login'] == 1) {
                             $stmt->execute();
                             $stmt->close();
 
-                            msg_okay("Der Gameserver wird installiert, das kann etwas dauern");
+                            msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
 
                           }
 
                      } else {
-
-                       echo '
-                       <div class="alert alert-danger" role="alert">
-                         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                         <span class="sr-only">Error:</span>
-                         Something went wrong, '.$msg.'
-                       </div>';
-
+                       msg_error('Something went wrong, '.$msg);
                      }
                     } else {
-
-                      echo '
-                      <div class="alert alert-danger" role="alert">
-                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                        <span class="sr-only">Error:</span>
-                        Something went wrong, '.$msg.'
-                      </div>';
-
+                      msg_error('Something went wrong, '.$msg);
                     }
 
                 }
@@ -515,7 +491,7 @@ if ($_SESSION['login'] == 1) {
            <?php } elseif (startsWith($page, "gameserver")) {
                     ?>
                     <form action="index.php?page=gameserver" method="post">
-                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success">+</a>';}  ?>
+                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-sm">+</a>';}  ?>
                     <table class="table table-bordered">
                       <thead>
                         <tr>

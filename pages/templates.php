@@ -77,17 +77,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $stmt->execute();
                          $stmt->close();
 
-                        msg_okay("Done");
+                        msg_okay("Das Template wurde angelegt.");
 
                      } else {
-
-                       echo '
-                       <div class="alert alert-danger" role="alert">
-                         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                         <span class="sr-only">Error:</span>
-                         Something went wrong, '.$msg.'
-                       </div>';
-
+                       msg_error('Something went wrong, '.$msg);
                      }
 
                     } else {
@@ -126,7 +119,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   } else {
                     ?>
                     <form action="index.php?page=templates" method="post">
-                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success">+</button>
+                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-sm">+</button>
                     <table class="table table-bordered">
                       <thead>
                         <tr>

@@ -32,7 +32,7 @@
 
 <div class="container-fluid">
     <div class="row">
-      <div class="col-sm-3 col-md-2 sidebar">
+      <div class="col-sm-3 col-md-1 sidebar">
         <ul class="nav nav-sidebar">
           <li>
               <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
@@ -62,4 +62,4 @@
           </li>
         </ul>
       </div>
-      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">

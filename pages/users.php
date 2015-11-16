@@ -35,6 +35,48 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
            <div class="row">
                <div class="col-lg-8">
                  <?php
+
+                 $query = "SELECT id FROM users ORDER by id";
+
+                 if ($result = $mysqli->query($query)) {
+
+                     /* fetch object array */
+                     while ($row = $result->fetch_row()) {
+
+                         if ($page == "users?delete-".$row[0]) {
+
+                           $id_result = 0;
+                           $stmtz = $mysqli->prepare("SELECT id FROM gameservers WHERE user_id = ?");
+                           $stmtz->bind_param('i', $row[0]);
+                           $stmtz->execute();
+                           $stmtz->bind_result($id_result);
+                           $stmtz->fetch();
+                           $stmtz->close();
+
+                          if ($id_result == 0 AND $_SESSION['user_id'] != $row[0]) {
+
+                            $stmt = $mysqli->prepare("DELETE FROM users WHERE id = ?");
+                            $stmt->bind_param('i', $row[0]);
+                            $stmt->execute();
+                            $stmt->close();
+
+                            msg_okay("Benutzer gelöscht.");
+
+                          } elseif ($_SESSION['user_id'] == $row[0]) {
+
+                           msg_warning("Du kannst dich nicht selber löschen.");
+
+                          } else {
+
+                           msg_warning("Der Benutzer besitzt noch Gameserver.");
+
+                          }
+                         }
+                     }
+                     /* free result set */
+                     $result->close();
+                 }
+
                   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
@@ -64,17 +106,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $stmt->execute();
                          $stmt->close();
 
-                         msg_okay("Done");
+                         msg_okay("Der Benutzer wurde erstellt.");
 
                      } else {
-
-                       echo '
-                       <div class="alert alert-danger" role="alert">
-                         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                         <span class="sr-only">Error:</span>
-                         '.$msg.'
-                       </div>';
-
+                      msg_error($msg);
                      }
 
                     } else {
@@ -122,23 +157,24 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   } else {
                     ?>
                     <form action="index.php?page=users" method="post">
-                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success">+</button>
+                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-sm">+</button>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
                           <th>Name</th>
                           <th>E-Mail</th>
                           <th>Rank</th>
+                          <th>Aktion</th>
                         </tr>
                       </thead>
                       <tbody>
                      <?php
 
-                     $query = "SELECT name, email, rank FROM users ORDER by id";
+                     $query = "SELECT name, email, rank,id FROM users ORDER by id";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_name, $db_email,$db_rank);
+                          $stmt->bind_result($db_name, $db_email,$db_rank,$db_id);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
@@ -149,6 +185,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             } elseif ($db_rank == 2) {
                               echo "<td>User</td>";
                             }
+                            echo '<td> <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-sm">X</a></td>';
                             echo "</tr>";
                           }
                           $stmt->close();

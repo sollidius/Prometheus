@@ -69,12 +69,7 @@ if ($_SESSION['login'] == 1) {
                <div class="col-lg-8">
                  <?php
                  if ($msg != "" and $success == false) {
-                   echo '
-                   <div class="alert alert-danger" role="alert">
-                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                     <span class="sr-only">Error:</span>
-                     Something went wrong, '.$msg.'
-                   </div>';
+                   msg_error('Something went wrong, '.$msg);
                  } elseif ($msg != "" and $success == true) {
                    msg_okay($msg);
                  }

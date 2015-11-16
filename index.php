@@ -30,7 +30,7 @@ if ($page=="usettings") {
 }
 
 //Users
-if ($page=="users") {
+if (startsWith($page, "users")) {
  include 'pages/users.php';
 }
 
