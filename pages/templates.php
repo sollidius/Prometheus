@@ -177,9 +177,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
            <!-- /.row -->
        </div>
        <!-- /#page-wrapper -->
-
    </div>
    <!-- /#wrapper -->
+ </div>
+</div>
+</div>
 
 
 <?php

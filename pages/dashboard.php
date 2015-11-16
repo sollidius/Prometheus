@@ -108,7 +108,9 @@ if ($_SESSION['login'] == 1) {
 
    </div>
    <!-- /#wrapper -->
-
+ </div>
+</div>
+</div>
 
 <?php
 

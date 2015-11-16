@@ -21,8 +21,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
 
 ?>
-<div id="wrapper">
-
+<div class="container-fluid">
+  <div class="row">
       <?php include 'navbar.php'; ?>
 
        <div id="page-wrapper">
@@ -388,9 +388,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
            <!-- /.row -->
        </div>
        <!-- /#page-wrapper -->
-
    </div>
    <!-- /#wrapper -->
+ </div>
+</div>
+</div>
 
 
 <?php
