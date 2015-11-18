@@ -13,6 +13,14 @@ CREATE TABLE `dedicated` (
   `language` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `dedicated_games` (
+  `id` int(11) NOT NULL,
+  `dedi_id` int(11) NOT NULL,
+  `template_id` int(11) NOT NULL,
+  `status` int(5) NOT NULL,
+  `status_text` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `gameservers` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -32,6 +40,7 @@ CREATE TABLE `gameservers` (
 CREATE TABLE `jobs` (
   `id` int(11) NOT NULL,
   `dedicated_id` int(11) NOT NULL,
+  `template_id` int(11) NOT NULL DEFAULT '0',
   `type` varchar(25) NOT NULL,
   `type_id` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -59,6 +68,9 @@ ALTER TABLE `dedicated`
   ADD UNIQUE KEY `name` (`name`),
   ADD UNIQUE KEY `ip` (`ip`);
 
+ALTER TABLE `dedicated_games`
+  ADD PRIMARY KEY (`id`);
+
 ALTER TABLE `gameservers`
   ADD PRIMARY KEY (`id`);
 
@@ -77,10 +89,12 @@ ALTER TABLE `users`
 
 ALTER TABLE `dedicated`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+ALTER TABLE `dedicated_games`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 ALTER TABLE `gameservers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 ALTER TABLE `jobs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 ALTER TABLE `templates`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 ALTER TABLE `users`

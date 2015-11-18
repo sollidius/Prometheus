@@ -33,7 +33,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                <!-- /.col-lg-12 -->
            </div>
            <div class="row">
-             <div class="col-lg-8">
+             <div class="col-lg-12">
                <?php
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -62,11 +62,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                exit;
                              } else {
 
+                               $installed = get_game_installed($id,$row["name"]);
                               $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates; then echo "1"; fi');
                               if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates'); }
                               $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row["name"].'; then echo "1"; fi');
-                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates/'.$row["name"]);
-
+                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates/'.$row["name"]); }
+                              if ($installed[0] == 1) {
                                 //Steamcmd
                                 if ($row["type"] == "steamcmd") {
 
@@ -76,8 +77,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                   $ssh->exec('cd /home/'.$user.'/templates/'.$row["name"] . ';/home/'.$user.'/templates/'.$row["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row["name"].'/game  +login anonymous +app_update '.$row["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row["name"].'/steam.log &');
 
                                   $template = "template";
-                                  $stmt = $mysqli->prepare("INSERT INTO jobs(dedicated_id,type,type_id) VALUES (?, ?, ?)");
-                                  $stmt->bind_param('iss', $id,$template,$row["name"]);
+                                  $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
+                                  $stmt->bind_param('iiss', $row["id"], $id,$template,$row["name"]);
                                   $stmt->execute();
                                   $stmt->close();
 
@@ -86,7 +87,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                 }
                               } else {
                                 $_POST['add_games_'.$id] = 1;
-                                msg_error('Spiel ist bereits installiert');
+                                msg_error($installed[1]);
                               }
                              }
                           }
@@ -219,19 +220,23 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                     $query = "SELECT name, type,type_name,id FROM templates ORDER by id";
 
-                     if ($stmt = $mysqli->prepare($query)) {
-                         $stmt->execute();
-                         $stmt->bind_result($db_name, $db_type,$db_type_name,$db_id);
+                      if ($result = $mysqli->query($query)) {
 
-                         while ($stmt->fetch()) {
+                       /* fetch object array */
+                       while ($row = $result->fetch_assoc()) {
+                           $installed = get_game_installed($send_root_id,$row["name"]);
                            echo "<tr>";
-                           echo "<td>" . $db_name . "</td>";
-                           echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$db_id.'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
+                           echo "<td>" . $row["name"] . "</td>";
+                           if ($installed[0] == 0) {
+                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success" disabled>Installieren</button></td>';
+                           } else {
+                             echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
+                           }
                            echo "</tr>";
                          }
-                         $stmt->close();
-                     }
-                     $mysqli->close(); ?>
+                         /* free result set */
+                               $result->close();
+                           } ?>
                      </tbody>
                    </table>
                    </div>
@@ -320,39 +325,41 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                    $query = "SELECT name,ip,port,user,status,id FROM dedicated ORDER by id";
 
-                    if ($stmt = $mysqli->prepare($query)) {
-                        $stmt->execute();
-                        $stmt->bind_result($db_name, $db_ip,$db_port,$db_user,$db_status,$db_id);
+                   if ($result = $mysqli->query($query)) {
 
-                        while ($stmt->fetch()) {
+                     /* fetch object array */
+                     while ($row = $result->fetch_assoc()) {
                           echo "<tr>";
-                          echo "<td>" . $db_name . "</td>";
-                          echo "<td>" . $db_ip . "</td>";
-                          echo "<td>" . $db_port . "</td>";
-                          echo "<td>" . $db_user . "</td>";
+                          echo "<td>" . $row["name"] . "</td>";
+                          echo "<td>" . $row["ip"] . "</td>";
+                          echo "<td>" . $row["port"] . "</td>";
+                          echo "<td>" . $row["user"] . "</td>";
                           echo "<td> ******** </td>";
-                          if ($db_status == 0) { echo "<td>Unbekannt</td>"; }
-                          if ($db_status == 1) { echo '<td>Installiert <button style="margin-bottom:2px;" type="submit" name="add_games_'.$db_id.'" class="btn btn-xs pull-right btn-success">+</button></td>'; }
+                          if ($row["status"] == 0) { echo "<td>Unbekannt</td>"; }
+                          if ($row["status"] == 1) { echo '<td>Installiert, ';
+
+                            $query = 'SELECT template_id FROM dedicated_games WHERE dedi_id = '.$row["id"].' ORDER by id';
+
+                              if ($result_2 = $mysqli->query($query)) {
+
+                                  /* fetch object array */
+                                  while ($row_2 = $result_2->fetch_assoc()) {
+                                    echo get_template_by_id($row_2["template_id"]).', ';
+                                  }
+                                $result_2->close();
+                              }
+                          echo '<button style="margin-bottom:2px;" type="submit" name="add_games_'.$row["id"].'" class="btn btn-xs pull-right btn-success">+</button></td>'; }
                           echo "</tr>";
                         }
-                        $stmt->close();
-                    }
-                    $mysqli->close(); ?>
+                          $result->close();
+                      } ?>
                     </tbody>
                   </table>
                 </form>
                 <?php }
                ?>
               </div>
-               <!-- /.col-lg-8 -->
-               <div class="col-lg-4">
-
-
-
-
-
-               </div>
-               <!-- /.col-lg-4 -->
+               <!-- /.col-lg-12 -->
            </div>
            <!-- /.row -->
        </div>

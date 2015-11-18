@@ -31,7 +31,7 @@ if ($_SESSION['login'] == 1) {
                <!-- /.col-lg-12 -->
            </div>
            <div class="row">
-               <div class="col-lg-9">
+               <div class="col-lg-12">
                  <?php
             //      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -321,34 +321,11 @@ if ($_SESSION['login'] == 1) {
 
                        if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
 
-                       $result_id = 0;
-                       $type_t = "template";
-                       $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
-                       $stmt->bind_param('iss', $dedi_id,$type_t,$type);
-                       $stmt->execute();
-                       $stmt->bind_result($result_id);
-                       $stmt->fetch();
-                       $stmt->close();
+                       $installed = check_game_installed($dedicated,$type);
 
-                       if ($result_id != 0) { $error = true;$msg = "Installation läuft noch";}
+                       if ($installed[0] != 1) { $error = true;$msg = $installed[1];}
 
-
-                       if ($error == false) {
-
-                         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                          if (!$ssh->login($dedi_login, $dedi_password)) {
-                            msg_error("Login failed");
-                            exit;
-                          } else {
-
-                            $output =  $ssh->exec('if ! test -d /home/'.$dedi_login.'/templates/'.$type.'; then echo "1"; fi');
-                            if ($output == 1) {
-                                $error = true;
-                                $msg = "Template ist nicht installiert";
-                            }
-                          }
-
-                          if ($error == false) {
+                        if ($error == false) {
 
                          $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
                          $stmt->bind_param('i', $user_gs);
@@ -406,10 +383,6 @@ if ($_SESSION['login'] == 1) {
                      } else {
                        msg_error('Something went wrong, '.$msg);
                      }
-                    } else {
-                      msg_error('Something went wrong, '.$msg);
-                    }
-
                 }
                 if ($page == "gameserver?add" and $db_rank == 1) {
 
@@ -564,15 +537,7 @@ if ($_SESSION['login'] == 1) {
                   <?php }
                  ?>
                </div>
-               <!-- /.col-lg-8 -->
-               <div class="col-lg-4">
-
-
-
-
-
-               </div>
-               <!-- /.col-lg-4 -->
+               <!-- /.col-lg-12 -->
            </div>
            <!-- /.row -->
        </div>

@@ -4,7 +4,7 @@ include 'pages/functions.php';
 set_include_path('components/phpseclib');
 include('Net/SSH2.php');
 
-$query = "SELECT dedicated_id,type_id,id FROM jobs ORDER by id";
+$query = "SELECT dedicated_id,type_id,id,template_id FROM jobs ORDER by id";
 
 if ($result = $mysqli->query($query)) {
 
@@ -29,6 +29,12 @@ if ($result = $mysqli->query($query)) {
 
               $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
               $stmt->bind_param('i', $row[2]);
+              $stmt->execute();
+              $stmt->close();
+
+              $status = 1; $status_text = "Installed";
+              $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,status_text) VALUES (?, ?, ?, ?)");
+              $stmt->bind_param('iiis', $row[0],$row[3],$status,$status_text);
               $stmt->execute();
               $stmt->close();
 

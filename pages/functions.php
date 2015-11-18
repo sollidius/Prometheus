@@ -171,4 +171,93 @@ function get_user_by_id($id) {
 
 }
 
+function get_game_installed($dedi_id,$game) {
+  global $mysqli;
+
+  $result_id = 0;
+  $type_t = "template";
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
+  $stmt->bind_param('iss', $dedi_id,$type_t,$game);
+  $stmt->execute();
+  $stmt->bind_result($result_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
+
+  $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
+  $stmt->bind_param('s',$game);
+  $stmt->execute();
+  $stmt->bind_result($template_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  $result_id = 0;
+  $stmt = $mysqli->prepare("SELECT id FROM dedicated_games WHERE dedi_id = ? AND template_id = ?");
+  $stmt->bind_param('ii',$dedi_id,$template_id);
+  $stmt->execute();
+  $stmt->bind_result($result_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  if ($result_id != 0) { $msg[1] = "Spiel ist installiert"; $msg[0] = 0; return $msg;}
+
+
+
+  $msg[0] = 1;
+  return $msg;
+}
+
+function check_game_installed($dedi_id,$game) {
+  global $mysqli;
+
+  $result_id = 0;
+  $type_t = "template";
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
+  $stmt->bind_param('iss', $dedi_id,$type_t,$game);
+  $stmt->execute();
+  $stmt->bind_result($result_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
+
+  $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
+  $stmt->bind_param('s',$game);
+  $stmt->execute();
+  $stmt->bind_result($template_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  $result_id = 0;
+  $stmt = $mysqli->prepare("SELECT id FROM dedicated_games WHERE dedi_id = ? AND template_id = ?");
+  $stmt->bind_param('ii',$dedi_id,$template_id);
+  $stmt->execute();
+  $stmt->bind_result($result_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  if ($result_id != 0) { $msg[1] = "Spiel ist installiert"; $msg[0] = 1; return $msg;}
+
+
+
+  $msg[0] = 0;
+  $msg[1] = "Spiel ist nicht Installiert.";
+  return $msg;
+}
+
+function get_template_by_id($id) {
+  global $mysqli;
+
+  $stmt = $mysqli->prepare("SELECT name FROM templates WHERE id = ?");
+  $stmt->bind_param('i',$id);
+  $stmt->execute();
+  $stmt->bind_result($name);
+  $stmt->fetch();
+  $stmt->close();
+
+  return $name;
+
+}
+
  ?>
