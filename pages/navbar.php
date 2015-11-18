@@ -22,7 +22,7 @@
           </li>
           <?php if  ($db_rank == 1) { echo '
           <li>
-              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Einstellungen</a>
+              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
           </li>
            '; } ?>
           <?php if  ($db_rank == 1) { echo '
@@ -51,7 +51,7 @@
           <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
       </a>
       <ul class="dropdown-menu dropdown-user">
-          <li><a href="index.php?page=usettings"><i class="fa fa-gear fa-fw"></i> Settings</a>
+          <li><a href="index.php?page=usettings"><i class="fa fa-gear fa-fw"></i> Konfig</a>
           </li>
           <li class="divider"></li>
           <li><a href="index.php?page=logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -73,7 +73,7 @@
           </li>
           <?php if  ($db_rank == 1) { echo '
           <li>
-              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Einstellungen</a>
+              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
           </li>
            '; } ?>
           <?php if  ($db_rank == 1) { echo '

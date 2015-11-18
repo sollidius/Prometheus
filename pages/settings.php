@@ -1,6 +1,6 @@
 <?php
 //header
-$title = "Einstellungen";
+$title = "Konfiguration";
 include 'header.php';
 
 session_start();

@@ -29,7 +29,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                <!-- /.col-lg-12 -->
            </div>
            <div class="row">
-               <div class="col-lg-8">
+               <div class="col-lg-12">
                  <?php
 
                      $query = "SELECT id FROM templates ORDER by id";
@@ -157,15 +157,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   <?php }
                  ?>
             </div>
-               <!-- /.col-lg-8 -->
-               <div class="col-lg-4">
-
-
-
-
-
-               </div>
-               <!-- /.col-lg-4 -->
+               <!-- /.col-lg-12 -->
            </div>
            <!-- /.row -->
        </div>

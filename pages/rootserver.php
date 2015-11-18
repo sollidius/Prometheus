@@ -212,7 +212,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                    <table class="table table-bordered">
                      <thead>
                        <tr>
-                         <th colspan="2">Name</th>
+                         <th colspan="1">Name</th>
+                         <th colspan="1">Aktion</th>
                        </tr>
                      </thead>
                      <tbody>
@@ -228,7 +229,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                            echo "<tr>";
                            echo "<td>" . $row["name"] . "</td>";
                            if ($installed[0] == 0) {
-                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success" disabled>Installieren</button></td>';
+                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success" disabled>Installiert</button></td>';
                            } else {
                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
                            }
