@@ -35,7 +35,7 @@ if (startsWith($page, "users")) {
 }
 
 //Rootserver
-if ($page=="rootserver") {
+if (startsWith($page, "rootserver")) {
  include 'pages/rootserver.php';
 }
 

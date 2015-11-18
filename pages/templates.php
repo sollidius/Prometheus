@@ -50,44 +50,49 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         $result->close();
                         }
 
-                  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                  If ($page == "templates?add") {
+
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
-                     if (isset($_POST['confirm'])) {
+                       if (isset($_POST['confirm'])) {
 
-                       $error = false;
+                         $error = false;
 
-                       $name = $_POST['name'];
-                       $type = $_POST['type'];
-                       $type_name = $_POST['type_name'];
-                       $internal = $_POST['internal'];
-                       if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-
-
-                       if (exists_entry("name","templates","name",$name) == true) { $error = true;}
-
-                       if ($error == false) {
+                         $name = $_POST['name'];
+                         $type = $_POST['type'];
+                         $type_name = $_POST['type_name'];
+                         $internal = $_POST['internal'];
+                         if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
 
 
-                         $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal) VALUES (?, ?, ?, ?)");
-                         $stmt->bind_param('ssss', $name, $type,$type_name,$internal);
-                         $stmt->execute();
-                         $stmt->close();
+                         if (exists_entry("name","templates","name",$name) == true) { $error = true;}
 
-                        msg_okay("Das Template wurde angelegt.");
+                         if ($error == false) {
 
-                     } else {
-                       msg_error('Something went wrong, '.$msg);
-                     }
 
-                    } else {
+                           $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal) VALUES (?, ?, ?, ?)");
+                           $stmt->bind_param('ssss', $name, $type,$type_name,$internal);
+                           $stmt->execute();
+                           $stmt->close();
+
+                          msg_okay("Das Template wurde angelegt.");
+
+                       } else {
+                         msg_error('Something went wrong, '.$msg);
+                       }
+
+                      }
+
+                  }
+
 
                   ?>
 
-                  <form class="form-horizontal" action="index.php?page=templates" method="post">
+                  <form class="form-horizontal" action="index.php?page=templates?add" method="post">
                     <div class="form-group">
                       <label class="control-label col-sm-2">Name/Internal:</label>
                       <div class="col-sm-3">
@@ -114,12 +119,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   </form>
 
 
-
-                  <?php }
-                  } else {
+                  <?php
+               } elseif ($page == "templates") {
                     ?>
                     <form action="index.php?page=templates" method="post">
-                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-xs">+</button>
+                    <a  style="margin-bottom:2px;" href="index.php?page=templates?add"  class="btn pull-right btn-success btn-xs">+</a>
                     <table class="table table-bordered">
                       <thead>
                         <tr>

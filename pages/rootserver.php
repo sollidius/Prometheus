@@ -19,7 +19,6 @@ $stmt->close();
 if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
 
-
 ?>
 <div class="container-fluid">
   <div class="row">
@@ -35,222 +34,215 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
            <div class="row">
              <div class="col-lg-12">
                <?php
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-                  //Install Games
-
-                    $query = "SELECT id,name,type,type_name FROM templates ORDER by id";
+                    $query = "SELECT id FROM dedicated ORDER by id";
 
                     if ($result = $mysqli->query($query)) {
 
-                        /* fetch object array */
-                        while ($row = $result->fetch_assoc()) {
-                          if (isset($_POST['game_'.$row["id"]])) {
+                      /* fetch object array */
+                      while ($row = $result->fetch_assoc()) {
+                        if ($page == "rootserver?manage=".$row["id"]) {
 
-                            $id = htmlentities($_POST['send_root_id']);
+                          if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-                            $stmtz = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
-                            $stmtz->bind_param('i', $id);
-                            $stmtz->execute();
-                            $stmtz->bind_result($ip,$port,$user,$password);
-                            $stmtz->fetch();
-                            $stmtz->close();
+                            //Install Games
 
-                            $ssh = new Net_SSH2($ip,$port);
-                             if (!$ssh->login($user, $password)) {
-                               msg_error('Login failed');
-                               exit;
-                             } else {
+                              $query = "SELECT id,name,type,type_name FROM templates ORDER by id";
 
-                               $installed = get_game_installed($id,$row["name"]);
-                              $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates; then echo "1"; fi');
-                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates'); }
-                              $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row["name"].'; then echo "1"; fi');
-                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates/'.$row["name"]); }
-                              if ($installed[0] == 1) {
-                                //Steamcmd
-                                if ($row["type"] == "steamcmd") {
+                              if ($result_2 = $mysqli->query($query)) {
 
-                                  //$ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row["name"] . ';wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row["name"] . ';tar xvf steamcmd_linux.tar.gz');
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row["name"] . ';/home/'.$user.'/templates/'.$row["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row["name"].'/game  +login anonymous +app_update '.$row["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row["name"].'/steam.log &');
+                                  /* fetch object array */
+                                  while ($row_2 = $result_2->fetch_assoc()) {
+                                    if (isset($_POST['game_'.$row_2["id"]])) {
 
-                                  $template = "template";
-                                  $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
-                                  $stmt->bind_param('iiss', $row["id"], $id,$template,$row["name"]);
-                                  $stmt->execute();
-                                  $stmt->close();
+                                      $id = $row["id"];
 
-                                  msg_okay("Das Template wird erstellt, das kann etwas dauern :)");
-                                  $_POST['add_games_'.$id] = 1;
-                                }
-                              } else {
-                                $_POST['add_games_'.$id] = 1;
-                                msg_error($installed[1]);
+                                      $stmtz = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                                      $stmtz->bind_param('i', $id);
+                                      $stmtz->execute();
+                                      $stmtz->bind_result($ip,$port,$user,$password);
+                                      $stmtz->fetch();
+                                      $stmtz->close();
+
+                                      $ssh = new Net_SSH2($ip,$port);
+                                       if (!$ssh->login($user, $password)) {
+                                         msg_error('Login failed');
+                                         exit;
+                                       } else {
+
+                                         $installed = get_game_installed($id,$row_2["name"]);
+                                        $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates; then echo "1"; fi');
+                                        if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates'); }
+                                        $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row_2["name"].'; then echo "1"; fi');
+                                        if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates/'.$row_2["name"]); }
+                                        if ($installed[0] == 1) {
+                                          //Steamcmd
+                                          if ($row_2["type"] == "steamcmd") {
+
+                                            //$ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
+                                            $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
+                                            $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';tar xvf steamcmd_linux.tar.gz');
+                                            $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
+
+                                            $template = "template";
+                                            $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
+                                            $stmt->bind_param('iiss', $row_2["id"], $id,$template,$row_2["name"]);
+                                            $stmt->execute();
+                                            $stmt->close();
+
+                                            msg_okay("Das Template wird erstellt, das kann etwas dauern :)");
+                                          }
+                                        } else {
+                                          msg_error($installed[1]);
+                                        }
+                                       }
+                                       break;
+                                    }
+                                  }
+
+                                  /* free result set */
+                                  $result_2->close();
                               }
-                             }
-                          }
-                        }
+                            }
+                        echo '<form class="form-horizontal" action="index.php?page=rootserver?manage='.$row["id"].'" method="post">'; ?>
+                         <div class="col-sm-4">
+                         <table class="table table-bordered">
+                           <thead>
+                             <tr>
+                               <th colspan="1">Name</th>
+                               <th colspan="1">Aktion</th>
+                             </tr>
+                           </thead>
+                           <tbody>
+                          <?php
 
+                          $query = "SELECT name, type,type_name,id FROM templates ORDER by id";
+
+                            if ($result_2 = $mysqli->query($query)) {
+
+                             /* fetch object array */
+                             while ($row_2 = $result_2->fetch_assoc()) {
+                                 $installed = get_game_installed($row['id'],$row_2["name"]);
+                                 echo "<tr>";
+                                 echo "<td>" . $row_2["name"] . "</td>";
+                                 if ($installed[0] == 0) {
+                                    echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs center-block btn-success" disabled>'.$installed[1].'</button></td>';
+                                 } else {
+                                   echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
+                                 }
+                                 echo "</tr>";
+                               }
+                               /* free result set */
+                                     $result_2->close();
+                                 } ?>
+                           </tbody>
+                         </table>
+                         </div>
+                       </form>
+                         <?php
+                            }
+                          }
                         /* free result set */
                         $result->close();
-                    }
+                  }
 
-                    //Check Root
-                    $send_root_id = 0;
-                    $query = "SELECT id FROM dedicated ORDER by id";
+               if ($page == "rootserver?add") {
 
-                     if ($stmt = $mysqli->prepare($query)) {
-                         $stmt->execute();
-                         $stmt->bind_result($db_id);
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                 if (isset($_POST['confirm'])) {
 
-                         while ($stmt->fetch()) {
-                             if (isset($_POST['add_games_'.$db_id])) {
-                                    $send_root_id = $db_id;
-                                    $_POST['add_games'] = 1;
-                             }
-                         }
-                         $stmt->close();
-                     }
+                   $error = false;
+                   $status = 1;
+
+                   $name = $_POST['name']; $ip = $_POST['ip']; $port = $_POST['port'];
+                   $user = $_POST['user']; $password = $_POST['password']; $root = $_POST['root']; $root_password = $_POST['root_password'];
+                   $os = $_POST['os'];
+                   $language = $_POST['language'];
 
 
-                   if (isset($_POST['confirm'])) {
+                   if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = "Exestiert bereits";}
+                   if (exists_entry("ip","dedicated","ip",$ip) == true) { $error = true; $msg = "Exestiert bereits";}
+                   if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                   if(!preg_match("/^[a-zA-Z0-9]+$/",$user)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                   if(!preg_match("/^[a-zA-Z0-9]+$/",$root)){ $msg = "Der Root Benutzer enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                   if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
 
-                     $error = false;
-                     $status = 1;
+                   if ($error == false) {
 
-                     $name = $_POST['name']; $ip = $_POST['ip']; $port = $_POST['port'];
-                     $user = $_POST['user']; $password = $_POST['password']; $root = $_POST['root']; $root_password = $_POST['root_password'];
-                     $os = $_POST['os'];
-                     $language = $_POST['language'];
+                     $ssh = new Net_SSH2($ip,$port);
+                      if (!$ssh->login($root, $root_password)) {
+                        msg_error('Login failed');
+                        exit;
+                      } else {
+                        if ($os == "Debian 7") {
 
-
-                     if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = "Exestiert bereits";}
-                     if (exists_entry("ip","dedicated","ip",$ip) == true) { $error = true; $msg = "Exestiert bereits";}
-                     if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/^[a-zA-Z0-9]+$/",$user)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/^[a-zA-Z0-9]+$/",$root)){ $msg = "Der Root Benutzer enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-
-                     if ($error == false) {
-
-                       $ssh = new Net_SSH2($ip,$port);
-                        if (!$ssh->login($root, $root_password)) {
-                          msg_error('Login failed');
-                          exit;
-                        } else {
-                          if ($os == "Debian 7") {
-
-                            $ssh->exec('dpkg --add-architecture i386');
-                            $ssh->setTimeout(45);
-                            $ssh->exec('apt-get update');
-                            $ssh->exec('apt-get -y install sudo');
-                            $ssh->exec('apt-get -y install screen');
-                            $ssh->exec('apt-get -y install ia32-libs');
-                            $ssh->exec('apt-get -y install libtinfo5 libncurses5');
-                            $ssh->exec('apt-get -y install lib32stdc++6');
+                          $ssh->exec('dpkg --add-architecture i386');
+                          $ssh->setTimeout(45);
+                          $ssh->exec('apt-get update');
+                          $ssh->exec('apt-get -y install sudo');
+                          $ssh->exec('apt-get -y install screen');
+                          $ssh->exec('apt-get -y install ia32-libs');
+                          $ssh->exec('apt-get -y install libtinfo5 libncurses5');
+                          $ssh->exec('apt-get -y install lib32stdc++6');
 
 
 
-                          } elseif ($os == "Debian 8") {
+                        } elseif ($os == "Debian 8") {
 
-                            $ssh->exec('dpkg --add-architecture i386');
-                            $ssh->setTimeout(45);
-                            $ssh->exec('apt-get update');
-                            $ssh->exec('apt-get -y install sudo');
-                            $ssh->exec('apt-get -y install screen');
-                            $ssh->exec('apt-get -y install libc6:i386');
-                            $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
-                            $ssh->exec('apt-get -y install lib32stdc++6');
-
-                          }
-
-                          $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
-                          $ssh->enablePTY();
-                          $ssh->exec('sudo passwd '.$user);
-                          if ($language == "Englisch") {
-                          $ssh->read('Enter new UNIX password:');
-                          $ssh->write($password . "\n");
-                          $ssh->read('Retype new UNIX password:');
-                          $ssh->write($password . "\n");
-                          $ssh->read('passwd: password updated successfully');
-                          } elseif ($language == "Deutsch") {
-                            $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
-                            $ssh->write($password . "\n");
-                            $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
-                            $ssh->write($password . "\n");
-                            $ssh->read('passwd: Passwort erfolgreich geändert');
-                          }
-                          $ssh->disablePTY();
-                          $ssh->read('[prompt]');
-                          $ssh->exec("usermod -a -G sudo ".$user);
-                          $ssh->exec('echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers');
-                          $ssh->read('[prompt]');
-
-                          $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status,language) VALUES (?, ?, ?, ? ,? ,? ,?, ?)");
-                          $stmt->bind_param('sssissis', $name,$os,$ip,$port,$user,$password,$status,$language);
-                          $stmt->execute();
-                          $stmt->close();
-
-                          unset($root_password);
-                          unset($root);
+                          $ssh->exec('dpkg --add-architecture i386');
+                          $ssh->setTimeout(45);
+                          $ssh->exec('apt-get update');
+                          $ssh->exec('apt-get -y install sudo');
+                          $ssh->exec('apt-get -y install screen');
+                          $ssh->exec('apt-get -y install libc6:i386');
+                          $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
+                          $ssh->exec('apt-get -y install lib32stdc++6');
 
                         }
 
-                        msg_okay("Der Rootserver wurde angelegt.");
+                        $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
+                        $ssh->enablePTY();
+                        $ssh->exec('sudo passwd '.$user);
+                        if ($language == "Englisch") {
+                        $ssh->read('Enter new UNIX password:');
+                        $ssh->write($password . "\n");
+                        $ssh->read('Retype new UNIX password:');
+                        $ssh->write($password . "\n");
+                        $ssh->read('passwd: password updated successfully');
+                        } elseif ($language == "Deutsch") {
+                          $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
+                          $ssh->write($password . "\n");
+                          $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
+                          $ssh->write($password . "\n");
+                          $ssh->read('passwd: Passwort erfolgreich geändert');
+                        }
+                        $ssh->disablePTY();
+                        $ssh->read('[prompt]');
+                        $ssh->exec("usermod -a -G sudo ".$user);
+                        $ssh->exec('echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers');
+                        $ssh->read('[prompt]');
 
-                   } else {
-                     msg_error('Something went wrong, '.$msg);
-                   }
+                        $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status,language) VALUES (?, ?, ?, ? ,? ,? ,?, ?)");
+                        $stmt->bind_param('sssissis', $name,$os,$ip,$port,$user,$password,$status,$language);
+                        $stmt->execute();
+                        $stmt->close();
 
-                 } else if (isset($_POST['add_games'])) {
+                        unset($root_password);
+                        unset($root);
 
-                  ?>
-                  <form class="form-horizontal" action="index.php?page=rootserver" method="post">
-                   <div class="col-sm-4">
-                   <table class="table table-bordered">
-                     <thead>
-                       <tr>
-                         <th colspan="1">Name</th>
-                         <th colspan="1">Aktion</th>
-                       </tr>
-                     </thead>
-                     <tbody>
-                    <?php
+                      }
 
-                    $query = "SELECT name, type,type_name,id FROM templates ORDER by id";
+                      msg_okay("Der Rootserver wurde angelegt.");
 
-                      if ($result = $mysqli->query($query)) {
-
-                       /* fetch object array */
-                       while ($row = $result->fetch_assoc()) {
-                           $installed = get_game_installed($send_root_id,$row["name"]);
-                           echo "<tr>";
-                           echo "<td>" . $row["name"] . "</td>";
-                           if ($installed[0] == 0) {
-                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success" disabled>'.$installed[1].'</button></td>';
-                           } else {
-                             echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
-                           }
-                           echo "</tr>";
-                         }
-                         /* free result set */
-                               $result->close();
-                           } ?>
-                     </tbody>
-                   </table>
-                   </div>
-                  <input type="hidden" name="send_root_id" value="<?php echo $send_root_id; ?>">
-                 </form>
-
-
-                   <?php
                   } else {
+                    msg_error('Something went wrong, '.$msg);
+                 }
+
+                 }
+               }
 
                 ?>
 
-                <form class="form-horizontal" action="index.php?page=rootserver" method="post">
+                <form class="form-horizontal" action="index.php?page=rootserver?add" method="post">
                   <div class="form-group">
                     <label class="control-label col-sm-2">Name:</label>
                     <div class="col-sm-6">
@@ -303,13 +295,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   </div>
                 </form>
 
-
-
-                <?php }
-                } else {
+                <?php
+              } elseif ($page == "rootserver") {
                   ?>
                   <form action="index.php?page=rootserver" method="post">
-                  <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-xs">+</button>
+                  <a  style="margin-bottom:2px;" href="index.php?page=rootserver?add"  class="btn pull-right btn-success btn-xs">+</a>
                   <table class="table table-bordered">
                     <thead>
                       <tr>
@@ -357,7 +347,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               }
                           echo '</td>';
                           echo '<td>';
-                          echo '<button style="margin-bottom:2px;" type="submit" name="add_games_'.$row["id"].'" class="btn btn-xs pull-left btn-primary">Verwalten</button></td>'; }
+                          echo '<a href="index.php?page=rootserver?manage='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Verwalten</a></td>'; }
                           echo "</tr>";
                         }
                           $result->close();

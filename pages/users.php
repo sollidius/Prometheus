@@ -33,7 +33,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                <!-- /.col-lg-12 -->
            </div>
            <div class="row">
-               <div class="col-lg-8">
+               <div class="col-lg-12">
                  <?php
 
                  $query = "SELECT id FROM users ORDER by id";
@@ -77,6 +77,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                      $result->close();
                  }
 
+
+                  if ($page == "users?add") {
+
                   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
@@ -112,11 +115,13 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       msg_error($msg);
                      }
 
-                    } else {
+                    }
+
+                  }
 
                   ?>
 
-                  <form class="form-horizontal" action="index.php?page=users" method="post">
+                  <form class="form-horizontal" action="index.php?page=users?add" method="post">
                     <div class="form-group">
                       <label class="control-label col-sm-2">Name:</label>
                       <div class="col-sm-8">
@@ -153,11 +158,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
 
 
-                  <?php }
-                  } else {
+                  <?php
+                } elseif ($page == "users") {
                     ?>
                     <form action="index.php?page=users" method="post">
-                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-xs">+</button>
+                    <a  style="margin-bottom:2px;" href="index.php?page=users?add"  class="btn pull-right btn-success btn-xs">+</a>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -197,14 +202,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   <?php }
                  ?>
             </div>
-               <!-- /.col-lg-8 -->
-               <div class="col-lg-4">
-
-
-
-
-               </div>
-               <!-- /.col-lg-4 -->
+               <!-- /.col-lg-12 -->
            </div>
            <!-- /.row -->
        </div>
