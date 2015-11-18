@@ -229,7 +229,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                            echo "<tr>";
                            echo "<td>" . $row["name"] . "</td>";
                            if ($installed[0] == 0) {
-                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success" disabled>Installiert</button></td>';
+                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success" disabled>'.$installed[1].'</button></td>';
                            } else {
                              echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
                            }
@@ -319,6 +319,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         <th>Benutzer</th>
                         <th>Passwort</th>
                         <th>Status</th>
+                        <th>Aktion</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -337,19 +338,26 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           echo "<td>" . $row["user"] . "</td>";
                           echo "<td> ******** </td>";
                           if ($row["status"] == 0) { echo "<td>Unbekannt</td>"; }
-                          if ($row["status"] == 1) { echo '<td>Installiert, ';
+                          if ($row["status"] == 1) { echo '<td>Installiert: ';
 
                             $query = 'SELECT template_id FROM dedicated_games WHERE dedi_id = '.$row["id"].' ORDER by id';
-
+                              $count = 0;
                               if ($result_2 = $mysqli->query($query)) {
 
                                   /* fetch object array */
                                   while ($row_2 = $result_2->fetch_assoc()) {
-                                    echo get_template_by_id($row_2["template_id"]).', ';
+                                    if ($count >= 1) {
+                                    echo ', '.get_template_by_id($row_2["template_id"]);
+                                  } else {
+                                    echo get_template_by_id($row_2["template_id"]);
+                                  }
+                                    $count++;
                                   }
                                 $result_2->close();
                               }
-                          echo '<button style="margin-bottom:2px;" type="submit" name="add_games_'.$row["id"].'" class="btn btn-xs pull-right btn-success">+</button></td>'; }
+                          echo '</td>';
+                          echo '<td>';
+                          echo '<button style="margin-bottom:2px;" type="submit" name="add_games_'.$row["id"].'" class="btn btn-xs pull-left btn-primary">Verwalten</button></td>'; }
                           echo "</tr>";
                         }
                           $result->close();
