@@ -274,24 +274,21 @@ if ($_SESSION['login'] == 1) {
                               <div class="form-group">
                                 <label class="control-label col-sm-2">Map:</label>
                                 <div class="col-sm-4">
-                                  <input type="text" class="form-control" name="map" value="<?php echo $db_map;?>">
+                                  <input type="text" class="form-control input-sm" name="map" value="<?php echo $db_map;?>">
                                 </div>
                               </div>
                               <div class="form-group">
                                 <label class="control-label col-sm-2">Paramter:</label>
                                 <div class="col-sm-8">
-                                  <input type="text" class="form-control" name="parameter" value="<?php echo $db_parameter;?>">
+                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
                                 </div>
                               </div>
                               <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                  <button type="submit" name="confirm-settings" class="btn btn-default">Submit</button>
+                                  <button type="submit" name="confirm-settings" class="btn btn-default btn-sm">Abschicken</button>
                                 </div>
                               </div>
                             </form>
-
-
-
 
                             <?php
                           }
@@ -419,7 +416,7 @@ if ($_SESSION['login'] == 1) {
                     <div class="form-group">
                       <label class="control-label col-sm-2">Type/Root:</label>
                       <div class="col-sm-4">
-                        <select class="form-control" name="type">
+                        <select class="form-control input-sm" name="type">
                         <?php
                         $query = "SELECT name FROM templates ORDER by id";
 
@@ -435,7 +432,7 @@ if ($_SESSION['login'] == 1) {
                         </select>
                       </div>
                       <div class="col-sm-4">
-                        <select class="form-control" name="dedicated">
+                        <select class="form-control input-sm" name="dedicated">
                         <?php
                         $query = "SELECT id,name FROM dedicated ORDER by id";
 
@@ -454,10 +451,10 @@ if ($_SESSION['login'] == 1) {
                     <div class="form-group">
                       <label class="control-label col-sm-2">Map/Benutzer:</label>
                       <div class="col-sm-4">
-                        <input type="text" class="form-control" name="map" placeholder="gm_flatgrass">
+                        <input type="text" class="form-control input-sm" name="map" placeholder="gm_flatgrass">
                       </div>
                       <div class="col-sm-4">
-                        <select class="form-control" name="users">
+                        <select class="form-control input-sm" name="users">
                         <?php
                         $query = "SELECT id,name FROM users ORDER by id";
 
@@ -476,22 +473,22 @@ if ($_SESSION['login'] == 1) {
                     <div class="form-group">
                       <label class="control-label col-sm-2">Port/Slots:</label>
                       <div class="col-sm-4">
-                        <input type="text" class="form-control" name="port" placeholder="27015">
+                        <input type="text" class="form-control input-sm" name="port" placeholder="27015">
                       </div>
                       <div class="col-sm-4">
-                        <input type="text" class="form-control" name="slots" placeholder="14">
+                        <input type="text" class="form-control input-sm" name="slots" placeholder="14">
                       </div>
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" name="confirm" class="btn btn-default">Submit</button>
+                        <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
                       </div>
                     </div>
                   </form>
            <?php } elseif (startsWith($page, "gameserver")) {
                     ?>
                     <form action="index.php?page=gameserver" method="post">
-                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-sm">+</a>';}  ?>
+                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-xs">+</a>';}  ?>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -528,11 +525,11 @@ if ($_SESSION['login'] == 1) {
                               echo "<td>" . $db_gs_login . "</td>";
                               echo "<td>" . $db_gs_password . "</td>";
                               if ($db_status == 0) {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-sm">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-sm">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-sm">Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-sm">Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-sm">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-sm">X</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs">X</a>  </td>';
                               } else {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-sm" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-sm" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-sm" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-sm" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-sm" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-sm" disabled>X</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
                               }
                               echo "</tr>";
                             } elseif ($db_rank == 2 AND $db_user_id == $_SESSION['user_id']) {
@@ -546,11 +543,11 @@ if ($_SESSION['login'] == 1) {
                               echo "<td>" . $db_gs_login . "</td>";
                               echo "<td>" . $db_gs_password . "</td>";
                               if ($db_status == 0) {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-sm">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-sm">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-sm">Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-sm">Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-sm">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-sm" disabled>X</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
                               } else {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-sm" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-sm" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-sm" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-sm" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-sm" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-sm" disabled>X</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
                               }
                               echo "</tr>";
                             }

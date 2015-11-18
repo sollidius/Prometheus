@@ -120,33 +120,33 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     <div class="form-group">
                       <label class="control-label col-sm-2">Name:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="name" placeholder="Enter Name">
+                        <input type="text" class="form-control input-sm" name="name" placeholder="Enter Name">
                       </div>
                       <div class="checkbox col-sm-2">
-                        <label><input type="checkbox" name ="administrator" value="1">Administrator</label>
+                        <label><input type="checkbox"  name ="administrator" value="1">Administrator</label>
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="control-label col-sm-2" for="email">E-Mail:</label>
                       <div class="col-sm-10">
-                        <input type="email" class="form-control" name="email" placeholder="Enter email">
+                        <input type="email" class="form-control input-sm" name="email" placeholder="Enter email">
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="control-label col-sm-2" for="pwd">Passwort:</label>
                       <div class="col-sm-10">
-                        <input type="password" class="form-control" name="pwd1" placeholder="Enter password">
+                        <input type="password" class="form-control input-sm" name="pwd1" placeholder="Enter password">
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="control-label col-sm-2" for="pwd">Passwort Nochmal:</label>
                       <div class="col-sm-10">
-                        <input type="password" class="form-control" name="pwd2" placeholder="Enter password">
+                        <input type="password" class="form-control input-sm" name="pwd2" placeholder="Enter password">
                       </div>
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" name="confirm" class="btn btn-default">Submit</button>
+                        <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
                       </div>
                     </div>
                   </form>
@@ -157,7 +157,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   } else {
                     ?>
                     <form action="index.php?page=users" method="post">
-                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-sm">+</button>
+                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-xs">+</button>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -185,7 +185,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             } elseif ($db_rank == 2) {
                               echo "<td>User</td>";
                             }
-                            echo '<td> <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-sm">X</a></td>';
+                            echo '<td> <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-xs">X</a></td>';
                             echo "</tr>";
                           }
                           $stmt->close();

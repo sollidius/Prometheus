@@ -82,11 +82,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                   $stmt->close();
 
                                   msg_okay("Das Template wird erstellt, das kann etwas dauern :)");
-
+                                  $_POST['add_games_'.$id] = 1;
                                 }
-
-
                               } else {
+                                $_POST['add_games_'.$id] = 1;
                                 msg_error('Spiel ist bereits installiert');
                               }
                              }
@@ -96,7 +95,6 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         /* free result set */
                         $result->close();
                     }
-
 
                     //Check Root
                     $send_root_id = 0;
@@ -228,7 +226,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          while ($stmt->fetch()) {
                            echo "<tr>";
                            echo "<td>" . $db_name . "</td>";
-                           echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$db_id.'" class="btn btn-sm center-block btn-success">Installieren</button></td>';
+                           echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$db_id.'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
                            echo "</tr>";
                          }
                          $stmt->close();
@@ -250,25 +248,25 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   <div class="form-group">
                     <label class="control-label col-sm-2">Name:</label>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control" name="name" placeholder="Chewbacca">
+                      <input type="text" class="form-control input-sm" name="name" placeholder="Chewbacca">
                     </div>
                     <div class="col-sm-2">
-                      <select class="form-control" name="os">
+                      <select class="form-control input-sm" name="os">
                         <option>Debian 7</option>
                         <option>Debian 8</option>
                       </select>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="control-label col-sm-2" for="email">IP/Port:</label>
+                    <label class="control-label col-sm-2">IP/Port:</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="ip" placeholder="127.0.0.1">
+                      <input type="text" class="form-control input-sm" name="ip" placeholder="127.0.0.1">
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" class="form-control" name="port" placeholder="22">
+                      <input type="text" class="form-control input-sm" name="port" placeholder="22">
                     </div>
                     <div class="col-sm-2">
-                      <select class="form-control" name="language">
+                      <select class="form-control input-sm" name="language">
                         <option>Englisch</option>
                         <option>Deutsch</option>
                       </select>
@@ -277,24 +275,24 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   <div class="form-group">
                     <label class="control-label col-sm-2" for="pwd">Benutzer/Passwort:</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="user" placeholder="prometheus">
+                      <input type="text" class="form-control input-sm" name="user" placeholder="prometheus">
                     </div>
                     <div class="col-sm-4">
-                      <input type="password" class="form-control" name="password" placeholder="123456">
+                      <input type="password" class="form-control input-sm" name="password" placeholder="123456">
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="control-label col-sm-2" for="pwd">Root/Passwort:</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="root" placeholder="root">
+                      <input type="text" class="form-control input-sm" name="root" placeholder="root">
                     </div>
                     <div class="col-sm-4">
-                      <input type="password" class="form-control" name="root_password" placeholder="123456">
+                      <input type="password" class="form-control input-sm" name="root_password" placeholder="123456">
                     </div>
                   </div>
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                      <button type="submit" name="confirm" class="btn btn-default">Submit</button>
+                      <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
                     </div>
                   </div>
                 </form>
@@ -305,7 +303,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 } else {
                   ?>
                   <form action="index.php?page=rootserver" method="post">
-                  <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-sm">+</button>
+                  <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-xs">+</button>
                   <table class="table table-bordered">
                     <thead>
                       <tr>

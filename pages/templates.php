@@ -91,24 +91,24 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     <div class="form-group">
                       <label class="control-label col-sm-2">Name/Internal:</label>
                       <div class="col-sm-3">
-                        <input type="text" class="form-control" name="name" placeholder="Garrysmod">
+                        <input type="text" class="form-control input-sm" name="name" placeholder="Garrysmod">
                       </div>
                       <div class="col-sm-3">
-                        <input type="text" class="form-control" name="internal" placeholder="garrysmod">
+                        <input type="text" class="form-control input-sm" name="internal" placeholder="garrysmod">
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="control-label col-sm-2">Type:</label>
                       <div class="col-sm-3">
-                        <input type="text" class="form-control" name="type" placeholder="steamcmd">
+                        <input type="text" class="form-control input-sm" name="type" placeholder="steamcmd">
                       </div>
                       <div class="col-sm-3">
-                        <input type="text" class="form-control" name="type_name" placeholder="4020">
+                        <input type="text" class="form-control input-sm" name="type_name" placeholder="4020">
                       </div>
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" name="confirm" class="btn btn-default">Abschicken</button>
+                        <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
                       </div>
                     </div>
                   </form>
@@ -119,7 +119,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   } else {
                     ?>
                     <form action="index.php?page=templates" method="post">
-                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-sm">+</button>
+                    <button style="margin-bottom:2px;" type="submit" name="add" class="btn pull-right btn-success btn-xs">+</button>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -145,7 +145,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             echo "<td>" . $db_name_internal . "</td>";
                             echo "<td>" . $db_type . "</td>";
                             echo "<td>" . $db_type_name . "</td>";
-                            echo '<td> <a href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-sm">X</a></td>';
+                            echo '<td> <a href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-xs">X</a></td>';
                             echo "</tr>";
                           }
                           $stmt->close();

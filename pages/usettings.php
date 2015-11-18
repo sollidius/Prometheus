@@ -79,24 +79,24 @@ if ($_SESSION['login'] == 1) {
                   <div class="col-lg-8">
                    <label class="control-label col-sm-3">Altes Passwort:</label>
                    <div class="col-sm-3">
-                     <input type="password" class="form-control" name="old_pw">
+                     <input type="password" class="form-control input-sm" name="old_pw">
                    </div>
                  </div>
                      <div style="margin-top:2px;" class="col-lg-8">
                    <label class="control-label col-sm-3">Neues Passwort:</label>
                    <div class="col-sm-3">
-                     <input type="password" class="form-control" name="new_pw">
+                     <input type="password" class="form-control input-sm" name="new_pw">
                    </div>
                  </div>
                      <div style="margin-top:2px;" class="col-lg-8">
                    <label class="control-label col-sm-3">Wiederholen:</label>
                    <div class="col-sm-3">
-                     <input type="password" class="form-control" name="new_pw2">
+                     <input type="password" class="form-control input-sm" name="new_pw2">
                    </div>
                  </div>
                       <div style="margin-top:2px;" class="col-lg-8">
                       <div style="margin-top:2px;" class="col-lg-6">
-                        <button type="submit" name="confirm" class="btn pull-right btn-success">Abschicken</button
+                        <button type="submit" name="confirm" class="btn pull-right btn-success btn-sm">Abschicken</button
                         </div>
                         </div>
                  </div>
