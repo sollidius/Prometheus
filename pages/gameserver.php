@@ -319,6 +319,8 @@ if ($_SESSION['login'] == 1) {
                        $stmt->fetch();
                        $stmt->close();
 
+                       if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
+
                        $result_id = 0;
                        $type_t = "template";
                        $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
@@ -385,8 +387,8 @@ if ($_SESSION['login'] == 1) {
                             $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login."'";
                             $ssh->exec($copy);
 
-                            $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,user_name,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
-                            $stmt->bind_param('issisisssi', $user_gs,$user_name,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
+                            $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
+                            $stmt->bind_param('isisisssi', $user_gs,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
                             $stmt->execute();
                             $stmt->close();
 
@@ -507,54 +509,55 @@ if ($_SESSION['login'] == 1) {
                       <tbody>
                      <?php
 
-                     $query = "SELECT user_id, user_name, game, ip, port,slots, gs_login, gs_password, id, map,status FROM gameservers ORDER by id";
+                     $query = "SELECT user_id, game, ip, port,slots, gs_login, gs_password, id, map,status FROM gameservers ORDER by id";
 
-                      if ($stmt = $mysqli->prepare($query)) {
-                          $stmt->execute();
-                          $stmt->bind_result($db_user_id, $db_user_name,$db_game,$db_ip,$db_port,$db_slots,$db_gs_login,$db_gs_password,$db_gs_id,$db_map,$db_status);
+                     if ($result = $mysqli->query($query)) {
 
-                          while ($stmt->fetch()) {
+                       /* fetch object array */
+                       while ($row = $result->fetch_assoc()) {
                             if ($db_rank == 1) {
+                              $db_user_name = get_user_by_id($row["user_id"]);
                               echo "<tr>";
                               echo "<td>" . $db_user_name . "</td>";
-                              echo "<td>" . $db_game . "</td>";
-                              echo "<td>" . $db_ip . "</td>";
-                              echo "<td>" . $db_port . "</td>";
-                              echo "<td>" . $db_slots . "</td>";
-                              echo "<td>" . $db_map . "</td>";
-                              echo "<td>" . $db_gs_login . "</td>";
-                              echo "<td>" . $db_gs_password . "</td>";
-                              if ($db_status == 0) {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs">X</a>  </td>';
+                              echo "<td>" . $row["game"] . "</td>";
+                              echo "<td>" . $row["ip"] . "</td>";
+                              echo "<td>" . $row["port"] . "</td>";
+                              echo "<td>" . $row["slots"] . "</td>";
+                              echo "<td>" . $row["map"] . "</td>";
+                              echo "<td>" . $row["gs_login"] . "</td>";
+                              echo "<td>" . $row["gs_password"] . "</td>";
+                              if ($row["status"] == 0) {
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs">X</a>  </td>';
                               } else {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
                               }
                               echo "</tr>";
-                            } elseif ($db_rank == 2 AND $db_user_id == $_SESSION['user_id']) {
+                            } elseif ($db_rank == 2 AND $row["user_id"] == $_SESSION['user_id']) {
+                              $db_user_name = get_user_by_id($row["user_id"]);
                               echo "<tr>";
                               echo "<td>" . $db_user_name . "</td>";
-                              echo "<td>" . $db_game . "</td>";
-                              echo "<td>" . $db_ip . "</td>";
-                              echo "<td>" . $db_port . "</td>";
-                              echo "<td>" . $db_slots . "</td>";
-                              echo "<td>" . $db_map . "</td>";
-                              echo "<td>" . $db_gs_login . "</td>";
-                              echo "<td>" . $db_gs_password . "</td>";
-                              if ($db_status == 0) {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
+                              echo "<td>" . $row["game"] . "</td>";
+                              echo "<td>" . $row["ip"] . "</td>";
+                              echo "<td>" . $row["port"] . "</td>";
+                              echo "<td>" . $row["slots"] . "</td>";
+                              echo "<td>" . $row["map"] . "</td>";
+                              echo "<td>" . $row["gs_login"] . "</td>";
+                              echo "<td>" . $row["gs_password"] . "</td>";
+                              if ($row["status"] == 0) {
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
                               } else {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$db_gs_id.'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$db_gs_id.'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$db_gs_id.'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$db_gs_id.'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled>X</a>  </td>';
                               }
                               echo "</tr>";
                             }
                           }
-                          $stmt->close();
-                      }
-                      $mysqli->close(); ?>
+                          /* free result set */
+                        $result->close();
+                      }  ?>
                       </tbody>
                     </table>
                   </form>

@@ -44,10 +44,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     if ($result = $mysqli->query($query)) {
 
                         /* fetch object array */
-                        while ($row = $result->fetch_row()) {
-                          if (isset($_POST['game_'.$row[0]])) {
+                        while ($row = $result->fetch_assoc()) {
+                          if (isset($_POST['game_'.$row["id"]])) {
 
-                            $id = $_POST['send_root_id'];
+                            $id = htmlentities($_POST['send_root_id']);
 
                             $stmtz = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
                             $stmtz->bind_param('i', $id);
@@ -64,20 +64,20 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                               $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates; then echo "1"; fi');
                               if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates'); }
-                              $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row[1].'; then echo "1"; fi');
-                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates/'.$row[1]);
+                              $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row["name"].'; then echo "1"; fi');
+                              if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates/'.$row["name"]);
 
                                 //Steamcmd
-                                if ($row[2] == "steamcmd") {
+                                if ($row["type"] == "steamcmd") {
 
                                   //$ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';tar xvf steamcmd_linux.tar.gz');
-                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$row[3].' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row["name"] . ';wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row["name"] . ';tar xvf steamcmd_linux.tar.gz');
+                                  $ssh->exec('cd /home/'.$user.'/templates/'.$row["name"] . ';/home/'.$user.'/templates/'.$row["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row["name"].'/game  +login anonymous +app_update '.$row["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row["name"].'/steam.log &');
 
                                   $template = "template";
                                   $stmt = $mysqli->prepare("INSERT INTO jobs(dedicated_id,type,type_id) VALUES (?, ?, ?)");
-                                  $stmt->bind_param('iss', $id,$template,$row[1]);
+                                  $stmt->bind_param('iss', $id,$template,$row["name"]);
                                   $stmt->execute();
                                   $stmt->close();
 

@@ -123,7 +123,52 @@ function msg_error($msg) {
  </div>';
 }
 
+function port_exists($ip,$port) {
+  global $mysqli;
+  $query = "SELECT `id` FROM `gameservers` WHERE ip=? AND port=?";
 
+  if ($stmt = $mysqli->prepare($query)){
 
+          $stmt->bind_param("si", $ip,$port);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows == 1){
+              return true;
+            } else {
+              return false;
+            }
+          }
+      }
+}
+
+function get_user_by_id($id) {
+  global $mysqli;
+
+  $name = "n/a";
+  $stmt = $mysqli->prepare("SELECT name FROM users WHERE id = ?");
+  if ( false===$stmt ) {
+  die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+  }
+  $rc = $stmt->bind_param('i', $id);
+  if ( false===$rc ) {
+    die('bind_param() failed: ' . htmlspecialchars($stmt->error));
+  }
+  $rc = $stmt->execute();
+  if ( false===$rc ) {
+  die('execute() failed: ' . htmlspecialchars($stmt->error));
+  }
+  $stmt->bind_result($name);
+  $stmt->fetch();
+  $stmt->close();
+
+  return $name;
+
+}
 
  ?>
