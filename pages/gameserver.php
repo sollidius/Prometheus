@@ -36,7 +36,7 @@ if ($_SESSION['login'] == 1) {
             //      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
-                    $query = "SELECT id,status,user_id FROM gameservers ORDER by id";
+                    $query = "SELECT id,status,user_id,ip FROM gameservers ORDER by id";
 
                     if ($result = $mysqli->query($query)) {
 
@@ -253,20 +253,45 @@ if ($_SESSION['login'] == 1) {
 
                             if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm-settings'])) {
 
-                            $map = htmlentities($_POST['map']);
-                            $parameter = htmlentities($_POST['parameter']);
+                              if ($db_rank == 2) {
 
-                            $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
-                            $stmt->bind_param('ssi',$map,$parameter,$row[0]);
-                            $stmt->execute();
-                            $stmt->close();
+                                $map = htmlentities($_POST['map']);
+                                $parameter = htmlentities($_POST['parameter']);
 
+                                $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
+                                $stmt->bind_param('ssi',$map,$parameter,$row[0]);
+                                $stmt->execute();
+                                $stmt->close();
+
+                              } elseif ($db_rank == 1) {
+
+                                $error = false;
+                                $map = htmlentities($_POST['map']);
+                                $parameter = htmlentities($_POST['parameter']);
+                                $slots = htmlentities($_POST['slots']);
+                                $port = htmlentities($_POST['port']);
+
+                                if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                                if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                                if (port_exists($row[3],$port,$row[2])) { $msg = "Port belegt"; $error = true;}
+
+                                if ($error == false) {
+
+                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?  WHERE id = ?");
+                                  $stmt->bind_param('ssiii',$map,$parameter,$slots,$port,$row[0]);
+                                  $stmt->execute();
+                                  $stmt->close();
+
+                                } else {
+                                  msg_error($msg);
+                                }
+                              }
                             }
 
-                            $stmt = $mysqli->prepare("SELECT map,parameter FROM gameservers WHERE id = ?");
+                            $stmt = $mysqli->prepare("SELECT map,parameter,slots,port FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $row[0]);
                             $stmt->execute();
-                            $stmt->bind_result($db_map,$db_parameter);
+                            $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port);
                             $stmt->fetch();
                             $stmt->close();
                             ?>
@@ -283,6 +308,18 @@ if ($_SESSION['login'] == 1) {
                                   <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
                                 </div>
                               </div>
+                              <?php if ($db_rank == 1) {
+                                ?>
+                                <div class="form-group">
+                                  <label class="control-label col-sm-2">Slots/Port:</label>
+                                  <div class="col-sm-2">
+                                    <input type="text" class="form-control input-sm" name="slots" value="<?php echo $db_slots;?>">
+                                  </div>
+                                  <div class="col-sm-2">
+                                    <input type="text" class="form-control input-sm" name="port" value="<?php echo $db_port;?>">
+                                  </div>
+                                </div>
+                            <?php  } ?>
                               <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                   <button type="submit" name="confirm-settings" class="btn btn-default btn-sm">Abschicken</button>

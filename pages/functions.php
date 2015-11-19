@@ -136,9 +136,9 @@ function msg_error($msg) {
  </div>';
 }
 
-function port_exists($ip,$port) {
+function port_exists($ip,$port,$id=0) {
   global $mysqli;
-  $query = "SELECT `id` FROM `gameservers` WHERE ip=? AND port=?";
+  $query = "SELECT `user_id` FROM `gameservers` WHERE ip=? AND port=?";
 
   if ($stmt = $mysqli->prepare($query)){
 
@@ -152,11 +152,21 @@ function port_exists($ip,$port) {
               $stmt->bind_result($check);
               $stmt->fetch();
 
-              if ($stmt->num_rows == 1){
-              return true;
-            } else {
-              return false;
-            }
+              if ($id == 0) {
+                if ($stmt->num_rows == 1){
+                return true;
+                } else {
+                return false;
+                }
+              } else {
+                if ($id == $check) {
+                  return false;
+                } elseif ($check == "") {
+                  return false;
+                } else {
+                  return true;
+                }
+              }
           } else {
             die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
@@ -297,7 +307,7 @@ function check_template($template) {
 
   if ($stmt = $mysqli->prepare($query)){
 
-          $stmt->bind_param("s", $name);
+          $stmt->bind_param("s", $template);
 
           if($stmt->execute()){
               $stmt->store_result();
