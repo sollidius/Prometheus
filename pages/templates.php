@@ -67,10 +67,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                                  $error = false;
 
-                                 $name = $_POST['name'];
-                                 $type = $_POST['type'];
-                                 $type_name = $_POST['type_name'];
-                                 $internal = $_POST['internal'];
+                                 $name = htmlentities($_POST['name']);
+                                 $type = htmlentities($_POST['type']);
+                                 $type_name = htmlentities($_POST['type_name']);
+                                 $internal = htmlentities($_POST['internal']);
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
@@ -168,10 +168,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                          $error = false;
 
-                         $name = $_POST['name'];
-                         $type = $_POST['type'];
-                         $type_name = $_POST['type_name'];
-                         $internal = $_POST['internal'];
+                         $name = htmlentities($_POST['name']);
+                         $type = htmlentities($_POST['type']);
+                         $type_name = htmlentities($_POST['type_name']);
+                         $internal = htmlentities($_POST['internal']);
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}

@@ -77,7 +77,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                               $error = false; $msg ="";
                               $rank = 2;
-                              $name = $_POST['name']; $email = $_POST['email']; $password = $_POST['pwd1'];
+                              $name = htmlentities($_POST['name']); $email = htmlentities($_POST['email']); $password = htmlentities($_POST['pwd1']);
 
                               if (isset($_POST['administrator'])) { $rank = 1;}
 
@@ -181,7 +181,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                        $error = false; $msg ="";
                        $rank = 2;
-                       $name = $_POST['name']; $email = $_POST['email']; $password = $_POST['pwd1'];
+                       $name = htmlentities($_POST['name']); $email = htmlentities($_POST['email']); $password = htmlentities($_POST['pwd1']);
 
                        if (isset($_POST['administrator'])) { $rank = 1;}
 

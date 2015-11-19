@@ -165,10 +165,61 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          </div>
                        </form>
                          <?php
-                            }
+                       } elseif ($page == "rootserver?edit=".$row["id"]) {
+
+
+                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                          if (isset($_POST['confirm'])) {
+
+                            $error = false;
+
+                            $ip = htmlentities($_POST['ip']); $port = htmlentities($_POST['port']);
+
+                            if (ip_exists($ip,$row["id"])) { $msg = "Die IP exestiert bereits."; $error = true;}
+                            if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+
+                            if ($error == false) {
+
+                              $stmt = $mysqli->prepare("UPDATE dedicated SET ip = ?,port = ? WHERE id = ?");
+                              $stmt->bind_param('sii', $ip, $port,$row["id"]);
+                              $stmt->execute();
+                              $stmt->close();
+
+
+                               msg_okay("Der Rootserver wurde aktualisiert.");
+
+                           } else {
+                             msg_error('Something went wrong, '.$msg);
                           }
-                        /* free result set */
-                        $result->close();
+
+                          }
+                        }
+
+
+                         echo '<form class="form-horizontal" action="index.php?page=rootserver?edit='.$row["id"].'" method="post">';
+                         ?>
+                           <div class="form-group">
+                             <label class="control-label col-sm-2">IP/Port</label>
+                             <div class="col-sm-4">
+                               <input type="text" class="form-control input-sm" name="ip" value="<?php echo $row["ip"] ?>" >
+                             </div>
+                             <div class="col-sm-2">
+                               <input type="text" class="form-control input-sm" name="port" value="<?php echo $row["port"] ?>">
+                             </div>
+                           </div>
+                           <div class="form-group">
+                             <div class="col-sm-offset-2 col-sm-10">
+                               <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                             </div>
+                           </div>
+                         </form>
+
+                         <?php
+
+                       }
+                      }
+                    /* free result set */
+                    $result->close();
                   }
 
                if ($page == "rootserver?add") {
@@ -179,10 +230,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                    $error = false;
                    $status = 1;
 
-                   $name = $_POST['name']; $ip = $_POST['ip']; $port = $_POST['port'];
-                   $user = $_POST['user']; $password = $_POST['password']; $root = $_POST['root']; $root_password = $_POST['root_password'];
-                   $os = $_POST['os'];
-                   $language = $_POST['language'];
+                   $name = htmlentities($_POST['name']); $ip = htmlentities($_POST['ip']); $port = htmlentities($_POST['port']);
+                   $user = htmlentities($_POST['user']); $password = htmlentities($_POST['password']); $root = htmlentities($_POST['root']); $root_password = htmlentities($_POST['root_password']);
+                   $os = htmlentities($_POST['os']);
+                   $language = htmlentities($_POST['language']);
 
 
                    if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = "Exestiert bereits";}
@@ -373,7 +424,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               }
                           echo '</td>';
                           echo '<td>';
-                          echo '<a href="index.php?page=rootserver?manage='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Verwalten</a></td>'; }
+                          echo '<a href="index.php?page=rootserver?edit='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Editieren</a>
+                                  <a style="margin-left:2px;" href="index.php?page=rootserver?manage='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Verwalten</a>';
+                          echo '</td>'; }
                           echo "</tr>";
                         }
                           $result->close();

@@ -531,4 +531,42 @@ function isValidEmail($email){
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
+function ip_exists($ip,$id = 0) {
+  global $mysqli;
+  $query = "SELECT `id` FROM `dedicated` WHERE ip=?";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("s", $ip);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($id == 0) {
+                if ($stmt->num_rows == 1){
+                return true;
+                } else {
+                return false;
+                }
+              } else {
+                if ($id == $check) {
+                  return false;
+                } elseif ($check == "") {
+                  return false;
+                } else {
+                  return true;
+                }
+              }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+          }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+      }
+}
+
  ?>
