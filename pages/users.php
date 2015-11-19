@@ -257,7 +257,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 } elseif ($page == "users" or startsWith($page, "users?delete")) {
                     ?>
                     <form action="index.php?page=users" method="post">
-                    <a  style="margin-bottom:2px;" href="index.php?page=users?add"  class="btn pull-right btn-success btn-xs">+</a>
+                    <a  style="margin-bottom:2px;" href="index.php?page=users?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-user-plus"></i></a>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -287,7 +287,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               echo "<td>User</td>";
                             }
                             echo '<td><a href="index.php?page=users?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</a>
-                                  <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-xs">X</a>';
+                                  <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                             echo '</td>';
                             echo "</tr>";
                           }

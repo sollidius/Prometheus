@@ -54,6 +54,105 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             } else {
                               msg_warning($msg);
                             }
+                          } elseif ($page == "templates?edit-".$row[0]) {
+
+                            $limited = false; $hide_msg = false;
+                            if (check_template_exist_in_games($row[0])) {$limited = true;}
+                            if (check_template_job_exists_id_only($row[0])) {  $limited = true;}
+
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+
+                               if (isset($_POST['confirm'])) {
+
+                                 $error = false;
+
+                                 $name = $_POST['name'];
+                                 $type = $_POST['type'];
+                                 $type_name = $_POST['type_name'];
+                                 $internal = $_POST['internal'];
+                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+
+                                 if (check_template($name,$row[0])) { $error = true; $msg = "Template exestiert bereits";}
+
+                                 if ($error == false) {
+
+                                   if ($limited == true) {
+
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ? WHERE id = ?");
+                                     $stmt->bind_param('ssi',$internal,$type_name,$row[0]);
+                                     $stmt->execute();
+                                     $stmt->close();
+
+                                   } else {
+
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?,type = ?,name = ? WHERE id = ?");
+                                     $stmt->bind_param('ssssi',$internal,$type_name,$type,$name,$row[0]);
+                                     $stmt->execute();
+                                     $stmt->close();
+
+                                   }
+
+                                  msg_okay("Das Template wurde aktualisiert.");
+                                  $hide_msg = true;
+
+                               } else {
+                                 msg_error('Something went wrong, '.$msg);
+                                 $hide_msg = true;
+                               }
+                              }
+                          }
+
+                          $stmt = $mysqli->prepare("SELECT name,name_internal,type,type_name FROM templates WHERE id = ?");
+                          $stmt->bind_param('i', $row[0]);
+                          $stmt->execute();
+                          $stmt->bind_result($db_name,$db_internal,$db_type,$db_type_name);
+                          $stmt->fetch();
+                          $stmt->close();
+
+                          echo '<form class="form-horizontal" action="index.php?page=templates?edit-'.$row[0].'" method="post">';
+                          ?>
+                            <div class="form-group">
+                              <?php if ($limited == true AND $hide_msg == false) { msg_warning("Nur teilweise editierbar, da bereits installiert."); } ?>
+                              <label class="control-label col-sm-2">Name/Internal:</label>
+                              <div class="col-sm-3">
+                                <?php if ($limited == true) {
+                                  echo '<input type="text" class="form-control input-sm" name="name" value="'.$db_name.'" readonly="readonly">';
+                                } else {
+                                  echo '<input type="text" class="form-control input-sm" name="name" value="'.$db_name.'">';
+                                }
+                                ?>
+                              </div>
+                              <div class="col-sm-3">
+                                <input type="text" class="form-control input-sm" name="internal" value="<?php echo $db_internal;?>">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="control-label col-sm-2">Type:</label>
+                              <div class="col-sm-3">
+                                <?php if ($limited == true AND $hide_msg == false) {
+                                  echo '<input type="text" class="form-control input-sm" name="type" value="'.$db_type.'" readonly="readonly">';
+                                } else {
+                                  echo '<input type="text" class="form-control input-sm" name="type" value="'.$db_type.'">';
+                                }
+                                ?>
+                              </div>
+                              <div class="col-sm-3">
+                                <input type="text" class="form-control input-sm" name="type_name" value="<?php echo $db_type_name;?>">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                              </div>
+                            </div>
+                          </form>
+
+
+                          <?php
                           }
                         }
                         /* free result set */
@@ -126,10 +225,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
 
                   <?php
-               } elseif ($page == "templates" or startsWith($page, "templates?delete")) {
+               } elseif ($page == "templates" or startsWith($page, "templates?delete") or startsWith($page, "templates?edit")) {
                     ?>
                     <form action="index.php?page=templates" method="post">
-                    <a  style="margin-bottom:2px;" href="index.php?page=templates?add"  class="btn pull-right btn-success btn-xs">+</a>
+                    <a  style="margin-bottom:2px;" href="index.php?page=templates?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -155,7 +254,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             echo "<td>" . $db_name_internal . "</td>";
                             echo "<td>" . $db_type . "</td>";
                             echo "<td>" . $db_type_name . "</td>";
-                            echo '<td> <a href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-xs">X</a></td>';
+                            echo '<td> <a href="index.php?page=templates?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</i></a>
+                                      <a style="margin-left:2px" href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
+                            echo '</td>';
                             echo "</tr>";
                           }
                           $stmt->close();

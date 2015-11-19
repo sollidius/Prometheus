@@ -325,7 +325,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
               } elseif ($page == "rootserver") {
                   ?>
                   <form action="index.php?page=rootserver" method="post">
-                  <a  style="margin-bottom:2px;" href="index.php?page=rootserver?add"  class="btn pull-right btn-success btn-xs">+</a>
+                  <a  style="margin-bottom:2px;" href="index.php?page=rootserver?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>
                   <table class="table table-bordered">
                     <thead>
                       <tr>

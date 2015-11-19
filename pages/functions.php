@@ -321,7 +321,7 @@ function get_template_by_id($id) {
 
 }
 
-function check_template($template) {
+function check_template($template,$id = 0) {
   global $mysqli;
   $query = "SELECT `id` FROM `templates` WHERE name=?";
 
@@ -336,11 +336,21 @@ function check_template($template) {
               $stmt->bind_result($check);
               $stmt->fetch();
 
+              if ($id == 0) {
               if ($stmt->num_rows == 1){
               return false;
             } else {
               return true;
             }
+          } else {
+            if ($id == $check) {
+              return false;
+            } elseif ($check == "") {
+              return false;
+            } else {
+              return true;
+            }
+          }
           } else {
             die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
