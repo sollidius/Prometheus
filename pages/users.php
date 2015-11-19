@@ -159,7 +159,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
 
                   <?php
-                } elseif ($page == "users") {
+                } elseif ($page == "users" or startsWith($page, "users?delete")) {
                     ?>
                     <form action="index.php?page=users" method="post">
                     <a  style="margin-bottom:2px;" href="index.php?page=users?add"  class="btn pull-right btn-success btn-xs">+</a>

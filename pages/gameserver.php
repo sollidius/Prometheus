@@ -46,15 +46,15 @@ if ($_SESSION['login'] == 1) {
 
                             $gs_select = $row[0];
 
-                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter FROM gameservers WHERE id = ?");
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $gs_select);
                             $stmt->execute();
-                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter);
+                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
                             $stmt->fetch();
                             $stmt->close();
 
-                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
-                            $stmt->bind_param('s', $ip);
+                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                            $stmt->bind_param('i', $dedi_id);
                             $stmt->execute();
                             $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
                             $stmt->fetch();
@@ -89,10 +89,10 @@ if ($_SESSION['login'] == 1) {
 
                             $gs_select = $row[0];
 
-                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter FROM gameservers WHERE id = ?");
+                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
                              $stmt->bind_param('i', $gs_select);
                              $stmt->execute();
-                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter);
+                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -103,8 +103,8 @@ if ($_SESSION['login'] == 1) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
-                             $stmt->bind_param('s', $ip);
+                             $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                             $stmt->bind_param('i', $dedi_id);
                              $stmt->execute();
                              $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
                              $stmt->fetch();
@@ -144,10 +144,10 @@ if ($_SESSION['login'] == 1) {
                           if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
                             $gs_select = $row[0];
 
-                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter FROM gameservers WHERE id = ?");
+                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
                              $stmt->bind_param('i', $gs_select);
                              $stmt->execute();
-                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter);
+                             $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -158,8 +158,8 @@ if ($_SESSION['login'] == 1) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
-                             $stmt->bind_param('s', $ip);
+                             $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                             $stmt->bind_param('i', $dedi_id);
                              $stmt->execute();
                              $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
                              $stmt->fetch();
@@ -183,15 +183,15 @@ if ($_SESSION['login'] == 1) {
                           if ($page == "gameserver?stop-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?stop-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
                             $gs_select = $row[0];
 
-                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $gs_select);
                             $stmt->execute();
-                            $stmt->bind_result($ip,$game,$gs_login,$slots);
+                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
                             $stmt->fetch();
                             $stmt->close();
 
-                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
-                            $stmt->bind_param('s', $ip);
+                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                            $stmt->bind_param('i', $dedi_id);
                             $stmt->execute();
                             $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
                             $stmt->fetch();
@@ -215,15 +215,15 @@ if ($_SESSION['login'] == 1) {
 
                               $gs_select = $row[0];
 
-                              $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots FROM gameservers WHERE id = ?");
+                              $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
                               $stmt->bind_param('i', $gs_select);
                               $stmt->execute();
-                              $stmt->bind_result($ip,$game,$gs_login,$slots);
+                              $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
                               $stmt->fetch();
                               $stmt->close();
 
-                              $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE ip = ?");
-                              $stmt->bind_param('s', $ip);
+                              $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                              $stmt->bind_param('i', $dedi_id);
                               $stmt->execute();
                               $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
                               $stmt->fetch();
@@ -320,6 +320,9 @@ if ($_SESSION['login'] == 1) {
                        $stmt->close();
 
                        if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
+                       if (check_dedi_id($dedicated)) {$msg = "Ungültige Dedicated ID"; $error = true;}
+                       if (check_template($type)) { $msg = "Ungültiges Template"; $error = true;}
+                       if (check_user_id($user_gs)) { $msg = "Ungültiger User"; $error = true;}
 
                        $installed = check_game_installed($dedicated,$type);
 

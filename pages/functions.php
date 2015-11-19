@@ -27,7 +27,11 @@ function user_exists($user) {
             } else {
               return false;
             }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
       }
 }
 
@@ -51,7 +55,11 @@ function email_exists($email) {
             } else {
               return false;
             }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
       }
 }
 
@@ -66,7 +74,8 @@ function exists_entry($spalte,$tabelle,$wo,$was) {
   global $mysqli;
   if ($stmt = $mysqli->prepare($query)){
 
-          $stmt->bind_param("s", $was);
+          $rc = $stmt->bind_param("s", $was);
+          if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
 
           if($stmt->execute()){
               $stmt->store_result();
@@ -80,7 +89,11 @@ function exists_entry($spalte,$tabelle,$wo,$was) {
             } else {
               return false;
             }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
       }
 }
 
@@ -129,7 +142,8 @@ function port_exists($ip,$port) {
 
   if ($stmt = $mysqli->prepare($query)){
 
-          $stmt->bind_param("si", $ip,$port);
+          $rc = $stmt->bind_param("si", $ip,$port);
+          if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
 
           if($stmt->execute()){
               $stmt->store_result();
@@ -143,7 +157,11 @@ function port_exists($ip,$port) {
             } else {
               return false;
             }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
       }
 }
 
@@ -152,17 +170,11 @@ function get_user_by_id($id) {
 
   $name = "n/a";
   $stmt = $mysqli->prepare("SELECT name FROM users WHERE id = ?");
-  if ( false===$stmt ) {
-  die('prepare() failed: ' . htmlspecialchars($mysqli->error));
-  }
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
   $rc = $stmt->bind_param('i', $id);
-  if ( false===$rc ) {
-    die('bind_param() failed: ' . htmlspecialchars($stmt->error));
-  }
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
   $rc = $stmt->execute();
-  if ( false===$rc ) {
-  die('execute() failed: ' . htmlspecialchars($stmt->error));
-  }
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($name);
   $stmt->fetch();
   $stmt->close();
@@ -177,8 +189,11 @@ function get_game_installed($dedi_id,$game) {
   $result_id = 0;
   $type_t = "template";
   $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
-  $stmt->bind_param('iss', $dedi_id,$type_t,$game);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('iss', $dedi_id,$type_t,$game);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($result_id);
   $stmt->fetch();
   $stmt->close();
@@ -186,16 +201,22 @@ function get_game_installed($dedi_id,$game) {
   if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
 
   $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
-  $stmt->bind_param('s',$game);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('s',$game);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($template_id);
   $stmt->fetch();
   $stmt->close();
 
   $result_id = 0;
   $stmt = $mysqli->prepare("SELECT id FROM dedicated_games WHERE dedi_id = ? AND template_id = ?");
-  $stmt->bind_param('ii',$dedi_id,$template_id);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('ii',$dedi_id,$template_id);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($result_id);
   $stmt->fetch();
   $stmt->close();
@@ -214,8 +235,11 @@ function check_game_installed($dedi_id,$game) {
   $result_id = 0;
   $type_t = "template";
   $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
-  $stmt->bind_param('iss', $dedi_id,$type_t,$game);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('iss', $dedi_id,$type_t,$game);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($result_id);
   $stmt->fetch();
   $stmt->close();
@@ -223,23 +247,27 @@ function check_game_installed($dedi_id,$game) {
   if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
 
   $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
-  $stmt->bind_param('s',$game);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('s',$game);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($template_id);
   $stmt->fetch();
   $stmt->close();
 
   $result_id = 0;
   $stmt = $mysqli->prepare("SELECT id FROM dedicated_games WHERE dedi_id = ? AND template_id = ?");
-  $stmt->bind_param('ii',$dedi_id,$template_id);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('ii',$dedi_id,$template_id);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($result_id);
   $stmt->fetch();
   $stmt->close();
 
   if ($result_id != 0) { $msg[1] = "Spiel ist installiert"; $msg[0] = 1; return $msg;}
-
-
 
   $msg[0] = 0;
   $msg[1] = "Spiel ist nicht Installiert.";
@@ -250,8 +278,11 @@ function get_template_by_id($id) {
   global $mysqli;
 
   $stmt = $mysqli->prepare("SELECT name FROM templates WHERE id = ?");
-  $stmt->bind_param('i',$id);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('i',$id);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($name);
   $stmt->fetch();
   $stmt->close();
@@ -259,5 +290,91 @@ function get_template_by_id($id) {
   return $name;
 
 }
+
+function check_template($template) {
+  global $mysqli;
+  $query = "SELECT `id` FROM `templates` WHERE name=?";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("s", $name);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows == 1){
+              return false;
+            } else {
+              return true;
+            }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+          }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+      }
+}
+
+function check_user_id($id) {
+  global $mysqli;
+  $query = "SELECT `name` FROM `users` WHERE id=?";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("i", $id);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows == 1){
+              return false;
+            } else {
+              return true;
+            }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+          }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+      }
+}
+
+function check_dedi_id($id) {
+  global $mysqli;
+  $query = "SELECT `name` FROM `dedicated` WHERE id=?";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("i", $id);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows == 1){
+              return false;
+            } else {
+              return true;
+            }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+          }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+      }
+}
+
+
 
  ?>
