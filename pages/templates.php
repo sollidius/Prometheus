@@ -40,10 +40,20 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         while ($row = $result->fetch_row()) {
 
                           if ($page == "templates?delete-".$row[0]) {
-                            $stmt = $mysqli->prepare("DELETE FROM templates WHERE id = ?");
-                            $stmt->bind_param('i', $row[0]);
-                            $stmt->execute();
-                            $stmt->close();
+                            $error = false;
+                            if (check_template_exist_in_games($row[0])) { $msg = "Das Template ist noch auf Rootservern installiert.";$error = true;}
+                            if (check_template_job_exists_id_only($row[0])) { $msg ="Installation des Templates läuft noch."; $error = true;}
+
+                            if ($error == false) {
+
+                              $stmt = $mysqli->prepare("DELETE FROM templates WHERE id = ?");
+                              $stmt->bind_param('i', $row[0]);
+                              $stmt->execute();
+                              $stmt->close();
+                              msg_okay("Das Template wurde gelöscht.");
+                            } else {
+                              msg_warning($msg);
+                            }
                           }
                         }
                         /* free result set */
@@ -84,12 +94,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        } else {
                          msg_error('Something went wrong, '.$msg);
                        }
-
                       }
-
                   }
-
-
                   ?>
 
                   <form class="form-horizontal" action="index.php?page=templates?add" method="post">
@@ -120,7 +126,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
 
                   <?php
-               } elseif ($page == "templates") {
+               } elseif ($page == "templates" or startsWith($page, "templates?delete")) {
                     ?>
                     <form action="index.php?page=templates" method="post">
                     <a  style="margin-bottom:2px;" href="index.php?page=templates?add"  class="btn pull-right btn-success btn-xs">+</a>

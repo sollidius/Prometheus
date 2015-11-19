@@ -34,7 +34,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
            <div class="row">
              <div class="col-lg-12">
                <?php
-                    $query = "SELECT id FROM dedicated ORDER by id";
+                    $query = "SELECT id,ip,port,user,password FROM dedicated ORDER by id";
 
                     if ($result = $mysqli->query($query)) {
 
@@ -96,9 +96,34 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                         }
                                        }
                                        break;
+                                    }   elseif (isset($_POST['remove_'.$row_2["id"]])) {
+                                      $error = false;
+
+                                      if (check_game_in_use($row_2["name"],$row["ip"])) { $msg ="Es exestieren noch Installierte Gameserver mit diesen Spiel."; $error = true;}
+                                      if (check_template_job_exists($row["id"],$row_2["id"])) { $msg ="Installation des Templates läuft noch."; $error = true;}
+
+                                      if ($error == false) {
+
+                                        $ssh = new Net_SSH2($row["ip"],$row["port"]);
+                                         if (!$ssh->login($row["user"], $row["password"])) {
+                                           msg_error("Login failed");
+                                           exit;
+                                         } else {
+                                           $ssh->exec('rm -r /home/'.$row["user"].'/templates/'.$row_2["name"]);
+
+                                           $status_game = 1;
+                                           $stmt = $mysqli->prepare("DELETE FROM dedicated_games WHERE dedi_id = ? AND template_id = ? AND status = ?");
+                                           $stmt->bind_param('iii', $row["id"],$row_2["id"],$status_game);
+                                           $stmt->execute();
+                                           $stmt->close();
+                                           msg_okay("Das Template wurde auf dem Rootserver gelöscht.");
+
+                                         }
+                                      } else {
+                                      msg_warning($msg);
+                                      }
                                     }
                                   }
-
                                   /* free result set */
                                   $result_2->close();
                               }
@@ -125,9 +150,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                  echo "<tr>";
                                  echo "<td>" . $row_2["name"] . "</td>";
                                  if ($installed[0] == 0) {
-                                    echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs center-block btn-success" disabled>'.$installed[1].'</button></td>';
+                                    echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success" disabled>'.$installed[1].'</button>';
+                                    echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">Deinstallieren</button></td>';
                                  } else {
-                                   echo '<td><button style="margin-bottom:2px;" type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
+                                   echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
                                  }
                                  echo "</tr>";
                                }
