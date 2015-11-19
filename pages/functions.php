@@ -7,9 +7,9 @@ if ($mysqli->connect_error) {
    exit;
 }
 
-function user_exists($user) {
+function user_exists($user,$id = 0) {
   global $mysqli;
-  $query = "SELECT `name` FROM `users` WHERE name=?";
+  $query = "SELECT `id` FROM `users` WHERE name=?";
 
   if ($stmt = $mysqli->prepare($query)){
 
@@ -22,11 +22,21 @@ function user_exists($user) {
               $stmt->bind_result($check);
               $stmt->fetch();
 
-              if ($stmt->num_rows == 1){
-              return true;
-            } else {
-              return false;
-            }
+              if ($id == 0) {
+                if ($stmt->num_rows == 1){
+                return true;
+                } else {
+                return false;
+                }
+              } else {
+                if ($id == $check) {
+                  return false;
+                } elseif ($check == "") {
+                  return false;
+                } else {
+                  return true;
+                }
+              }
           } else {
             die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
@@ -35,9 +45,9 @@ function user_exists($user) {
       }
 }
 
-function email_exists($email) {
+function email_exists($email,$id = 0) {
   global $mysqli;
-  $query = "SELECT `email` FROM `users` WHERE email=?";
+  $query = "SELECT `id` FROM `users` WHERE email=?";
 
   if ($stmt = $mysqli->prepare($query)){
 
@@ -50,11 +60,21 @@ function email_exists($email) {
               $stmt->bind_result($check);
               $stmt->fetch();
 
-              if ($stmt->num_rows == 1){
-              return true;
-            } else {
-              return false;
-            }
+              if ($id == 0) {
+                if ($stmt->num_rows == 1){
+                return true;
+                } else {
+                return false;
+                }
+              } else {
+                if ($id == $check) {
+                  return false;
+                } elseif ($check == "") {
+                  return false;
+                } else {
+                  return true;
+                }
+              }
           } else {
             die('execute() failed: ' . htmlspecialchars($stmt->error));
           }
@@ -495,6 +515,10 @@ function check_template_exist_in_games($template_id) {
       } else {
         die('prepare() failed: ' . htmlspecialchars($mysqli->error));
       }
+}
+
+function isValidEmail($email){
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
  ?>

@@ -71,7 +71,101 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                            msg_warning("Der Benutzer besitzt noch Gameserver.");
 
                           }
-                         }
+                        }  elseif ($page == "users?edit-".$row[0]) {
+
+                          if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
+
+                              $error = false; $msg ="";
+                              $rank = 2;
+                              $name = $_POST['name']; $email = $_POST['email']; $password = $_POST['pwd1'];
+
+                              if (isset($_POST['administrator'])) { $rank = 1;}
+
+                              if (!$_POST['pwd1'] == "") {
+                                if ($_POST['pwd1'] != $_POST['pwd2']) {$error = true;$msg="Passwort ungleich";}
+                                if (strlen($password) < 8) {$error = true; $msg="Passwort zu Kurz";}
+                              }
+                              if (user_exists($name,$row[0]) == true) { $error = true;$msg="User exestiert";}
+                              if (email_exists($email,$row[0]) == true) { $error = true;$msg="E-Mail exestiert";}
+                              if (strlen($name) <= 2) {$error = true; $msg="Name zu Kurz";}
+                              if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                              if(!preg_match("/([0-9a-zA-Z])@(\w+)\.(\w+)/",$email)){ $msg = "Die E-Mail ist nicht g&uuml;ltig<br>";  $error = true;}
+                              if (strlen($email) < 6) {$error = true; $msg="E-Mail zu kurz";}
+                              if (isValidEmail($email) == false) { $msg ="E-Mail ungültig."; $error = true;}
+
+                              if ($error == false) {
+
+                                  if ($_POST['pwd1'] == "") {
+
+                                    $stmt = $mysqli->prepare("UPDATE users SET name = ?, email = ?, rank= ?  WHERE id = ?");
+                                    $stmt->bind_param('ssii',$name,$email,$rank,$row[0]);
+                                    $stmt->execute();
+                                    $stmt->close();
+
+                                  } else {
+
+                                    $hash = password_hash($password, PASSWORD_DEFAULT);
+
+                                    $stmt = $mysqli->prepare("UPDATE users SET name = ?, email = ?, rank= ?, password = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssisi',$name,$email,$rank,$hash,$row[0]);
+                                    $stmt->execute();
+                                    $stmt->close();
+                                  }
+                                msg_okay("Benutzer aktualisiert.");
+
+                            } else {
+                             msg_error($msg);
+                            }
+                          }
+
+                          $stmt = $mysqli->prepare("SELECT name,email,password,rank FROM users WHERE id = ?");
+                          $stmt->bind_param('i', $row[0]);
+                          $stmt->execute();
+                          $stmt->bind_result($db_name,$db_email,$db_password,$db_rank);
+                          $stmt->fetch();
+                          $stmt->close();
+                          echo '<form class="form-horizontal" action="index.php?page=users?edit-'.$row[0].'" method="post">';
+                          ?>
+                            <div class="form-group">
+                              <label class="control-label col-sm-2">Name:</label>
+                              <div class="col-sm-8">
+                                <input type="text" class="form-control input-sm" name="name" value="<?php echo $db_name;?>">
+                              </div>
+                              <div class="checkbox col-sm-2">
+                                <?php if ($db_rank == 2) {
+                                    echo '<label><input type="checkbox"  name ="administrator" value="1">Administrator</label>';
+                                } elseif ($db_rank == 1) {
+                                    echo '<label><input type="checkbox"  name ="administrator" value="1" checked>Administrator</label>';
+                                } ?>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="control-label col-sm-2" for="email">E-Mail:</label>
+                              <div class="col-sm-10">
+                                <input type="email" class="form-control input-sm" name="email" value="<?php echo $db_email;?>">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="control-label col-sm-2" for="pwd">Passwort:</label>
+                              <div class="col-sm-10">
+                                <input type="password" class="form-control input-sm" name="pwd1" placeholder="Leer lassen, wenn keine änderung">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="control-label col-sm-2" for="pwd">Passwort Nochmal:</label>
+                              <div class="col-sm-10">
+                                <input type="password" class="form-control input-sm" name="pwd2" placeholder="Leer lassen, wenn keine änderung">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                              </div>
+                            </div>
+                          </form>
+
+                          <?php
+                        }
                      }
                      /* free result set */
                      $result->close();
@@ -98,6 +192,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                        if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                        if(!preg_match("/([0-9a-zA-Z])@(\w+)\.(\w+)/",$email)){ $msg = "Die E-Mail ist nicht g&uuml;ltig<br>";  $error = true;}
                        if (strlen($email) <= 5) {$error = true; $msg="E-Mail zu kurz";}
+                       if (isValidEmail($email) == false) { $msg ="E-Mail ungültig."; $error = true;}
                        if (strlen($password) <= 8) {$error = true; $msg="Passwort zu Kurz";}
 
                        if ($error == false) {
@@ -185,12 +280,15 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             echo "<tr>";
                             echo "<td>" . $db_name . "</td>";
                             echo "<td>" . $db_email . "</td>";
+                            //echo "<td>***********</td>";
                             if ($db_rank == 1) {
                               echo "<td>Administrator</td>";
                             } elseif ($db_rank == 2) {
                               echo "<td>User</td>";
                             }
-                            echo '<td> <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-xs">X</a></td>';
+                            echo '<td><a href="index.php?page=users?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</a>
+                                  <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-xs">X</a>';
+                            echo '</td>';
                             echo "</tr>";
                           }
                           $stmt->close();

@@ -1,11 +1,17 @@
 <?php
 //header
 $title = "Login";
-include 'header.php';;
+include 'header.php';
+
+$error = false; $msg = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-if (strlen($_POST['email']) >= 5 and strlen($_POST['password']) >= 8) {
+  if (isValidEmail($_POST['email']) == false) { $msg ="E-Mail ungültig."; $error = true;}
+  if (strlen($_POST['email']) < 6) { $msg ="E-Mail zu kurz."; $error = true;}
+  if (strlen($_POST['password']) < 8 ) {$msg = "Passwort zu kurz"; $error = true;}
+
+  if ($error == false) {
 
   $password = $_POST['password'];
 
@@ -25,7 +31,8 @@ if (strlen($_POST['email']) >= 5 and strlen($_POST['password']) >= 8) {
     }
     else {
         // Invalid credentials
-
+        $error = true;
+        $msg = "E-Mail/Passwort ungültig.";
     }
 }
 
@@ -38,7 +45,8 @@ if (strlen($_POST['email']) >= 5 and strlen($_POST['password']) >= 8) {
             <div class="col-md-4 col-md-offset-4">
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Please Sign In</h3>
+                        <h3 style="margin-bottom:2px;" class="panel-title">Please Sign In</h3>
+                        <?php if ($error == true) { msg_warning($msg);} ?>
                     </div>
                     <div class="panel-body">
                         <form action="index.php?page=login" method="post">
@@ -49,7 +57,6 @@ if (strlen($_POST['email']) >= 5 and strlen($_POST['password']) >= 8) {
                                 <div class="form-group">
                                     <input class="form-control" placeholder="Password" name="password" type="password" value="">
                                 </div>
-                                <!-- Change this to a button or input when using this as a form -->
                                 <button type="submit" class="btn btn-lg btn-success btn-block">Login</button>
                             </fieldset>
                         </form>
@@ -60,8 +67,6 @@ if (strlen($_POST['email']) >= 5 and strlen($_POST['password']) >= 8) {
     </div>
 
 <?php
-
-
 
 
 
