@@ -175,7 +175,7 @@ if ($_SESSION['login'] == 1) {
                                 </div>';
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
-                                $ssh->exec('sudo -u '.$gs_login.' screen -adms game /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
+                                $ssh->exec('sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
                                 msg_okay("Der Gamesever wurde gestartet.");
                               }
                               break;
@@ -509,8 +509,7 @@ if ($_SESSION['login'] == 1) {
                         <tr>
                           <th>Benutzer</th>
                           <th>Game</th>
-                          <th>IP</th>
-                          <th>Port</th>
+                          <th>IP+Port</th>
                           <th>Slots</th>
                           <th>Map</th>
                           <th>Login</th>
@@ -533,8 +532,7 @@ if ($_SESSION['login'] == 1) {
                               echo "<tr>";
                               echo "<td>" . $db_user_name . "</td>";
                               echo "<td>" . $row["game"] . "</td>";
-                              echo "<td>" . $row["ip"] . "</td>";
-                              echo "<td>" . $row["port"] . "</td>";
+                              echo "<td>" . $row["ip"] .":".$row["port"]."</td>";
                               echo "<td>" . $row["slots"] . "</td>";
                               echo "<td>" . $row["map"] . "</td>";
                               echo "<td>" . $row["gs_login"] . "</td>";
@@ -552,8 +550,7 @@ if ($_SESSION['login'] == 1) {
                               echo "<tr>";
                               echo "<td>" . $db_user_name . "</td>";
                               echo "<td>" . $row["game"] . "</td>";
-                              echo "<td>" . $row["ip"] . "</td>";
-                              echo "<td>" . $row["port"] . "</td>";
+                              echo "<td>" . $row["ip"] .":".$row["port"]."</td>";
                               echo "<td>" . $row["slots"] . "</td>";
                               echo "<td>" . $row["map"] . "</td>";
                               echo "<td>" . $row["gs_login"] . "</td>";

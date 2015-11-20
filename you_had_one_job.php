@@ -22,7 +22,7 @@ if ($result = $mysqli->query($query)) {
        if (!$ssh->login($user, $password)) {
          exit;
        } else {
-        $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x402 after update job" ; echo $?');
+        $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
         if ($status == 1) {
             $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "Success!" ; echo $?');
             if ($status != 1) {
