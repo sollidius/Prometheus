@@ -97,6 +97,7 @@ if ($result = $mysqli->query($query)) {
         $stmt->fetch();
         $stmt->close();
 
+
         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
          if (!$ssh->login($dedi_login, $dedi_password)) {
            exit;
