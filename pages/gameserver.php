@@ -546,7 +546,7 @@ if ($_SESSION['login'] == 1) {
            <?php } elseif (startsWith($page, "gameserver")) {
                     ?>
                     <form action="index.php?page=gameserver" method="post">
-                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>';}  ?>
+                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;margin-top:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>';}  ?>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
