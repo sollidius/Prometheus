@@ -134,6 +134,22 @@ if ($result = $mysqli->query($query)) {
            }
         }
       }
+      //Log Cleanup
+      $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+      $stmt->bind_param('i', $row[1]);
+      $stmt->execute();
+      $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+      $stmt->fetch();
+      $stmt->close();
+
+      $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+       if (!$ssh->login($dedi_login, $dedi_password)) {
+         exit;
+       } else {
+       $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 50 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");
+       $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/game/screenlog.tmp > /home/".$row[0]."/game/screenlog.0'");
+       $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/game/screenlog.tmp'");
+      }
     }
 
     /* free result set */
