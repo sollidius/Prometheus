@@ -333,6 +333,40 @@ if ($_SESSION['login'] == 1) {
 
                             $gs_select = $row[0];
 
+
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['console_submit'])) {
+
+
+                              $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
+                              $stmt->bind_param('i', $gs_select);
+                              $stmt->execute();
+                              $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
+                              $stmt->fetch();
+                              $stmt->close();
+
+                              $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                              $stmt->bind_param('i', $dedi_id);
+                              $stmt->execute();
+                              $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                              $stmt->fetch();
+                              $stmt->close();
+
+                              $cmd = htmlentities($_POST['cmd']);
+
+                              $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                               if (!$ssh->login($dedi_login, $dedi_password)) {
+                                 echo '
+                                 <div class="alert alert-danger" role="alert">
+                                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                   <span class="sr-only">Error:</span>
+                                   Login failed
+                                 </div>';
+                               } else {
+                                 $ssh->exec('sudo -u '.$gs_login.' screen -S "game'.$gs_login.'" -X stuff "'.$cmd.'\n"');
+                                 sleep(2);
+                               }
+                            }
+
                             $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $gs_select);
                             $stmt->execute();
@@ -358,12 +392,27 @@ if ($_SESSION['login'] == 1) {
                              } else {
                                $text = $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' cat -A screenlog.0');
                                $lines = explode("^M$",$text);
-                               echo '<textarea id="console" class="form-control" rows="16">';
+                               echo '<form class="form-horizontal" action="index.php?page=gameserver?console-'.$gs_select.'" method="post">';
+                               echo '<div class="form-group"><div class="col-sm-10">';
+                               echo '<textarea id="console" class="form-control input-sm"" rows="16">';
                                foreach ($lines as &$element) {
                                  echo $element;
                                }
-                               echo '</textarea>';
+                               echo '</textarea></div>';
                                ?>
+                                 <div style="margin-top:5px;" class="col-sm-10">
+                                   <div class="input-group">
+                                   <input type="text" class="form-control input-sm" name="cmd" placeholder="changelevel de_dust2">
+                                   <span class="input-group-btn">
+                                     <?php
+                                    echo '<a href="index.php?page=gameserver?console-'.$gs_select.'"  class="btn btn-success btn-sm">Update</a>';
+                                     ?>
+                                      <button class="btn btn-primary btn-sm" name="console_submit" type="submit">Abschicken</button>
+                                   </span>
+                                 </div>
+                               </div>
+                             </div>
+                           </form>
                                <script>
                                var textarea = document.getElementById('console');
                                textarea.scrollTop = textarea.scrollHeight;
@@ -546,7 +595,8 @@ if ($_SESSION['login'] == 1) {
            <?php } elseif (startsWith($page, "gameserver")) {
                     ?>
                     <form action="index.php?page=gameserver" method="post">
-                  <?php if ($db_rank == 1) { echo '<a  style="margin-bottom:2px;margin-top:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>';}  ?>
+                  <?php if ($db_rank == 1 AND startsWith($page, "gameserver?console") == false ) { echo '<a  style="margin-bottom:2px;margin-top:2px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>';}
+                  elseif ($db_rank == 1 AND startsWith($page, "gameserver?console") == true ) { echo '<a  style="margin-bottom:2px;margin-top:28px;" href="index.php?page=gameserver?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>';} ?>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
