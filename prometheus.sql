@@ -35,7 +35,8 @@ CREATE TABLE `gameservers` (
   `gs_login` varchar(25) NOT NULL,
   `gs_password` varchar(50) NOT NULL,
   `status` int(1) NOT NULL DEFAULT '1',
-  `status_update` int(1) NOT NULL DEFAULT '0'
+  `status_update` int(1) NOT NULL DEFAULT '0',
+  `running` int(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `jobs` (
@@ -53,6 +54,15 @@ CREATE TABLE `templates` (
   `type` varchar(50) NOT NULL,
   `type_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`) VALUES
+(2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020'),
+(7, 'CSS', 'cstrike', 'steamcmd', '232330'),
+(9, 'CSGO', 'csgo', 'steamcmd', '740'),
+(10, 'TF2', 'tf', 'steamcmd', '232250'),
+(14, 'L4D2', 'l4d2', 'steamcmd', '222860'),
+(20, 'L4D', 'l4d', 'steamcmd', '222840'),
+(21, 'DODS', 'dods', 'steamcmd', '232290');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,

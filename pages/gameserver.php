@@ -177,6 +177,12 @@ if ($_SESSION['login'] == 1) {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
                                 $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
                                 msg_okay("Der Gamesever wurde gestartet.");
+
+                                $is_running = 2; $running = 1;
+                                $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?  WHERE id = ?");
+                                $stmt->bind_param('iii',$is_running,$running,$gs_select);
+                                $stmt->execute();
+                                $stmt->close();
                               }
                               break;
                           }
@@ -208,6 +214,12 @@ if ($_SESSION['login'] == 1) {
                              } else {
                                $ssh->exec('sudo pkill -u '.$gs_login);
                                msg_okay("Der Gameserver wurde angehalten.");
+
+                               $is_running = 0; $running = 0;
+                               $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?  WHERE id = ?");
+                               $stmt->bind_param('iii',$is_running,$running,$gs_select);
+                               $stmt->execute();
+                               $stmt->close();
                              }
                              break;
                           }
@@ -614,7 +626,7 @@ if ($_SESSION['login'] == 1) {
                       <tbody>
                      <?php
 
-                     $query = "SELECT user_id, game, ip, port,slots, gs_login, gs_password, id, map,status FROM gameservers ORDER by id";
+                     $query = "SELECT user_id, game, ip, port,slots, gs_login, gs_password, id, map,status,is_running FROM gameservers ORDER by id";
 
                      if ($result = $mysqli->query($query)) {
 
@@ -622,7 +634,13 @@ if ($_SESSION['login'] == 1) {
                        while ($row = $result->fetch_assoc()) {
                             if ($db_rank == 1) {
                               $db_user_name = get_user_by_id($row["user_id"]);
-                              echo "<tr>";
+                              if ($row["is_running"] == 1) {
+                                  echo '<tr class="success">';
+                              } elseif ($row["is_running"] == 2)  {
+                                  echo '<tr class="warning">';
+                              } elseif ($row["is_running"] == 0)  {
+                                  echo '<tr class="danger">';
+                              }
                               echo "<td>" . $db_user_name . "</td>";
                               echo "<td>" . $row["game"] . "</td>";
                               echo "<td>" . $row["ip"] .":".$row["port"]."</td>";
@@ -640,7 +658,13 @@ if ($_SESSION['login'] == 1) {
                               echo "</tr>";
                             } elseif ($db_rank == 2 AND $row["user_id"] == $_SESSION['user_id']) {
                               $db_user_name = get_user_by_id($row["user_id"]);
-                              echo "<tr>";
+                              if ($row["is_running"] == 1) {
+                                  echo '<tr class="success">';
+                              } elseif ($row["is_running"] == 2)  {
+                                  echo '<tr class="warning">';
+                              } elseif ($row["is_running"] == 0)  {
+                                  echo '<tr class="danger">';
+                              }
                               echo "<td>" . $db_user_name . "</td>";
                               echo "<td>" . $row["game"] . "</td>";
                               echo "<td>" . $row["ip"] .":".$row["port"]."</td>";

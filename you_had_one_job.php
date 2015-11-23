@@ -1,8 +1,22 @@
 <?php
 
 include 'pages/functions.php';
+include('components/GameQ-2/GameQ.php');
 set_include_path('components/phpseclib');
 include('Net/SSH2.php');
+
+function check_gs($servers) {
+
+  $gq = new GameQ(); // or $gq = GameQ::factory();
+  $gq->setOption('timeout', 5); // Seconds
+  $gq->setOption('debug', TRUE);
+  $gq->setFilter('normalise');
+  $gq->addServers($servers);
+
+  $results = $gq->requestData();
+  return $results;
+
+}
 
 $query = "SELECT dedicated_id,type_id,id,template_id FROM jobs ORDER by id";
 
@@ -58,7 +72,7 @@ if ($result = $mysqli->query($query)) {
     $result->close();
 }
 
-$query = "SELECT gs_login,dedi_id,status,id,status_update,game FROM gameservers ORDER by id";
+$query = "SELECT gs_login,dedi_id,status,id,status_update,game,ip,port FROM gameservers ORDER by id";
 
 if ($result = $mysqli->query($query)) {
 
@@ -146,9 +160,42 @@ if ($result = $mysqli->query($query)) {
        if (!$ssh->login($dedi_login, $dedi_password)) {
          exit;
        } else {
-       $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 50 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");
+       $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");
        $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/game/screenlog.tmp > /home/".$row[0]."/game/screenlog.0'");
        $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/game/screenlog.tmp'");
+       //Status
+       $servers[1]["type"] = "unknown";
+       if ($row[5] == "Garrysmod") { $servers[1]["type"] = "gmod";}
+       if ($row[5] == "CSS") { $servers[1]["type"] = "css";}
+       if ($row[5] == "CSGO") { $servers[1]["type"] = "csgo";}
+       if ($row[5] == "TF2") { $servers[1]["type"] = "tf2";}
+       if ($row[5] == "L4D") { $servers[1]["type"] = "l4d";}
+       if ($row[5] == "L4D2") { $servers[1]["type"] = "l4d2";}
+       if ($row[5] == "DODS") { $servers[1]["type"] = "dods";}
+       $servers[1]["host"] = $row[6] .':'.$row[7];
+       $servers[1]["id"] = "serv";
+       if ($servers[1]["type"] != "unknown") {
+         $results = check_gs($servers);
+         foreach ($results as &$element) {
+             if ($element["gq_online"] == 1) {
+
+               $running = 1;
+               $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?  WHERE id = ?");
+               $stmt->bind_param('ii',$running,$row[3]);
+               $stmt->execute();
+               $stmt->close();
+
+             } else {
+
+               $running = 0;
+               $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?  WHERE id = ?");
+               $stmt->bind_param('ii',$running,$row[3]);
+               $stmt->execute();
+               $stmt->close();
+
+             }
+         }
+       }
       }
     }
 
