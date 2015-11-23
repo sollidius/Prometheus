@@ -60,17 +60,19 @@ CREATE TABLE `templates` (
   `name` varchar(50) NOT NULL,
   `name_internal` varchar(50) NOT NULL,
   `type` varchar(50) NOT NULL,
-  `type_name` varchar(50) NOT NULL
+  `type_name` varchar(50) NOT NULL,
+  `gameq` varchar(50) NOT NULL,
+  `map_path` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`) VALUES
-(2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020'),
-(7, 'CSS', 'cstrike', 'steamcmd', '232330'),
-(9, 'CSGO', 'csgo', 'steamcmd', '740'),
-(10, 'TF2', 'tf', 'steamcmd', '232250'),
-(14, 'L4D2', 'left4dead2', 'steamcmd', '222860'),
-(20, 'L4D', 'left4dead', 'steamcmd', '222840'),
-(21, 'DODS', 'dod', 'steamcmd', '232290');
+INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `gameq`, `map_path`) VALUES
+(2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020', '', 'garrysmod'),
+(7, 'CSS', 'cstrike', 'steamcmd', '232330', '', ''),
+(9, 'CSGO', 'csgo', 'steamcmd', '740', '', 'csgo'),
+(10, 'TF2', 'tf', 'steamcmd', '232250', '', ''),
+(14, 'L4D2', 'left4dead2', 'steamcmd', '222860', '', ''),
+(20, 'L4D', 'left4dead', 'steamcmd', '222840', '', ''),
+(21, 'DODS', 'dod', 'steamcmd', '232290', '', '');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,

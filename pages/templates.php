@@ -71,6 +71,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                  $type = htmlentities($_POST['type']);
                                  $type_name = htmlentities($_POST['type_name']);
                                  $internal = htmlentities($_POST['internal']);
+                                 $path = htmlentities($_POST['path']);
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
@@ -82,15 +83,15 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                                    if ($limited == true) {
 
-                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ? WHERE id = ?");
-                                     $stmt->bind_param('ssi',$internal,$type_name,$row[0]);
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?, map_path = ? WHERE id = ?");
+                                     $stmt->bind_param('sssi',$internal,$type_name,$path,$row[0]);
                                      $stmt->execute();
                                      $stmt->close();
 
                                    } else {
 
-                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?,type = ?,name = ? WHERE id = ?");
-                                     $stmt->bind_param('ssssi',$internal,$type_name,$type,$name,$row[0]);
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?,type = ?,name = ?,map_path = ?  WHERE id = ?");
+                                     $stmt->bind_param('sssssi',$internal,$type_name,$type,$name,$path,$row[0]);
                                      $stmt->execute();
                                      $stmt->close();
 
@@ -106,10 +107,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               }
                           }
 
-                          $stmt = $mysqli->prepare("SELECT name,name_internal,type,type_name FROM templates WHERE id = ?");
+                          $stmt = $mysqli->prepare("SELECT name,name_internal,type,type_name,map_path FROM templates WHERE id = ?");
                           $stmt->bind_param('i', $row[0]);
                           $stmt->execute();
-                          $stmt->bind_result($db_name,$db_internal,$db_type,$db_type_name);
+                          $stmt->bind_result($db_name,$db_internal,$db_type,$db_type_name,$db_path);
                           $stmt->fetch();
                           $stmt->close();
 
@@ -145,6 +146,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               </div>
                             </div>
                             <div class="form-group">
+                              <label class="control-label col-sm-2">Map Pfad:</label>
+                              <div class="col-sm-3">
+                                <input type="text" class="form-control input-sm" name="path" value="<?php echo $db_path;?>">
+                              </div>
+                            </div>
+                            <div class="form-group">
                               <div class="col-sm-offset-2 col-sm-10">
                                 <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
                               </div>
@@ -172,6 +179,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $type = htmlentities($_POST['type']);
                          $type_name = htmlentities($_POST['type_name']);
                          $internal = htmlentities($_POST['internal']);
+                         $map_path = htmlentities($_POST['path']);
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
@@ -183,8 +191,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          if ($error == false) {
 
 
-                           $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal) VALUES (?, ?, ?, ?)");
-                           $stmt->bind_param('ssss', $name, $type,$type_name,$internal);
+                           $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal,map_path) VALUES (?, ?, ?, ? ,?)");
+                           $stmt->bind_param('sssss', $name, $type,$type_name,$internal,$map_path);
                            $stmt->execute();
                            $stmt->close();
 
@@ -217,6 +225,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       </div>
                     </div>
                     <div class="form-group">
+                      <label class="control-label col-sm-2">Map Pfad:</label>
+                      <div class="col-sm-3">
+                        <input type="text" class="form-control input-sm" name="path" placeholder="csgo">
+                      </div>
+                    </div>
+                    <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
                       </div>
@@ -236,17 +250,18 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           <th>Internal</th>
                           <th>Type</th>
                           <th>Type Name</th>
+                          <th>Pfad</th>
                           <th>Aktion</th>
                         </tr>
                       </thead>
                       <tbody>
                      <?php
 
-                     $query = "SELECT name, type,type_name,name_internal,id FROM templates ORDER by id";
+                     $query = "SELECT name, type,type_name,name_internal,id,map_path FROM templates ORDER by id";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal,$db_id);
+                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal,$db_id,$db_path);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
@@ -254,6 +269,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             echo "<td>" . $db_name_internal . "</td>";
                             echo "<td>" . $db_type . "</td>";
                             echo "<td>" . $db_type_name . "</td>";
+                            echo "<td>" . $db_path . "</td>";
                             echo '<td> <a href="index.php?page=templates?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</i></a>
                                       <a style="margin-left:2px" href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                             echo '</td>';

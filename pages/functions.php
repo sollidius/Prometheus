@@ -89,6 +89,11 @@ function startsWith($haystack, $needle) {
     return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
 }
 
+function endsWith($haystack, $needle) {
+    // search forward starting from end minus needle length characters
+    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
+}
+
 function exists_entry($spalte,$tabelle,$wo,$was) {
 
   $query = "SELECT ".$spalte." FROM ".$tabelle." WHERE ".$wo."=?";

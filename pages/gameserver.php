@@ -276,6 +276,23 @@ if ($_SESSION['login'] == 1) {
                             }
                           if ($page == "gameserver?settings-".$row[0] AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?settings-".$row[0] AND $db_rank == 1) {
 
+                            $gs_select = $row[0];
+
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
+                            $stmt->bind_param('i', $gs_select);
+                            $stmt->execute();
+                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                            $stmt->bind_param('i', $dedi_id);
+                            $stmt->execute();
+                            $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                            $stmt->fetch();
+                            $stmt->close();
+
+
                             if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm-settings'])) {
 
                               if ($db_rank == 2) {
@@ -319,12 +336,41 @@ if ($_SESSION['login'] == 1) {
                             $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port);
                             $stmt->fetch();
                             $stmt->close();
+
+                            $stmt = $mysqli->prepare("SELECT map_path FROM templates WHERE name = ?");
+                            if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+                            $rc = $stmt->bind_param('s', $game);
+                            if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+                            $rc = $stmt->execute();
+                            if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
+                            $stmt->bind_result($db_path);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                             if (!$ssh->login($dedi_login, $dedi_password)) {
+                               echo '
+                               <div class="alert alert-danger" role="alert">
+                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                 <span class="sr-only">Error:</span>
+                                 Login failed
+                               </div>';
+                             } else {
+                                $msg =  $ssh->exec('cd /home/'.$gs_login.'/game/'.$db_path.'/maps/;ls');
+                                $lines = preg_split('/\s+/', $msg);
+                                foreach ($lines as &$element) {
+                                  if (endsWith($element, ".bsp")) {
+                                    //echo $element;
+                                    //echo "<br>";
+                                  }
+                                }
+                             }
                             ?>
                             <form class="form-horizontal" action="<?php echo "index.php?page=gameserver?settings-".$row[0]; ?>" method="post">
                               <div class="form-group">
                                 <label class="control-label col-sm-2">Map:</label>
                                 <div class="col-sm-4">
-                                  <input type="text" class="form-control input-sm" name="map" value="<?php echo $db_map;?>">
+                                  <input type="text" class="form-control input-sm typeahead" autocomplete="off" name="map" value="<?php echo $db_map;?>">
                                 </div>
                               </div>
                               <div class="form-group">
@@ -535,7 +581,7 @@ if ($_SESSION['login'] == 1) {
 
                             msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
 
-                            event_add(4,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
+                            event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
 
                           }
 

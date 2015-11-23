@@ -153,7 +153,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                     echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success" disabled>'.$installed[1].'</button>';
                                     echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">Deinstallieren</button></td>';
                                  } else {
-                                   echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs center-block btn-success">Installieren</button></td>';
+                                   echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success">Installieren</button> <button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>Deinstallieren</button> </td>';
                                  }
                                  echo "</tr>";
                                }
