@@ -202,6 +202,27 @@ if ($result = $mysqli->query($query)) {
     /* free result set */
     $result->close();
 }
+//Events Cleanup
+
+$query = "SELECT id,type,message,timestamp FROM events ORDER by id";
+
+if ($result = $mysqli->query($query)) {
+
+    /* fetch object array */
+    while ($row = $result->fetch_row()) {
+      $time = time();
+      $delete = strtotime('+1 day', $row[3]);
+      if ($time > $delete) {
+        $stmt = $mysqli->prepare("DELETE FROM events WHERE id = ?");
+        $stmt->bind_param('i', $row[0]);
+        $stmt->execute();
+        $stmt->close();
+      }
+    }
+    /* free result set */
+    $result->close();
+}
+
 echo "ok";
 
  ?>

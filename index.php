@@ -39,12 +39,17 @@ if (startsWith($page, "rootserver")) {
  include 'pages/rootserver.php';
 }
 
-//Rootserver
+//Templates
 if (startsWith($page, "templates")) {
  include 'pages/templates.php';
 }
 
-//Rootserver
+//Events
+if (startsWith($page, "events")) {
+ include 'pages/events.php';
+}
+
+//Gameserver
 if (startsWith($page, "gameserver")) {
  include 'pages/gameserver.php';
 }

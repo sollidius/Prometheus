@@ -83,6 +83,8 @@ if ($_SESSION['login'] == 1) {
 
                                msg_okay("Der Gameserver wird neuinstalliert.");
 
+                               event_add(5,"Gameserver ".$ip.":".$port." wird neuinstalliert.");
+
                              }
                           }
                           if ($page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?update-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
@@ -139,6 +141,8 @@ if ($_SESSION['login'] == 1) {
                                 $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
                                 $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
                                 msg_okay("Der Gameserver wird aktualisiert.");
+
+                                event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
                               }
                           }
                           if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
@@ -176,13 +180,17 @@ if ($_SESSION['login'] == 1) {
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
                                 $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
-                                msg_okay("Der Gamesever wurde gestartet.");
 
                                 $is_running = 2; $running = 1;
                                 $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?  WHERE id = ?");
                                 $stmt->bind_param('iii',$is_running,$running,$gs_select);
                                 $stmt->execute();
                                 $stmt->close();
+
+                                event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
+
+                                msg_okay("Der Gamesever wurde gestartet.");
+
                               }
                               break;
                           }
@@ -214,6 +222,8 @@ if ($_SESSION['login'] == 1) {
                              } else {
                                $ssh->exec('sudo pkill -u '.$gs_login);
                                msg_okay("Der Gameserver wurde angehalten.");
+
+                               event_add(2,"Der Gameserver ".$ip.":".$port." wurde angehalten.");
 
                                $is_running = 0; $running = 0;
                                $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?  WHERE id = ?");
@@ -257,6 +267,9 @@ if ($_SESSION['login'] == 1) {
                                  $stmt->bind_param('i', $gs_select);
                                  $stmt->execute();
                                  $stmt->close();
+
+                                 event_add(3,"Der Gameserver ".$ip.":".$port." wurde gelöscht.");
+
                                  msg_okay("Der Gameserver wurde gelöscht.");
                                }
                                break;
@@ -521,6 +534,8 @@ if ($_SESSION['login'] == 1) {
                             $stmt->close();
 
                             msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
+
+                            event_add(4,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
 
                           }
 

@@ -22,6 +22,13 @@ CREATE TABLE `dedicated_games` (
   `status_text` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL,
+  `type` int(2) NOT NULL,
+  `message` text NOT NULL,
+  `timestamp` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `gameservers` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -36,7 +43,8 @@ CREATE TABLE `gameservers` (
   `gs_password` varchar(50) NOT NULL,
   `status` int(1) NOT NULL DEFAULT '1',
   `status_update` int(1) NOT NULL DEFAULT '0',
-  `running` int(1) NOT NULL DEFAULT '0'
+  `running` int(1) NOT NULL DEFAULT '0',
+  `is_running` int(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `jobs` (
@@ -60,9 +68,9 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`) VAL
 (7, 'CSS', 'cstrike', 'steamcmd', '232330'),
 (9, 'CSGO', 'csgo', 'steamcmd', '740'),
 (10, 'TF2', 'tf', 'steamcmd', '232250'),
-(14, 'L4D2', 'l4d2', 'steamcmd', '222860'),
-(20, 'L4D', 'l4d', 'steamcmd', '222840'),
-(21, 'DODS', 'dods', 'steamcmd', '232290');
+(14, 'L4D2', 'left4dead2', 'steamcmd', '222860'),
+(20, 'L4D', 'left4dead', 'steamcmd', '222840'),
+(21, 'DODS', 'dod', 'steamcmd', '232290');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -80,6 +88,9 @@ ALTER TABLE `dedicated`
   ADD UNIQUE KEY `ip` (`ip`);
 
 ALTER TABLE `dedicated_games`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `events`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `gameservers`
@@ -101,6 +112,8 @@ ALTER TABLE `users`
 ALTER TABLE `dedicated`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `dedicated_games`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `events`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `gameservers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

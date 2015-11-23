@@ -1,5 +1,6 @@
 <?php
 
+date_default_timezone_set('Europe/Amsterdam');
 $mysqli = new mysqli("localhost", "Prometheus", "aTFGbJjEC9LtUSN4", "prometheus");
 
 if ($mysqli->connect_error) {
@@ -430,7 +431,7 @@ function check_game_in_use($game,$ip) {
               $stmt->bind_result($check);
               $stmt->fetch();
 
-              if ($stmt->num_rows == 1){
+              if ($stmt->num_rows >= 1){
               return true;
             } else {
               return false;
@@ -575,6 +576,21 @@ function console_send($cmd) {
 
 
 
+
+}
+
+function event_add($type,$msg) {
+
+  global $mysqli;
+
+  $time = time();
+  $stmt = $mysqli->prepare("INSERT INTO events(type,message,timestamp) VALUES (?, ?, ?)");
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('isi', $type,$msg,$time);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
+  $stmt->close();
 
 }
 

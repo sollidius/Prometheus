@@ -25,6 +25,11 @@
               <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
           </li>
            '; } ?>
+           <?php if  ($db_rank == 1) { echo '
+           <li>
+               <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> Events</a>
+           </li>
+            '; } ?>
           <?php if  ($db_rank == 1) { echo '
           <li>
               <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
@@ -76,6 +81,11 @@
               <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
           </li>
            '; } ?>
+           <?php if  ($db_rank == 1) { echo '
+           <li>
+               <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> Events</a>
+           </li>
+            '; } ?>
           <?php if  ($db_rank == 1) { echo '
           <li>
               <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
