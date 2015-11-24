@@ -216,7 +216,33 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                          <?php
 
-                       }
+                      } elseif ($page == "rootserver?remove=".$row["id"]) {
+
+                      $error = false;
+
+                      if (check_template_exist_in_games_dedi_id($row["id"])) { $error = true; $msg = "Templates noch installiert.";}
+
+                      if ($error == false) {
+
+                        $stmt = $mysqli->prepare("DELETE FROM dedicated WHERE id = ?");
+                        $stmt->bind_param('i', $row["id"]);
+                        $stmt->execute();
+                        $stmt->close();
+
+                        msg_okay("Rootserver gelöscht.");
+
+                      } else {
+
+                        msg_warning($msg);
+
+                      }
+
+                      } elseif ($page == "rootserver?delete=".$row["id"]) {
+                        //soonTM
+
+                        msg_warning("soonTM");
+
+                      }
                       }
                     /* free result set */
                     $result->close();
@@ -253,12 +279,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         exit;
                       } else {
 
-                        $vsftpd = "###Prometheus###";
-                        $vsftpd.= "anonymous_enable=NO";
-                        $vsftpd.= "write_enable=YES";
-                        $vsftpd.= "chroot_local_user=YES";
-                        $vsftpd.= "allow_writeable_chroot=YES";
-                        $vsftpd.= "################";
+                        $vsftpd = "\n###Prometheus###\n";
+                        $vsftpd.= "anonymous_enable=NO\n";
+                        $vsftpd.= "write_enable=YES\n";
+                        $vsftpd.= "chroot_local_user=YES\n";
+                        $vsftpd.= "allow_writeable_chroot=YES\n";
+                        $vsftpd.= "################\n";
 
                         if ($os == "Debian 7 32bit") {
 
@@ -386,7 +412,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         $ssh->read('[prompt]');
                         $ssh->exec("usermod -a -G sudo ".$user);
                         $ssh->exec('echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers');
-                        $ssh->exec('echo '.$vsftpd.' >> /etc/vsftpd');
+                        $ssh->exec('echo "'.$vsftpd.'" >> /etc/vsftpd.conf');
                         $ssh->exec('service vsftpd restart');
                         $ssh->read('[prompt]');
 
@@ -523,7 +549,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           echo '</td>';
                           echo '<td>';
                           echo '<a href="index.php?page=rootserver?edit='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Editieren</a>
-                                  <a style="margin-left:2px;" href="index.php?page=rootserver?manage='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Verwalten</a>';
+                                  <a style="margin-left:2px;" href="index.php?page=rootserver?manage='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Verwalten</a>
+                                  <a style="margin-left:2px;" href="index.php?page=rootserver?remove='.$row["id"].'" class="btn pull-left btn-danger btn-xs"><i class="fa fa-eraser"></i></a>
+                                  <a style="margin-left:2px;" href="index.php?page=rootserver?delete='.$row["id"].'" class="btn pull-left btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                           echo '</td>'; }
                           echo "</tr>";
                         }

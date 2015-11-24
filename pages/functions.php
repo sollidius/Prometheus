@@ -590,5 +590,33 @@ function event_add($type,$msg) {
 
 }
 
+function check_template_exist_in_games_dedi_id($id) {
+  global $mysqli;
+  $query = "SELECT `id` FROM `dedicated_games` WHERE dedi_id=?";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("i",$id);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows >= 1){
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+          }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+      }
+}
+
 
  ?>
