@@ -164,10 +164,10 @@ if ($_SESSION['login'] == 1) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT name_internal FROM templates WHERE name = ?");
+                             $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE name = ?");
                              $stmt->bind_param('s', $game);
                              $stmt->execute();
-                             $stmt->bind_result($name_internal);
+                             $stmt->bind_result($name_internal,$type);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -188,7 +188,11 @@ if ($_SESSION['login'] == 1) {
                                 </div>';
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
-                                $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
+                                if ($type == "steamcmd") {
+                                    $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
+                                } elseif ($type == "image") {
+                                   $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' '.$name_internal.' ' .$parameter.'');
+                                }
 
                                 $is_running = 2; $running = 1;
                                 $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?  WHERE id = ?");
@@ -454,6 +458,13 @@ if ($_SESSION['login'] == 1) {
                             $stmt->fetch();
                             $stmt->close();
 
+                            $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE name = ?");
+                            $stmt->bind_param('s', $game);
+                            $stmt->execute();
+                            $stmt->bind_result($name_internal,$type);
+                            $stmt->fetch();
+                            $stmt->close();
+
                             $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
                             $stmt->bind_param('i', $dedi_id);
                             $stmt->execute();
@@ -470,7 +481,11 @@ if ($_SESSION['login'] == 1) {
                                  Login failed
                                </div>';
                              } else {
-                               $text = $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' cat -A screenlog.0');
+                               if ($type == "steamcmd") {
+                                 $text = $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' cat -A screenlog.0');
+                               } elseif ($type == "image") {
+                                 $text = $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' cat -A screenlog.0');
+                               }
                                $lines = explode("^M$",$text);
                                echo '<form class="form-horizontal" action="index.php?page=gameserver?console-'.$gs_select.'" method="post">';
                                echo '<div class="form-group"><div class="col-sm-10">';

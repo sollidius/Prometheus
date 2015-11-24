@@ -73,7 +73,7 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `ga
 (14, 'L4D2', 'left4dead2', 'steamcmd', '222860', 'l4d2', ''),
 (20, 'L4D', 'left4dead', 'steamcmd', '222840', 'l4d', ''),
 (21, 'DODS', 'dod', 'steamcmd', '232290', 'dods', ''),
-(31, 'Minecraft', 'mc', 'image', 'https://multi-user-worlds.googlecode.com/files/minecraft-server.zip', 'minecraft', '');
+(31, 'Minecraft', 'java -jar minecraft_server.1.8.8.jar', 'image', 'http://185.58.194.253/minecraft_server.1.8.8.jar.zip', 'minecraft', '');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,

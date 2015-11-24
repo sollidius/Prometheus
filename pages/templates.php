@@ -74,7 +74,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                  $path = htmlentities($_POST['path']);
                                  $gameq = htmlentities($_POST['gameq']);
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if ($type == "steamcmd") {
+                                   if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 }
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if ($type == "steamcmd") {
                                     if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
@@ -197,7 +199,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $map_path = htmlentities($_POST['path']);
                          $gameq = htmlentities($_POST['gameq']);
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                         if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if ($type == "steamcmd") {
+                           if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         }
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if ($type == "steamcmd") {
                             if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
