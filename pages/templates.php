@@ -72,26 +72,38 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                  $type_name = htmlentities($_POST['type_name']);
                                  $internal = htmlentities($_POST['internal']);
                                  $path = htmlentities($_POST['path']);
+                                 $gameq = htmlentities($_POST['gameq']);
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if ($type == "steamcmd") {
+                                    if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 }
+                                 if ($gameq != "") {
+                                    if(!preg_match("/^[a-zA-Z0-9\s]+$/",$gameq)){ $msg = "GameQ enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 }
+                                 if ($type == "steamcmd") {
 
+                                 } elseif ($type == "image") {
+
+                                 } else {
+                                    $error = true; $msg = "Ungültiger Type.";
+                                 }
                                  if (check_template($name,$row[0])) { $error = true; $msg = "Template exestiert bereits";}
 
                                  if ($error == false) {
 
                                    if ($limited == true) {
 
-                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?, map_path = ? WHERE id = ?");
-                                     $stmt->bind_param('sssi',$internal,$type_name,$path,$row[0]);
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?, map_path = ?, gameq = ? WHERE id = ?");
+                                     $stmt->bind_param('ssssi',$internal,$type_name,$path,$gameq,$row[0]);
                                      $stmt->execute();
                                      $stmt->close();
 
                                    } else {
 
-                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?,type = ?,name = ?,map_path = ?  WHERE id = ?");
-                                     $stmt->bind_param('sssssi',$internal,$type_name,$type,$name,$path,$row[0]);
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?,type = ?,name = ?,map_path = ?, gameq = ?  WHERE id = ?");
+                                     $stmt->bind_param('ssssssi',$internal,$type_name,$type,$name,$path,$gameq,$row[0]);
                                      $stmt->execute();
                                      $stmt->close();
 
@@ -107,10 +119,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               }
                           }
 
-                          $stmt = $mysqli->prepare("SELECT name,name_internal,type,type_name,map_path FROM templates WHERE id = ?");
+                          $stmt = $mysqli->prepare("SELECT name,name_internal,type,type_name,map_path,gameq FROM templates WHERE id = ?");
                           $stmt->bind_param('i', $row[0]);
                           $stmt->execute();
-                          $stmt->bind_result($db_name,$db_internal,$db_type,$db_type_name,$db_path);
+                          $stmt->bind_result($db_name,$db_internal,$db_type,$db_type_name,$db_path,$db_gameq);
                           $stmt->fetch();
                           $stmt->close();
 
@@ -146,9 +158,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-sm-2">Map Pfad:</label>
+                              <label class="control-label col-sm-2">Map Pfad/GameQ:</label>
                               <div class="col-sm-3">
                                 <input type="text" class="form-control input-sm" name="path" value="<?php echo $db_path;?>">
+                              </div>
+                              <div class="col-sm-3">
+                                <input type="text" class="form-control input-sm" name="gameq" value="<?php echo $db_gameq;?>">
                               </div>
                             </div>
                             <div class="form-group">
@@ -180,19 +195,30 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $type_name = htmlentities($_POST['type_name']);
                          $internal = htmlentities($_POST['internal']);
                          $map_path = htmlentities($_POST['path']);
+                         $gameq = htmlentities($_POST['gameq']);
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                         if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if ($type == "steamcmd") {
+                            if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         }
+                         if ($gameq != "") {
+                            if(!preg_match("/^[a-zA-Z0-9\s]+$/",$gameq)){ $msg = "GameQ enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         }
+                         if ($type == "steamcmd") {
 
+                         } elseif ($type == "image") {
 
-                         if (exists_entry("name","templates","name",$name) == true) { $error = true;}
+                         } else {
+                            $error = true; $msg = "Ungültiger Type.";
+                         }
+                         if (exists_entry("name","templates","name",$name) == true) { $error = true;  $msg = "Template exestiert bereits";}
 
                          if ($error == false) {
 
 
-                           $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal,map_path) VALUES (?, ?, ?, ? ,?)");
-                           $stmt->bind_param('sssss', $name, $type,$type_name,$internal,$map_path);
+                           $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal,map_path,gameq) VALUES (?, ?, ?, ? ,? ,?)");
+                           $stmt->bind_param('ssssss', $name, $type,$type_name,$internal,$map_path,$gameq);
                            $stmt->execute();
                            $stmt->close();
 
@@ -218,16 +244,19 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     <div class="form-group">
                       <label class="control-label col-sm-2">Type:</label>
                       <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm" name="type" placeholder="steamcmd">
+                        <input type="text" class="form-control input-sm" name="type" placeholder="steamcmd oder image">
                       </div>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="type_name" placeholder="4020">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Map Pfad:</label>
+                      <label class="control-label col-sm-2">Map Pfad/GameQ:</label>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="path" placeholder="csgo">
+                      </div>
+                      <div class="col-sm-3">
+                        <input type="text" class="form-control input-sm" name="gameq" placeholder="csgo">
                       </div>
                     </div>
                     <div class="form-group">
@@ -251,25 +280,31 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           <th>Type</th>
                           <th>Type Name</th>
                           <th>Pfad</th>
+                          <th>GameQ</th>
                           <th>Aktion</th>
                         </tr>
                       </thead>
                       <tbody>
                      <?php
 
-                     $query = "SELECT name, type,type_name,name_internal,id,map_path FROM templates ORDER by id";
+                     $query = "SELECT name, type,type_name,name_internal,id,map_path,gameq FROM templates ORDER by id";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal,$db_id,$db_path);
+                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal,$db_id,$db_path,$db_gameq);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
                             echo "<td>" . $db_name . "</td>";
                             echo "<td>" . $db_name_internal . "</td>";
                             echo "<td>" . $db_type . "</td>";
-                            echo "<td>" . $db_type_name . "</td>";
+                            if ( strlen($db_type_name) > 15) {
+                              echo "<td>" . substr($db_type_name, 0, 15) . "...</td>";
+                            } else {
+                              echo "<td>" . $db_type_name . "</td>";
+                            }
                             echo "<td>" . $db_path . "</td>";
+                            echo "<td>" . $db_gameq . "</td>";
                             echo '<td> <a href="index.php?page=templates?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</i></a>
                                       <a style="margin-left:2px" href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                             echo '</td>';

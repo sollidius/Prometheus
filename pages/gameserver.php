@@ -72,7 +72,7 @@ if ($_SESSION['login'] == 1) {
 
                                $ssh->exec('sudo pkill -u '.$gs_login);
                                $ssh->exec('sudo rm -r /home/'.$gs_login.'/*');
-                               $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";";
+                               $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";'";
                                $ssh->exec($copy);
 
                                $status = 1;
@@ -91,6 +91,8 @@ if ($_SESSION['login'] == 1) {
 
                             $gs_select = $row[0];
 
+                              $error = false; $msg = "";
+
                              $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
                              $stmt->bind_param('i', $gs_select);
                              $stmt->execute();
@@ -98,12 +100,14 @@ if ($_SESSION['login'] == 1) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT name_internal FROM templates WHERE name = ?");
+                             $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE name = ?");
                              $stmt->bind_param('s', $game);
                              $stmt->execute();
-                             $stmt->bind_result($name_internal);
+                             $stmt->bind_result($name_internal,$type);
                              $stmt->fetch();
                              $stmt->close();
+
+                             if ($type == "image") { $error = true; $msg = "Deaktiviert für Images";}
 
                              $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
                              $stmt->bind_param('i', $dedi_id);
@@ -112,38 +116,43 @@ if ($_SESSION['login'] == 1) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                              if (!$ssh->login($dedi_login, $dedi_password)) {
-                                echo '
-                                <div class="alert alert-danger" role="alert">
-                                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                  <span class="sr-only">Error:</span>
-                                  Login failed
-                                </div>';
-                              } else {
+                             if ($error == false) {
 
-                                $stmt = $mysqli->prepare("SELECT type_name FROM templates WHERE name = ?");
-                                $stmt->bind_param('s',$game);
-                                $stmt->execute();
-                                $stmt->bind_result($type_name);
-                                $stmt->fetch();
-                                $stmt->close();
+                               $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                                if (!$ssh->login($dedi_login, $dedi_password)) {
+                                  echo '
+                                  <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Login failed
+                                  </div>';
+                                } else {
 
-                                $status = 1;
-                                $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?  WHERE id = ?");
-                                $stmt->bind_param('iii',$status,$status,$gs_select);
-                                $stmt->execute();
-                                $stmt->close();
+                                  $stmt = $mysqli->prepare("SELECT type_name FROM templates WHERE name = ?");
+                                  $stmt->bind_param('s',$game);
+                                  $stmt->execute();
+                                  $stmt->bind_result($type_name);
+                                  $stmt->fetch();
+                                  $stmt->close();
 
-                                $ssh->exec('sudo pkill -u '.$gs_login);
-                                $ssh->exec('sudo rm /home/'.$gs_login.'/game/steam.log');
-                                $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
-                                $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
-                                $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
-                                msg_okay("Der Gameserver wird aktualisiert.");
+                                  $status = 1;
+                                  $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?  WHERE id = ?");
+                                  $stmt->bind_param('iii',$status,$status,$gs_select);
+                                  $stmt->execute();
+                                  $stmt->close();
 
-                                event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
-                              }
+                                  $ssh->exec('sudo pkill -u '.$gs_login);
+                                  $ssh->exec('sudo rm /home/'.$gs_login.'/game/steam.log');
+                                  $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
+                                  $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
+                                  $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                                  msg_okay("Der Gameserver wird aktualisiert.");
+
+                                  event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
+                                }
+                             } else {
+                               msg_warning($msg);
+                             }
                           }
                           if ($page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?start-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
                             $gs_select = $row[0];
@@ -497,102 +506,103 @@ if ($_SESSION['login'] == 1) {
                         $result->close();
                     }
 
-                    if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
+                if ($page == "gameserver?add" and $db_rank == 1) {
 
-                       $error = false; $msg = "";
-                       $port = htmlentities($_POST['port']); $slots = htmlentities($_POST['slots']);
-                       $dedicated = htmlentities($_POST['dedicated']); $type = htmlentities($_POST['type']);
-                       $map = htmlentities($_POST['map']);
-                       $user_gs = htmlentities($_POST['users']);
+                  if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
 
-                       if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/^[0-9]+$/",$dedicated)){ $msg = "Dedicated enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/^[0-9]+$/",$user_gs)){ $msg = "User enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                       if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                     $error = false; $msg = "";
+                     $port = htmlentities($_POST['port']); $slots = htmlentities($_POST['slots']);
+                     $dedicated = htmlentities($_POST['dedicated']); $type = htmlentities($_POST['type']);
+                     $map = htmlentities($_POST['map']);
+                     $user_gs = htmlentities($_POST['users']);
+
+                     if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$dedicated)){ $msg = "Dedicated enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$user_gs)){ $msg = "User enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
 
 
-                       $stmt = $mysqli->prepare("SELECT ip,port,user,password,id,language FROM dedicated WHERE id = ?");
-                       $stmt->bind_param('i', $dedicated);
+                     $stmt = $mysqli->prepare("SELECT ip,port,user,password,id,language FROM dedicated WHERE id = ?");
+                     $stmt->bind_param('i', $dedicated);
+                     $stmt->execute();
+                     $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id,$dedi_language);
+                     $stmt->fetch();
+                     $stmt->close();
+
+                     if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
+                     if (check_dedi_id($dedicated)) {$msg = "Ungültige Dedicated ID"; $error = true;}
+                     if (check_template($type)) { $msg = "Ungültiges Template"; $error = true;}
+                     if (check_user_id($user_gs)) { $msg = "Ungültiger User"; $error = true;}
+
+                     $installed = check_game_installed($dedicated,$type);
+
+                     if ($installed[0] != 1) { $error = true;$msg = $installed[1];}
+
+                      if ($error == false) {
+
+                       $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
+                       $stmt->bind_param('i', $user_gs);
                        $stmt->execute();
-                       $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_id,$dedi_language);
+                       $stmt->bind_result($user_name,$user_u_count);
                        $stmt->fetch();
                        $stmt->close();
 
-                       if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
-                       if (check_dedi_id($dedicated)) {$msg = "Ungültige Dedicated ID"; $error = true;}
-                       if (check_template($type)) { $msg = "Ungültiges Template"; $error = true;}
-                       if (check_user_id($user_gs)) { $msg = "Ungültiger User"; $error = true;}
+                       $gs_login = $user_name . "-" . $user_u_count;
+                       $gs_password = generatePassword();
 
-                       $installed = check_game_installed($dedicated,$type);
+                       $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                        if (!$ssh->login($dedi_login, $dedi_password)) {
+                          msg_error("Login failed");
+                          exit;
+                        } else {
 
-                       if ($installed[0] != 1) { $error = true;$msg = $installed[1];}
-
-                        if ($error == false) {
-
-                         $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
-                         $stmt->bind_param('i', $user_gs);
-                         $stmt->execute();
-                         $stmt->bind_result($user_name,$user_u_count);
-                         $stmt->fetch();
-                         $stmt->close();
-
-                         $gs_login = $user_name . "-" . $user_u_count;
-                         $gs_password = generatePassword();
-
-                         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                          if (!$ssh->login($dedi_login, $dedi_password)) {
-                            msg_error("Login failed");
-                            exit;
-                          } else {
-
-                            $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login);
-                            $ssh->enablePTY();
-                            $ssh->exec('sudo passwd '.$gs_login);
-                            if ($dedi_language == "Deutsch") {
-                             $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
-                             $ssh->write($gs_password . "\n");
-                             $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
-                             $ssh->write($gs_password . "\n");
-                             $ssh->read('passwd: Passwort erfolgreich geändert');
-                            } elseif ($dedi_language == "Englisch") {
-                              $ssh->read('Enter new UNIX password:');
-                              $ssh->write($gs_password . "\n");
-                              $ssh->read('Retype new UNIX password:');
-                              $ssh->write($gs_password . "\n");
-                              $ssh->read('passwd: password updated successfully');
-                            }
-                            $ssh->disablePTY();
-                            $ssh->read('[prompt]');
-                            $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login."'";
-                            $ssh->exec($copy);
-
-                            $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
-                            $stmt->bind_param('isisisssi', $user_gs,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
-                            $stmt->execute();
-                            $stmt->close();
-
-                            $user_u_count = $user_u_count +1;
-
-                            $stmt = $mysqli->prepare("UPDATE users SET u_count = ? WHERE id = ?");
-                            $stmt->bind_param('ii', $user_u_count, $user_gs);
-                            $stmt->execute();
-                            $stmt->close();
-
-                            msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
-
-                            event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
-
+                          $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login);
+                          $ssh->enablePTY();
+                          $ssh->exec('sudo passwd '.$gs_login);
+                          if ($dedi_language == "Deutsch") {
+                           $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
+                           $ssh->write($gs_password . "\n");
+                           $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
+                           $ssh->write($gs_password . "\n");
+                           $ssh->read('passwd: Passwort erfolgreich geändert');
+                          } elseif ($dedi_language == "Englisch") {
+                            $ssh->read('Enter new UNIX password:');
+                            $ssh->write($gs_password . "\n");
+                            $ssh->read('Retype new UNIX password:');
+                            $ssh->write($gs_password . "\n");
+                            $ssh->read('passwd: password updated successfully');
                           }
+                          $ssh->disablePTY();
+                          $ssh->read('[prompt]');
+                          $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login."'";
+                          $ssh->exec($copy);
 
-                     } else {
-                       msg_error('Something went wrong, '.$msg);
-                     }
-                }
-                if ($page == "gameserver?add" and $db_rank == 1) {
+                          $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
+                          $stmt->bind_param('isisisssi', $user_gs,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
+                          $stmt->execute();
+                          $stmt->close();
+
+                          $user_u_count = $user_u_count +1;
+
+                          $stmt = $mysqli->prepare("UPDATE users SET u_count = ? WHERE id = ?");
+                          $stmt->bind_param('ii', $user_u_count, $user_gs);
+                          $stmt->execute();
+                          $stmt->close();
+
+                          msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
+
+                          event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
+
+                        }
+
+                   } else {
+                     msg_error('Something went wrong, '.$msg);
+                   }
+              }
 
                   ?>
-                  <form class="form-horizontal" action="index.php?page=gameserver" method="post">
+                  <form class="form-horizontal" action="index.php?page=gameserver?add" method="post">
                     <div class="form-group">
                       <label class="control-label col-sm-2">Type/Root:</label>
                       <div class="col-sm-4">

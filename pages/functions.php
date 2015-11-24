@@ -224,9 +224,10 @@ function get_game_installed($dedi_id,$game) {
 
   $result_id = 0;
   $type_t = "template";
-  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
+  $type_i = "image";
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND (type = ? OR type = ?) AND type_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-  $rc = $stmt->bind_param('iss', $dedi_id,$type_t,$game);
+  $rc = $stmt->bind_param('isss', $dedi_id,$type_t,$type_i,$game);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
   $rc = $stmt->execute();
   if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }

@@ -18,7 +18,7 @@ function check_gs($servers) {
 
 }
 
-$query = "SELECT dedicated_id,type_id,id,template_id FROM jobs ORDER by id";
+$query = "SELECT dedicated_id,type_id,id,template_id,type FROM jobs ORDER by id";
 
 if ($result = $mysqli->query($query)) {
 
@@ -36,35 +36,54 @@ if ($result = $mysqli->query($query)) {
        if (!$ssh->login($user, $password)) {
          exit;
        } else {
-        $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
-        if ($status == 1) {
-            $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "Success!" ; echo $?');
-            if ($status != 1) {
+         if ($row[4] == "template") {
+           $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
+           if ($status == 1) {
+               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "Success!" ; echo $?');
+               if ($status != 1) {
 
-              $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
-              $stmt->bind_param('i', $row[2]);
-              $stmt->execute();
-              $stmt->close();
+                 $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
+                 $stmt->bind_param('i', $row[2]);
+                 $stmt->execute();
+                 $stmt->close();
 
-              $status = 1; $status_text = "Installed";
-              $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,status_text) VALUES (?, ?, ?, ?)");
-              $stmt->bind_param('iiis', $row[0],$row[3],$status,$status_text);
-              $stmt->execute();
-              $stmt->close();
+                 $status = 1; $status_text = "Installed";
+                 $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,status_text) VALUES (?, ?, ?, ?)");
+                 $stmt->bind_param('iiis', $row[0],$row[3],$status,$status_text);
+                 $stmt->execute();
+                 $stmt->close();
 
-            }
-        } elseif ($status != 1) {
+               }
+           } elseif ($status != 1) {
 
-          $stmt = $mysqli->prepare("SELECT type,type_name FROM templates WHERE name = ?");
-          $stmt->bind_param('s', $row[1]);
-          $stmt->execute();
-          $stmt->bind_result($db_type,$db_type_name);
-          $stmt->fetch();
-          $stmt->close();
+             $stmt = $mysqli->prepare("SELECT type,type_name FROM templates WHERE name = ?");
+             $stmt->bind_param('s', $row[1]);
+             $stmt->execute();
+             $stmt->bind_result($db_type,$db_type_name);
+             $stmt->fetch();
+             $stmt->close();
 
-          $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+             $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
 
-        }
+           }
+         } elseif ($row[4] == "image") {
+
+          echo  $status = $ssh->exec("ps -ef | grep -i image".$row[1]." | grep -v grep; echo $?");
+           if ($status == 1) {
+
+             $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
+             $stmt->bind_param('i', $row[2]);
+             $stmt->execute();
+             $stmt->close();
+
+             $status = 1; $status_text = "Installed";
+             $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,status_text) VALUES (?, ?, ?, ?)");
+             $stmt->bind_param('iiis', $row[0],$row[3],$status,$status_text);
+             $stmt->execute();
+             $stmt->close();
+
+           }
+         }
        }
     }
 
@@ -165,13 +184,13 @@ if ($result = $mysqli->query($query)) {
        $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/game/screenlog.tmp'");
        //Status
        $servers[1]["type"] = "unknown";
-       if ($row[5] == "Garrysmod") { $servers[1]["type"] = "gmod";}
-       if ($row[5] == "CSS") { $servers[1]["type"] = "css";}
-       if ($row[5] == "CSGO") { $servers[1]["type"] = "csgo";}
-       if ($row[5] == "TF2") { $servers[1]["type"] = "tf2";}
-       if ($row[5] == "L4D") { $servers[1]["type"] = "l4d";}
-       if ($row[5] == "L4D2") { $servers[1]["type"] = "l4d2";}
-       if ($row[5] == "DODS") { $servers[1]["type"] = "dods";}
+       $stmt = $mysqli->prepare("SELECT gameq FROM templates WHERE name = ?");
+       $stmt->bind_param('i', $row[5]);
+       $stmt->execute();
+       $stmt->bind_result($gameq);
+       $stmt->fetch();
+       $stmt->close();
+       $servers[1]["type"] = $gameq;
        $servers[1]["host"] = $row[6] .':'.$row[7];
        $servers[1]["id"] = "serv";
        if ($servers[1]["type"] != "unknown") {

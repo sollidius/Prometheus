@@ -90,6 +90,28 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                             $stmt->close();
 
                                             msg_okay("Das Template wird erstellt, das kann etwas dauern :)");
+                                          } elseif ($row_2["type"] == "image") {
+
+                                            $file = basename($row_2["type_name"]);
+                                            if (endsWith($file,".zip")) {
+                                              $name = $row_2["name"]; $type_name = $row_2["type_name"];
+                                              $cmd = 'cd /home/'.$user.'/templates/'.$name.';screen -A -m -d -L -S image'.$name.' bash -c "cd /home/'.$user.'/templates/'.$name.';wget '.$type_name.';unzip '.$file.'"';
+                                              $ssh->exec($cmd);
+                                            } elseif (endsWith($file,".tar")) {
+                                              $name = $row_2["name"]; $type_name = $row_2["type_name"];
+                                              $cmd = 'cd /home/'.$user.'/templates/'.$name.';screen -A -m -d -L -S image'.$name.' bash -c "cd /home/'.$user.'/templates/'.$name.';wget '.$type_name.';tar xvf '.$file.'"';
+                                              $ssh->exec($cmd);
+                                            } else {
+                                              //Die Hard 4.0
+                                              msg_error("Nur .tar oder .zip");
+                                              exit;
+                                            }
+                                            $template = "image";
+                                            $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
+                                            $stmt->bind_param('iiss', $row_2["id"], $id,$template,$row_2["name"]);
+                                            $stmt->execute();
+                                            $stmt->close();
+                                            msg_okay("Das Image wird erstellt, das kann etwas dauern :)");
                                           }
                                         } else {
                                           msg_error($installed[1]);
@@ -303,6 +325,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install vsftpd');
+                          $ssh->exec('apt-get -y install unzip');
                           $os_version = "Debian 7"; $os_bit = "32";
 
                         } elseif ($os == "Debian 7 64bit") {
@@ -317,6 +340,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install lib32gcc1');
                           $ssh->exec('apt-get -y install vsftpd');
+                          $ssh->exec('apt-get -y install unzip');
                           $os_version = "Debian 7"; $os_bit = "64";
 
                         } elseif ($os == "Debian 8 32bit") {
@@ -328,6 +352,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install vsftpd');
+                          $ssh->exec('apt-get -y install unzip');
                           $os_version = "Debian 8"; $os_bit = "32";
 
                         } elseif ($os == "Debian 8 64bit") {
@@ -342,6 +367,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install lib32gcc1');
                           $ssh->exec('apt-get -y install vsftpd');
+                          $ssh->exec('apt-get -y install unzip');
                           $os_version = "Debian 8"; $os_bit = "64";
 
                         } elseif ($os == "Ubuntu 12.04 32bit") {
@@ -353,6 +379,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install vsftpd');
+                            $ssh->exec('apt-get -y install unzip');
                             $os_version = "Ubuntu 12.04"; $os_bit = "32";
 
                           } elseif ($os == "Ubuntu 12.04 64bit") {
@@ -367,6 +394,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install lib32gcc1');
                             $ssh->exec('apt-get -y install vsftpd');
+                            $ssh->exec('apt-get -y install unzip');
                             $os_version = "Ubuntu 12.04"; $os_bit = "64";
 
                           } elseif ($os == "Ubuntu 14.04 32bit") {
@@ -378,6 +406,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install vsftpd');
+                            $ssh->exec('apt-get -y install unzip');
                             $os_version = "Ubuntu 14.04"; $os_bit = "32";
 
                           } elseif ($os == "Ubuntu 14.04 64bit") {
@@ -392,6 +421,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install lib32gcc1');
                             $ssh->exec('apt-get -y install vsftpd');
+                            $ssh->exec('apt-get -y install unzip');
                             $os_version = "Ubuntu 14.04"; $os_bit = "64";
 
 
