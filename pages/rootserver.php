@@ -252,6 +252,14 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         msg_error('Login failed');
                         exit;
                       } else {
+
+                        $vsftpd = "###Prometheus###";
+                        $vsftpd.= "anonymous_enable=NO";
+                        $vsftpd.= "write_enable=YES";
+                        $vsftpd.= "chroot_local_user=YES";
+                        $vsftpd.= "allow_writeable_chroot=YES";
+                        $vsftpd.= "################";
+
                         if ($os == "Debian 7 32bit") {
 
                           $ssh->setTimeout(45);
@@ -260,6 +268,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install screen');
                           $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                           $ssh->exec('apt-get -y install lib32stdc++6');
+                          $ssh->exec('apt-get -y install vsftpd');
                           $os_version = "Debian 7"; $os_bit = "32";
 
                         } elseif ($os == "Debian 7 64bit") {
@@ -273,6 +282,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install lib32gcc1');
+                          $ssh->exec('apt-get -y install vsftpd');
                           $os_version = "Debian 7"; $os_bit = "64";
 
                         } elseif ($os == "Debian 8 32bit") {
@@ -283,6 +293,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install screen');
                           $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                           $ssh->exec('apt-get -y install lib32stdc++6');
+                          $ssh->exec('apt-get -y install vsftpd');
                           $os_version = "Debian 8"; $os_bit = "32";
 
                         } elseif ($os == "Debian 8 64bit") {
@@ -296,6 +307,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install lib32gcc1');
+                          $ssh->exec('apt-get -y install vsftpd');
                           $os_version = "Debian 8"; $os_bit = "64";
 
                         } elseif ($os == "Ubuntu 12.04 32bit") {
@@ -306,6 +318,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install screen');
                             $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                             $ssh->exec('apt-get -y install lib32stdc++6');
+                            $ssh->exec('apt-get -y install vsftpd');
                             $os_version = "Ubuntu 12.04"; $os_bit = "32";
 
                           } elseif ($os == "Ubuntu 12.04 64bit") {
@@ -319,6 +332,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install lib32gcc1');
+                            $ssh->exec('apt-get -y install vsftpd');
                             $os_version = "Ubuntu 12.04"; $os_bit = "64";
 
                           } elseif ($os == "Ubuntu 14.04 32bit") {
@@ -329,6 +343,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install screen');
                             $ssh->exec('apt-get -y install libtinfo5 libncurses5');
                             $ssh->exec('apt-get -y install lib32stdc++6');
+                            $ssh->exec('apt-get -y install vsftpd');
                             $os_version = "Ubuntu 14.04"; $os_bit = "32";
 
                           } elseif ($os == "Ubuntu 14.04 64bit") {
@@ -342,6 +357,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install lib32gcc1');
+                            $ssh->exec('apt-get -y install vsftpd');
                             $os_version = "Ubuntu 14.04"; $os_bit = "64";
 
 
@@ -370,6 +386,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         $ssh->read('[prompt]');
                         $ssh->exec("usermod -a -G sudo ".$user);
                         $ssh->exec('echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers');
+                        $ssh->exec('echo '.$vsftpd.' >> /etc/vsftpd');
+                        $ssh->exec('service vsftpd restart');
                         $ssh->read('[prompt]');
 
                         $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status,language,os_bit) VALUES (?, ?, ?, ? ,? ,? ,?, ? ,?)");

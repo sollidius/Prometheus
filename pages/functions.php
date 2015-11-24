@@ -575,15 +575,6 @@ function ip_exists($ip,$id = 0) {
       }
 }
 
-function console_send($cmd) {
-//screen -S "gameUser-1" -X stuff "changelevel de_dust2\n"
-
-
-
-
-
-}
-
 function event_add($type,$msg) {
 
   global $mysqli;

@@ -33,8 +33,9 @@ if ($_SESSION['login'] == 1) {
                <!-- /.col-lg-12 -->
            </div>
            <div class="row">
+             <?php if ($db_rank == 1) { ?>
                <div class="col-lg-8">
-
+<!--
                  <div class="row">
               <div class="col-lg-3 col-md-6">
                   <div class="panel panel-primary">
@@ -163,6 +164,7 @@ if ($_SESSION['login'] == 1) {
                    </div>
                </div>
                <!-- /.col-lg-4 -->
+               <?php } ?>
            </div>
            <!-- /.row -->
        </div>
