@@ -72,7 +72,7 @@ if ($_SESSION['login'] == 1) {
 
                                $ssh->exec('sudo pkill -u '.$gs_login);
                                $ssh->exec('sudo rm -r /home/'.$gs_login.'/*');
-                               $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login."'";
+                               $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";";
                                $ssh->exec($copy);
 
                                $status = 1;

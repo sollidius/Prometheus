@@ -229,6 +229,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         $stmt->execute();
                         $stmt->close();
 
+                        $stmt = $mysqli->prepare("DELETE FROM jobs WHERE dedicated_id = ?");
+                        $stmt->bind_param('i', $row["id"]);
+                        $stmt->execute();
+                        $stmt->close();
+
                         msg_okay("Rootserver gelöscht.");
 
                       } else {
@@ -283,8 +288,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         $vsftpd.= "anonymous_enable=NO\n";
                         $vsftpd.= "write_enable=YES\n";
                         $vsftpd.= "chroot_local_user=YES\n";
+                        $vsftpd.= "write_enable=YES\n";
+                        $vsftpd.= "local_enable=YES\n";
                         $vsftpd.= "allow_writeable_chroot=YES\n";
                         $vsftpd.= "################\n";
+
 
                         if ($os == "Debian 7 32bit") {
 
@@ -392,6 +400,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                 exit;
                         }
 
+
                         $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
                         $ssh->enablePTY();
                         $ssh->exec('sudo passwd '.$user);
@@ -497,7 +506,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 </form>
 
                 <?php
-              } elseif ($page == "rootserver") {
+              } elseif ($page == "rootserver" or startsWith($page, "rootserver?remove=") or startsWith($page, "rootserver?delete=")) {
                   ?>
                   <form action="index.php?page=rootserver" method="post">
                   <a  style="margin-bottom:2px;" href="index.php?page=rootserver?add"  class="btn pull-right btn-success btn-xs"><i class="fa fa-plus"></i></a>
