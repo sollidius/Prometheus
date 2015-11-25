@@ -283,7 +283,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           <th>Internal</th>
                           <th>Type</th>
                           <th>Type Name</th>
-                          <th>Pfad</th>
+                          <th>Map pfad</th>
                           <th>GameQ</th>
                           <th>Aktion</th>
                         </tr>
@@ -300,8 +300,16 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           while ($stmt->fetch()) {
                             echo "<tr>";
                             echo "<td>" . $db_name . "</td>";
-                            echo "<td>" . $db_name_internal . "</td>";
-                            echo "<td>" . $db_type . "</td>";
+                            if ( strlen($db_name_internal) > 15) {
+                              echo "<td>" . substr($db_name_internal, 0, 15) . "...</td>";
+                            } else {
+                              echo "<td>" . $db_name_internal . "</td>";
+                            }
+                            if ( strlen($db_type) > 15) {
+                              echo "<td>" . substr($db_type, 0, 15) . "...</td>";
+                            } else {
+                              echo "<td>" . $db_type . "</td>";
+                            }
                             if ( strlen($db_type_name) > 15) {
                               echo "<td>" . substr($db_type_name, 0, 15) . "...</td>";
                             } else {

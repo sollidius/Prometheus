@@ -175,21 +175,28 @@ if ($result = $mysqli->query($query)) {
       $stmt->fetch();
       $stmt->close();
 
+      $stmt = $mysqli->prepare("SELECT type,type_name,gameq FROM templates WHERE name = ?");
+      $stmt->bind_param('s', $row[5]);
+      $stmt->execute();
+      $stmt->bind_result($db_type,$db_type_name,$gameq);
+      $stmt->fetch();
+      $stmt->close();
+
       $ssh = new Net_SSH2($dedi_ip,$dedi_port);
        if (!$ssh->login($dedi_login, $dedi_password)) {
          exit;
        } else {
-       $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");
-       $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/game/screenlog.tmp > /home/".$row[0]."/game/screenlog.0'");
-       $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/game/screenlog.tmp'");
+         if ($db_type == "steamcmd") {
+           $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");
+           $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/game/screenlog.tmp > /home/".$row[0]."/game/screenlog.0'");
+           $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/game/screenlog.tmp'");
+         } elseif ($db_type == "image") {
+           $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/screenlog.0 > /home/".$row[0]."/screenlog.tmp'");
+           $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/screenlog.tmp > /home/".$row[0]."/screenlog.0'");
+           $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/screenlog.tmp'");
+         }
        //Status
        $servers[1]["type"] = "unknown";
-       $stmt = $mysqli->prepare("SELECT gameq FROM templates WHERE name = ?");
-       $stmt->bind_param('i', $row[5]);
-       $stmt->execute();
-       $stmt->bind_result($gameq);
-       $stmt->fetch();
-       $stmt->close();
        $servers[1]["type"] = $gameq;
        $servers[1]["host"] = $row[6] .':'.$row[7];
        $servers[1]["id"] = "serv";

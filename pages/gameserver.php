@@ -178,6 +178,13 @@ if ($_SESSION['login'] == 1) {
                              $stmt->fetch();
                              $stmt->close();
 
+                             $stmt = $mysqli->prepare("SELECT type,type_name,gameq FROM templates WHERE name = ?");
+                             $stmt->bind_param('s', $game);
+                             $stmt->execute();
+                             $stmt->bind_result($db_type,$db_type_name,$gameq);
+                             $stmt->fetch();
+                             $stmt->close();
+
                              $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                               if (!$ssh->login($dedi_login, $dedi_password)) {
                                 echo '
@@ -191,6 +198,17 @@ if ($_SESSION['login'] == 1) {
                                 if ($type == "steamcmd") {
                                     $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
                                 } elseif ($type == "image") {
+                                  if ($gameq == "minecraft") {
+                                    $server_port = str_replace("server-port=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "server-port="'));
+                                    $server_port = preg_replace("/\s+/", "", $server_port);
+                                    $query_port = str_replace("query.port=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "query.port="'));
+                                    $query_port = preg_replace("/\s+/", "", $query_port);
+                                    $max_players = str_replace("max-players=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "max-players="'));
+                                    $max_players = preg_replace("/\s+/", "", $max_players);
+                                    echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/server-port=".$server_port."/server-port=".$port."/g' {} \;");
+                                    echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/query.port=".$query_port."/query.port=".$port."/g' {} \;");
+                                    echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/max-players=".$max_players."/max-players=".$slots."/g' {} \;");
+                                  }
                                    $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' '.$name_internal.' ' .$parameter.'');
                                 }
 
@@ -703,8 +721,8 @@ if ($_SESSION['login'] == 1) {
                           <th>IP+Port</th>
                           <th>Slots</th>
                           <th>Map</th>
-                          <th>Login</th>
-                          <th>Passwort</th>
+                          <th>FTP Login</th>
+                          <th>FTP Passwort</th>
                           <th>Start/Stop</th>
                           <th>Aktion</th>
                         </tr>
