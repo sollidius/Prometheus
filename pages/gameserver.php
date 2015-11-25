@@ -196,6 +196,7 @@ if ($_SESSION['login'] == 1) {
                               } else {
                                 $ssh->exec('sudo pkill -u '.$gs_login);
                                 if ($type == "steamcmd") {
+                                    $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' rm screenlog.0');
                                     $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
                                 } elseif ($type == "image") {
                                   if ($gameq == "minecraft") {
@@ -209,6 +210,7 @@ if ($_SESSION['login'] == 1) {
                                     echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/query.port=".$query_port."/query.port=".$port."/g' {} \;");
                                     echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/max-players=".$max_players."/max-players=".$slots."/g' {} \;");
                                   }
+                                   $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' rm screenlog.0');
                                    $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' '.$name_internal.' ' .$parameter.'');
                                 }
 
@@ -608,7 +610,7 @@ if ($_SESSION['login'] == 1) {
                           }
                           $ssh->disablePTY();
                           $ssh->read('[prompt]');
-                          $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login."'";
+                          $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login.";rm screenlog.0;'";
                           $ssh->exec($copy);
 
                           $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");

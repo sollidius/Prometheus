@@ -95,11 +95,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                             $file = basename($row_2["type_name"]);
                                             if (endsWith($file,".zip")) {
                                               $name = $row_2["name"]; $type_name = $row_2["type_name"];
-                                              $cmd = 'cd /home/'.$user.'/templates/'.$name.';screen -A -m -d -L -S image'.$name.' bash -c "cd /home/'.$user.'/templates/'.$name.';wget '.$type_name.';unzip '.$file.'"';
+                                              $cmd = 'cd /home/'.$user.'/templates/'.$name.';screen -A -m -d -L -S image'.$name.' bash -c "cd /home/'.$user.'/templates/'.$name.';wget '.$type_name.';unzip '.$file.';rm '.$file.'"';
                                               $ssh->exec($cmd);
                                             } elseif (endsWith($file,".tar")) {
                                               $name = $row_2["name"]; $type_name = $row_2["type_name"];
-                                              $cmd = 'cd /home/'.$user.'/templates/'.$name.';screen -A -m -d -L -S image'.$name.' bash -c "cd /home/'.$user.'/templates/'.$name.';wget '.$type_name.';tar xvf '.$file.'"';
+                                              $cmd = 'cd /home/'.$user.'/templates/'.$name.';screen -A -m -d -L -S image'.$name.' bash -c "cd /home/'.$user.'/templates/'.$name.';wget '.$type_name.';tar xvf '.$file.';rm '.$file.'"';
                                               $ssh->exec($cmd);
                                             } else {
                                               //Die Hard 4.0
