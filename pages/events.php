@@ -49,9 +49,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                    /* fetch object array */
                    while ($row = $result->fetch_assoc()) {
+                     $type = $row['type'];
                      echo '<tr>';
                      echo '<td>'.date('d-m-Y H:i:s', $row['timestamp']).'</td>';
-                     echo '<td>'.$row['message'].'</td>';
+                     echo '<td><i class="fa fa-'.event_id_to_ico($type).' fa-fw"></i> ';
+                     echo $row['message'].'</td>';
 
                      echo '<tr>';
                     }

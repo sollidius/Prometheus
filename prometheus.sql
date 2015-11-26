@@ -45,7 +45,8 @@ CREATE TABLE `gameservers` (
   `status_update` int(1) NOT NULL DEFAULT '0',
   `running` int(1) NOT NULL DEFAULT '0',
   `is_running` int(1) NOT NULL DEFAULT '0',
-  `parameters_active` int(1) NOT NULL DEFAULT '0'
+  `parameters_active` int(1) NOT NULL DEFAULT '0',
+  `deadline` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `jobs` (
@@ -85,6 +86,18 @@ CREATE TABLE `users` (
   `u_count` int(3) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `wi_settings` (
+  `id` int(1) NOT NULL,
+  `header_txt` varchar(255) NOT NULL,
+  `log_gs_cleanup` int(1) NOT NULL DEFAULT '1',
+  `wi_maintance` int(1) NOT NULL DEFAULT '0',
+  `cronjob_lastrun` int(11) NOT NULL,
+  `gs_check_crash` int(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`) VALUES
+(1, 'Prometheus', 1, 0, 1448550183, 1);
+
 
 ALTER TABLE `dedicated`
   ADD PRIMARY KEY (`id`),
@@ -111,6 +124,10 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`),
   ADD UNIQUE KEY `email` (`email`);
+
+ALTER TABLE `wi_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
 
 
 ALTER TABLE `dedicated`

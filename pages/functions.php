@@ -619,5 +619,26 @@ function check_template_exist_in_games_dedi_id($id) {
       }
 }
 
+function event_id_to_ico($id) {
+
+  if ($id == 1) {
+    return "rocket";
+  } elseif ($id == 2) {
+    return "stop";
+  } elseif ($id == 3) {
+    return "remove";
+  } elseif ($id == 4) {
+    return "download";
+  } elseif ($id == 5) {
+    return "refresh";
+  } elseif ($id == 6) {
+    return "plus";
+  } elseif ($id == 7) {
+    return "exclamation-triangle";
+  }
+
+
+}
+
 
  ?>

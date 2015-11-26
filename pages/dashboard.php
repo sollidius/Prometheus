@@ -147,8 +147,9 @@ if ($_SESSION['login'] == 1) {
 
                              /* fetch object array */
                              while ($row = $result->fetch_assoc()) {
+                               $type = $row['type'];
                                echo '<a href="#" class="list-group-item">';
-                               echo '<i class="fa fa-comment fa-fw"></i>'.$row['message'];
+                               echo '<i class="fa fa-'.event_id_to_ico($type).' fa-fw"></i>'.$row['message'];
                                echo ' <span class="pull-right text-muted small"><em>'.date('d-m-Y H:i:s', $row['timestamp']).'</em></span>';
 
                                echo '</a>';
