@@ -311,10 +311,10 @@ if ($_SESSION['login'] == 1) {
 
                             $gs_select = $row[0];
 
-                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id,parameters_active FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $gs_select);
                             $stmt->execute();
-                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
+                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id,$parameter_active);
                             $stmt->fetch();
                             $stmt->close();
 
@@ -333,18 +333,30 @@ if ($_SESSION['login'] == 1) {
                                 $map = htmlentities($_POST['map']);
                                 $parameter = htmlentities($_POST['parameter']);
 
-                                $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
-                                $stmt->bind_param('ssi',$map,$parameter,$row[0]);
-                                $stmt->execute();
-                                $stmt->close();
+                                if ($parameter_active == 1) {
+
+                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
+                                  $stmt->bind_param('ssi',$map,$parameter,$row[0]);
+                                  $stmt->execute();
+                                  $stmt->close();
+
+                                } else {
+
+                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?  WHERE id = ?");
+                                  $stmt->bind_param('si',$map,$row[0]);
+                                  $stmt->execute();
+                                  $stmt->close();
+
+                                }
 
                               } elseif ($db_rank == 1) {
 
-                                $error = false;
+                                $error = false; $parameter_active = 0;
                                 $map = htmlentities($_POST['map']);
                                 $parameter = htmlentities($_POST['parameter']);
                                 $slots = htmlentities($_POST['slots']);
                                 $port = htmlentities($_POST['port']);
+                                if (isset($_POST['parameter_active'])) { $parameter_active = 1;}
 
                                 if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
                                 if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
@@ -352,8 +364,8 @@ if ($_SESSION['login'] == 1) {
 
                                 if ($error == false) {
 
-                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?  WHERE id = ?");
-                                  $stmt->bind_param('ssiii',$map,$parameter,$slots,$port,$row[0]);
+                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?  WHERE id = ?");
+                                  $stmt->bind_param('ssiiii',$map,$parameter,$slots,$port,$parameter_active,$row[0]);
                                   $stmt->execute();
                                   $stmt->close();
 
@@ -363,10 +375,10 @@ if ($_SESSION['login'] == 1) {
                               }
                             }
 
-                            $stmt = $mysqli->prepare("SELECT map,parameter,slots,port FROM gameservers WHERE id = ?");
+                            $stmt = $mysqli->prepare("SELECT map,parameter,slots,port,parameters_active FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $row[0]);
                             $stmt->execute();
-                            $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port);
+                            $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port,$db_parameter_active);
                             $stmt->fetch();
                             $stmt->close();
 
@@ -408,8 +420,38 @@ if ($_SESSION['login'] == 1) {
                               </div>
                               <div class="form-group">
                                 <label class="control-label col-sm-2">Paramter:</label>
-                                <div class="col-sm-8">
-                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
+                                <div class="col-sm-4">
+                                  <?php if ($db_rank == 1) { ?>
+                                <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
+                                <?php } elseif ($db_rank == 2 AND $db_parameter_active == 1) { ?>
+                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>"> <?php
+                                } elseif ($db_rank == 2 AND $db_parameter_active == 0) { ?>
+                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>" readonly="readonly"> <?php
+                                } ?>
+                                </div>
+                                <div class="col-sm-2">
+                                  <?php if ($db_rank == 1) {
+                                    echo '<input data-size="small" id="toggle-parameter" data-height="20" type="checkbox" name="parameter_active" data-toggle="toggle">';
+                                  }
+                                   if ($db_parameter_active == 1) {
+                                    ?>
+                                    <script>
+                                      function toggleOn() {
+                                        $('#toggle-parameter').bootstrapToggle('on');
+                                      }
+                                      window.onload=toggleOn;
+                                    </script>
+                                    <?php
+                                  } elseif ($db_parameter_active == 0) { ?>
+                                    <script>
+                                      function toggleOff() {
+                                        $('#toggle-parameter').bootstrapToggle('off');
+                                      }
+                                      window.onload=toggleOff;
+                                    </script>
+                                    <?php
+                                  }
+                                  ?>
                                 </div>
                               </div>
                               <?php if ($db_rank == 1) {
@@ -509,7 +551,7 @@ if ($_SESSION['login'] == 1) {
                                $lines = explode("^M$",$text);
                                echo '<form class="form-horizontal" action="index.php?page=gameserver?console-'.$gs_select.'" method="post">';
                                echo '<div class="form-group"><div class="col-sm-10">';
-                               echo '<textarea id="console" class="form-control input-sm"" rows="16">';
+                               echo '<textarea id="console" class="form-control input-sm"" rows="16" readonly="readonly">';
                                foreach ($lines as &$element) {
                                  echo $element;
                                }

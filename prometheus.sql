@@ -44,7 +44,8 @@ CREATE TABLE `gameservers` (
   `status` int(1) NOT NULL DEFAULT '1',
   `status_update` int(1) NOT NULL DEFAULT '0',
   `running` int(1) NOT NULL DEFAULT '0',
-  `is_running` int(1) NOT NULL DEFAULT '0'
+  `is_running` int(1) NOT NULL DEFAULT '0',
+  `parameters_active` int(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `jobs` (
@@ -73,7 +74,7 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `ga
 (14, 'L4D2', 'left4dead2', 'steamcmd', '222860', 'l4d2', ''),
 (20, 'L4D', 'left4dead', 'steamcmd', '222840', 'l4d', ''),
 (21, 'DODS', 'dod', 'steamcmd', '232290', 'dods', ''),
-(31, 'Minecraft', 'java -jar minecraft_server.1.8.8.jar', 'image', 'http://185.58.194.253/minecraft_server.1.8.8.jar.zip', 'minecraft', '');
+(31, 'MinecraftVanilla', 'java -jar minecraft_server.1.8.8.jar', 'image', 'http://185.58.194.253/mc1.8.8.zip', 'minecraft', '');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,

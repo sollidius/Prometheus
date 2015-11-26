@@ -13,6 +13,8 @@
     <!-- Bootstrap core CSS -->
     <link href="components/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="components/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
+
     <!-- Custom styles for this template -->
     <link href="components/dashboard.css" rel="stylesheet">
 
