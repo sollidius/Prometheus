@@ -131,12 +131,18 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               <div class="col-sm-8">
                                 <input type="text" class="form-control input-sm" name="name" value="<?php echo $db_name;?>">
                               </div>
-                              <div class="checkbox col-sm-2">
-                                <?php if ($db_rank == 2) {
-                                    echo '<label><input type="checkbox"  name ="administrator" value="1">Administrator</label>';
-                                } elseif ($db_rank == 1) {
-                                    echo '<label><input type="checkbox"  name ="administrator" value="1" checked>Administrator</label>';
-                                } ?>
+                              <div class="col-sm-2">
+                                  <input data-size="small" data-off="Benutzer" id="toggle-user" data-on="Administrator" data-height="20" type="checkbox" name="administrator" data-toggle="toggle">
+                                  <?php
+                                 if ($db_rank == 1) {
+                                  ?>
+                                  <script> function toggleOncleanup() { $('#toggle-user').bootstrapToggle('on'); } window.onload=toggleOncleanup; </script>
+                                  <?php
+                                } elseif ($db_rank == 0) { ?>
+                                  <script> function toggleOffcleanup() { $('#toggle-user').bootstrapToggle('off'); } window.onload=toggleOffcleanup; </script>
+                                  <?php
+                                }
+                                ?>
                               </div>
                             </div>
                             <div class="form-group">
@@ -222,9 +228,9 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       <div class="col-sm-8">
                         <input type="text" class="form-control input-sm" name="name" placeholder="Enter Name">
                       </div>
-                      <div class="checkbox col-sm-2">
-                        <label><input type="checkbox"  name ="administrator" value="1">Administrator</label>
-                      </div>
+                        <div class="col-sm-2">
+                          <input data-size="small" data-off="Benutzer" data-on="Administrator" data-height="20" type="checkbox" name="administrator" data-toggle="toggle">
+                        </div>
                     </div>
                     <div class="form-group">
                       <label class="control-label col-sm-2" for="email">E-Mail:</label>

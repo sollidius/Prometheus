@@ -18,6 +18,14 @@ function check_gs($servers) {
 
 }
 
+$wi_id = 1;
+$stmt = $mysqli->prepare("SELECT log_gs_cleanup FROM wi_settings WHERE id = ?");
+$stmt->bind_param('i', $wi_id);
+$stmt->execute();
+$stmt->bind_result($db_log_gs_cleanup);
+$stmt->fetch();
+$stmt->close();
+
 $query = "SELECT dedicated_id,type_id,id,template_id,type FROM jobs ORDER by id";
 
 if ($result = $mysqli->query($query)) {
@@ -168,33 +176,35 @@ if ($result = $mysqli->query($query)) {
         }
       }
       //Log Cleanup
-      $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
-      $stmt->bind_param('i', $row[1]);
-      $stmt->execute();
-      $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
-      $stmt->fetch();
-      $stmt->close();
+      if ($db_log_gs_cleanup == 1) {
+        $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+        $stmt->bind_param('i', $row[1]);
+        $stmt->execute();
+        $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+        $stmt->fetch();
+        $stmt->close();
 
-      $stmt = $mysqli->prepare("SELECT type,type_name,gameq FROM templates WHERE name = ?");
-      $stmt->bind_param('s', $row[5]);
-      $stmt->execute();
-      $stmt->bind_result($db_type,$db_type_name,$gameq);
-      $stmt->fetch();
-      $stmt->close();
+        $stmt = $mysqli->prepare("SELECT type,type_name,gameq FROM templates WHERE name = ?");
+        $stmt->bind_param('s', $row[5]);
+        $stmt->execute();
+        $stmt->bind_result($db_type,$db_type_name,$gameq);
+        $stmt->fetch();
+        $stmt->close();
 
-      $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-       if (!$ssh->login($dedi_login, $dedi_password)) {
-         exit;
-       } else {
-         if ($db_type == "steamcmd") {
-           $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");
-           $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/game/screenlog.tmp > /home/".$row[0]."/game/screenlog.0'");
-           $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/game/screenlog.tmp'");
-         } elseif ($db_type == "image") {
-           $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/screenlog.0 > /home/".$row[0]."/screenlog.tmp'");
-           $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/screenlog.tmp > /home/".$row[0]."/screenlog.0'");
-           $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/screenlog.tmp'");
-         }
+        $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+         if (!$ssh->login($dedi_login, $dedi_password)) {
+           exit;
+         } else {
+           if ($db_type == "steamcmd") {
+             $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");
+             $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/game/screenlog.tmp > /home/".$row[0]."/game/screenlog.0'");
+             $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/game/screenlog.tmp'");
+           } elseif ($db_type == "image") {
+             $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/screenlog.0 > /home/".$row[0]."/screenlog.tmp'");
+             $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/screenlog.tmp > /home/".$row[0]."/screenlog.0'");
+             $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/screenlog.tmp'");
+           }
+      }
        //Status
        $servers[1]["type"] = "unknown";
        $servers[1]["type"] = $gameq;
@@ -248,6 +258,13 @@ if ($result = $mysqli->query($query)) {
     /* free result set */
     $result->close();
 }
+
+$time = time(); $id = 1;
+
+$stmt = $mysqli->prepare("UPDATE wi_settings SET cronjob_lastrun = ?  WHERE id = ?");
+$stmt->bind_param('ii',$time,$id);
+$stmt->execute();
+$stmt->close();
 
 echo "ok";
 
