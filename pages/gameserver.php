@@ -214,9 +214,10 @@ if ($_SESSION['login'] == 1) {
                                    $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' '.$name_internal.' ' .$parameter.'');
                                 }
 
+                                $deadline = strtotime('+4 minutes', time());
                                 $is_running = 2; $running = 1;
-                                $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?  WHERE id = ?");
-                                $stmt->bind_param('iii',$is_running,$running,$gs_select);
+                                $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?,deadline = ?  WHERE id = ?");
+                                $stmt->bind_param('iiii',$is_running,$running,$deadline,$gs_select);
                                 $stmt->execute();
                                 $stmt->close();
 

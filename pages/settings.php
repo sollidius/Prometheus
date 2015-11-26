@@ -50,24 +50,24 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                  if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
 
-                   $maintance = 0;
-                   $gs_log_cleanup = 0;
+                   $maintance = 0;$gs_log_cleanup = 0; $gs_crash = 0;
                    if (isset($_POST['maintance'])) {  $maintance = 1;}
                    if (isset($_POST['gs_log_cleanup'])) { $gs_log_cleanup = 1;}
+                   if (isset($_POST['gs_crash'])) { $gs_crash = 1;}
 
                    $id = 1;
-                   $stmt = $mysqli->prepare("UPDATE wi_settings SET log_gs_cleanup = ?, wi_maintance = ?  WHERE id = ?");
-                   $stmt->bind_param('iii',$gs_log_cleanup,$maintance,$id);
+                   $stmt = $mysqli->prepare("UPDATE wi_settings SET log_gs_cleanup = ?, wi_maintance = ?,gs_check_crash = ?  WHERE id = ?");
+                   $stmt->bind_param('iiii',$gs_log_cleanup,$maintance,$gs_crash,$id);
                    $stmt->execute();
                    $stmt->close();
 
                  }
 
                  $wi_id = 1;
-                 $stmt = $mysqli->prepare("SELECT log_gs_cleanup,wi_maintance,cronjob_lastrun FROM wi_settings WHERE id = ?");
+                 $stmt = $mysqli->prepare("SELECT log_gs_cleanup,wi_maintance,cronjob_lastrun,gs_check_crash FROM wi_settings WHERE id = ?");
                  $stmt->bind_param('i', $wi_id);
                  $stmt->execute();
-                 $stmt->bind_result($db_log_gs_cleanup,$db_wi_maintance,$db_cronjob_lastrun);
+                 $stmt->bind_result($db_log_gs_cleanup,$db_wi_maintance,$db_cronjob_lastrun,$gs_check_crash);
                  $stmt->fetch();
                  $stmt->close();
 
@@ -92,12 +92,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 }
                 ?>
                 <form action="index.php?page=settings" method="post">
-                <div class="form-group">
-                  <label class="control-label col-sm-2">Wartungsmodus:</label>
-                  <div class="col-sm-2">
-                    <?php if ($db_rank == 1) {
-                      echo '<input data-size="mini" id="toggle-maintance" type="checkbox" name="maintance" data-toggle="toggle" disabled>';
-                    }
+                <div class="form-group col-sm-8">
+                  <label class="control-label">
+                    <input data-size="mini" id="toggle-maintance" type="checkbox" name="maintance" data-toggle="toggle" disabled>
+                    Wartungsmodus</label>
+                    <?php
                      if ($db_wi_maintance == 1) {
                       ?>
                       <script> function toggleOnmaintance() { $('#toggle-maintance').bootstrapToggle('on'); } addLoadEvent(toggleOnmaintance); </script>
@@ -108,13 +107,11 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     }
                     ?>
                   </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label col-sm-3">Gameserver Log cleanup:</label>
-                  <div class="col-sm-2">
-                    <?php if ($db_rank == 1) {
-                      echo '<input data-size="mini" id="toggle-log" type="checkbox" name="gs_log_cleanup" data-toggle="toggle">';
-                    }
+                <div class="form-group col-sm-8">
+                  <label class="control-label">
+                    <input data-size="mini" id="toggle-log" type="checkbox" name="gs_log_cleanup" data-toggle="toggle">
+                    Gameserver Log cleanup</label>
+                    <?php
                      if ($db_log_gs_cleanup == 1) {
                       ?>
                       <script> function toggleOncleanup() { $('#toggle-log').bootstrapToggle('on'); } addLoadEvent(toggleOncleanup); </script>
@@ -124,12 +121,24 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       <?php
                     }
                     ?>
-                  </div>
                 </div>
-                <div style="margin-top:5px;" class="form-group">
-                  <div class="col-sm-offset-0 col-sm-10">
-                    <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
-                  </div>
+                <div class="form-group col-sm-8">
+                  <label class="control-label">
+                    <input data-size="mini" id="toggle-crash" type="checkbox" name="gs_crash" data-toggle="toggle">
+                    Gameserver Neustart bei Crash</label>
+                      <?php
+                     if ($gs_check_crash == 1) {
+                      ?>
+                      <script> function toggleOncleanup() { $('#toggle-crash').bootstrapToggle('on'); } addLoadEvent(toggleOncleanup); </script>
+                      <?php
+                    } elseif ($gs_check_crash == 0) { ?>
+                      <script> function toggleOffcleanup() { $('#toggle-crash').bootstrapToggle('off'); } addLoadEvent(toggleOffcleanup); </script>
+                      <?php
+                    }
+                    ?>
+                </div>
+                <div class="form-group col-sm-8">
+                    <button type="submit" name="confirm" class="btn btn-default btn-sm">Speichern</button>
                 </div>
               </form>
 
