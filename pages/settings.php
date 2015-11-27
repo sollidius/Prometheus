@@ -1,18 +1,26 @@
 <?php
-//header
-$title = "Konfiguration";
-include 'header.php';
 
 session_start();
 
 $db_rank = 2;
 //Load user Data from DB
-$stmt = $mysqli->prepare("SELECT rank,id FROM users WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ?");
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
-$stmt->bind_result($db_rank,$db_id);
+$stmt->bind_result($db_rank,$db_id,$db_language);
 $stmt->fetch();
 $stmt->close();
+
+if ($db_language == "de") {
+    require_once('lang/de.lang.php');
+}
+
+//header
+$title = _settings_titel;
+include 'header.php';
+set_include_path('components/phpseclib');
+include('Net/SSH2.php');
+
 
 if ($_SESSION['login'] == 1 and $db_rank == 1) {
 

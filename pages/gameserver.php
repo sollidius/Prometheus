@@ -1,20 +1,26 @@
 <?php
-//header
-$title = "Gameserver";
-include 'header.php';
-set_include_path('components/phpseclib');
-include('Net/SSH2.php');
 
 session_start();
 
 $db_rank = 2;
 //Load user Data from DB
-$stmt = $mysqli->prepare("SELECT rank,id FROM users WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ?");
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
-$stmt->bind_result($db_rank,$db_id);
+$stmt->bind_result($db_rank,$db_id,$db_language);
 $stmt->fetch();
 $stmt->close();
+
+if ($db_language == "de") {
+    require_once('lang/de.lang.php');
+}
+
+//header
+$title = _gameserver_titel;
+include 'header.php';
+set_include_path('components/phpseclib');
+include('Net/SSH2.php');
+
 
 if ($_SESSION['login'] == 1) {
 
@@ -206,9 +212,12 @@ if ($_SESSION['login'] == 1) {
                                     $query_port = preg_replace("/\s+/", "", $query_port);
                                     $max_players = str_replace("max-players=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "max-players="'));
                                     $max_players = preg_replace("/\s+/", "", $max_players);
-                                    echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/server-port=".$server_port."/server-port=".$port."/g' {} \;");
-                                    echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/query.port=".$query_port."/query.port=".$port."/g' {} \;");
-                                    echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/max-players=".$max_players."/max-players=".$slots."/g' {} \;");
+                                    $query_enable = str_replace("enable-query=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "enable-query="'));
+                                    $query_enable = preg_replace("/\s+/", "", $query_enable);
+                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/server-port=".$server_port."/server-port=".$port."/g' {} \;");
+                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/query.port=".$query_port."/query.port=".$port."/g' {} \;");
+                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/max-players=".$max_players."/max-players=".$slots."/g' {} \;");
+                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/enable-query=".$query_enable."/enable-query=true/g' {} \;");
                                   }
                                    $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' rm screenlog.0');
                                    $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' '.$name_internal.' ' .$parameter.'');
@@ -294,8 +303,7 @@ if ($_SESSION['login'] == 1) {
                                    Login failed
                                  </div>';
                                } else {
-                                 $ssh->exec('sudo pkill -u '.$gs_login);
-                                 $ssh->exec('sudo userdel -r '.$gs_login);
+                                 $ssh->exec('sudo pkill -u '.$gs_login.';sudo userdel -r '.$gs_login);
 
                                  $stmt = $mysqli->prepare("DELETE FROM gameservers WHERE id = ?");
                                  $stmt->bind_param('i', $gs_select);
@@ -677,7 +685,7 @@ if ($_SESSION['login'] == 1) {
                    } else {
                      msg_error('Something went wrong, '.$msg);
                    }
-              }
+                }
 
                   ?>
                   <form class="form-horizontal" action="index.php?page=gameserver?add" method="post">

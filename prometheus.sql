@@ -83,7 +83,8 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `rank` int(11) NOT NULL DEFAULT '2',
-  `u_count` int(3) NOT NULL DEFAULT '1'
+  `u_count` int(3) NOT NULL DEFAULT '1',
+  `language` varchar(2) NOT NULL DEFAULT 'de'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `wi_settings` (
@@ -96,7 +97,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`) VALUES
-(1, 'Prometheus', 1, 0, 1448550183, 1);
+(1, 'Prometheus', 1, 0, 1448614683, 1);
 
 
 ALTER TABLE `dedicated`
