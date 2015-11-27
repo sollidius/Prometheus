@@ -1,18 +1,25 @@
 <?php
-//header
-$title = "Dashboard";
-include 'header.php';
 
 session_start();
 
 $db_rank = 2;
 //Load user Data from DB
-$stmt = $mysqli->prepare("SELECT rank,id FROM users WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ?");
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
-$stmt->bind_result($db_rank,$db_id);
+$stmt->bind_result($db_rank,$db_id,$db_language);
 $stmt->fetch();
 $stmt->close();
+
+if ($db_language == "de") {
+    require_once('lang/de.lang.php');
+  } elseif ($db_language == "en") {
+    require_once('lang/en.lang.php');
+  }
+
+//header
+$title = _title_dasboard;
+include 'header.php';
 
 if ($_SESSION['login'] == 1) {
 

@@ -13,10 +13,12 @@ $stmt->close();
 
 if ($db_language == "de") {
     require_once('lang/de.lang.php');
-}
+  } elseif ($db_language == "en") {
+    require_once('lang/en.lang.php');
+  }
 
 //header
-$title = _settings_titel;
+$title = _title_settings;
 include 'header.php';
 set_include_path('components/phpseclib');
 include('Net/SSH2.php');
@@ -86,7 +88,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                    <div class="alert alert-danger" role="alert">
                     <span class="fa fa-warning" aria-hidden="true"></span>
                     <span class="sr-only">Error:</span>
-                    Der Cronjob wurde am <?php echo  date('d-m-Y H:i:s', $db_cronjob_lastrun); ?> ausgeführt.
+                    <?php echo _settings_msgbox; ?> <?php echo  date('d-m-Y H:i:s', $db_cronjob_lastrun); ?> <?php echo _settings_msgbox_executed; ?>
                   </div>
                   <?php
                 } else {
@@ -94,7 +96,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                   <div class="alert alert-success" role="success">
                     <span class="fa fa-check" aria-hidden="true"></span>
                     <span class="sr-only">Success:</span>
-                    Der Cronjob wurde am <?php echo  date('d-m-Y H:i:s', $db_cronjob_lastrun); ?> ausgeführt.
+                    <?php echo _settings_msgbox; ?> <?php echo  date('d-m-Y H:i:s', $db_cronjob_lastrun); ?> <?php echo _settings_msgbox_executed; ?>
                   </div>
                   <?php
                 }
@@ -103,7 +105,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 <div class="form-group col-sm-8">
                   <label class="control-label">
                     <input data-size="mini" id="toggle-maintance" type="checkbox" name="maintance" data-toggle="toggle" disabled>
-                    Wartungsmodus</label>
+                    <?php echo _settings_maintance; ?></label>
                     <?php
                      if ($db_wi_maintance == 1) {
                       ?>
@@ -118,7 +120,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 <div class="form-group col-sm-8">
                   <label class="control-label">
                     <input data-size="mini" id="toggle-log" type="checkbox" name="gs_log_cleanup" data-toggle="toggle">
-                    Gameserver Log cleanup</label>
+                    <?php echo _settings_cleanup; ?></label>
                     <?php
                      if ($db_log_gs_cleanup == 1) {
                       ?>
@@ -133,7 +135,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                 <div class="form-group col-sm-8">
                   <label class="control-label">
                     <input data-size="mini" id="toggle-crash" type="checkbox" name="gs_crash" data-toggle="toggle">
-                    Gameserver Neustart bei Crash</label>
+                    <?php echo _settings_restart; ?></label>
                       <?php
                      if ($gs_check_crash == 1) {
                       ?>
@@ -146,7 +148,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     ?>
                 </div>
                 <div class="form-group col-sm-8">
-                    <button type="submit" name="confirm" class="btn btn-default btn-sm">Speichern</button>
+                    <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                 </div>
               </form>
 

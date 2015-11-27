@@ -13,10 +13,12 @@ $stmt->close();
 
 if ($db_language == "de") {
     require_once('lang/de.lang.php');
-}
+  } elseif ($db_language == "en") {
+    require_once('lang/en.lang.php');
+  }
 
 //header
-$title = _gameserver_titel;
+$title = _title_gameserver;
 include 'header.php';
 set_include_path('components/phpseclib');
 include('Net/SSH2.php');
