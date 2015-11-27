@@ -598,12 +598,23 @@ if ($_SESSION['login'] == 1) {
 
                   if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
 
-                     $error = false; $msg = "";
+                     $error = false; $msg = ""; $mass = 0;
                      $port = htmlentities($_POST['port']); $slots = htmlentities($_POST['slots']);
                      $dedicated = htmlentities($_POST['dedicated']); $type = htmlentities($_POST['type']);
                      $map = htmlentities($_POST['map']);
                      $user_gs = htmlentities($_POST['users']);
+                     if (isset($_POST['mass'])) {  $mass = 1;}
+                     if (isset($_POST['mass_ammount'])) { $mass_ammount = $_POST['mass_ammount'];}
 
+                     if ($mass == 1) {
+                        if(!preg_match("/^[0-9]+$/",$mass_ammount)){ $msg = "Die Anzahl enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                        if ($mass_ammount > 14) {
+                          $mass_ammount = 14;
+                        }
+                        if ($mass_ammount < 0) {
+                          $mass_ammount = 2;
+                        }
+                     }
                      if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
                      if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
                      if(!preg_match("/^[0-9]+$/",$dedicated)){ $msg = "Dedicated enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
@@ -629,59 +640,69 @@ if ($_SESSION['login'] == 1) {
 
                       if ($error == false) {
 
-                       $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
-                       $stmt->bind_param('i', $user_gs);
-                       $stmt->execute();
-                       $stmt->bind_result($user_name,$user_u_count);
-                       $stmt->fetch();
-                       $stmt->close();
+                        $i = 1;
+                        if ($mass == 0) { $mass_ammount =1;}
+                        while ($i <= $mass_ammount) {
 
-                       $gs_login = $user_name . "-" . $user_u_count;
-                       $gs_password = generatePassword();
-
-                       $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                        if (!$ssh->login($dedi_login, $dedi_password)) {
-                          msg_error("Login failed");
-                          exit;
-                        } else {
-
-                          $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login);
-                          $ssh->enablePTY();
-                          $ssh->exec('sudo passwd '.$gs_login);
-                          if ($dedi_language == "Deutsch") {
-                           $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
-                           $ssh->write($gs_password . "\n");
-                           $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
-                           $ssh->write($gs_password . "\n");
-                           $ssh->read('passwd: Passwort erfolgreich geändert');
-                          } elseif ($dedi_language == "Englisch") {
-                            $ssh->read('Enter new UNIX password:');
-                            $ssh->write($gs_password . "\n");
-                            $ssh->read('Retype new UNIX password:');
-                            $ssh->write($gs_password . "\n");
-                            $ssh->read('passwd: password updated successfully');
-                          }
-                          $ssh->disablePTY();
-                          $ssh->read('[prompt]');
-                          $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login.";rm screenlog.0;'";
-                          $ssh->exec($copy);
-
-                          $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
-                          $stmt->bind_param('isisisssi', $user_gs,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
+                          $stmt = $mysqli->prepare("SELECT name,u_count FROM users WHERE id = ?");
+                          $stmt->bind_param('i', $user_gs);
                           $stmt->execute();
+                          $stmt->bind_result($user_name,$user_u_count);
+                          $stmt->fetch();
                           $stmt->close();
 
-                          $user_u_count = $user_u_count +1;
+                          $gs_login = $user_name . "-" . $user_u_count;
+                          $gs_password = generatePassword();
 
-                          $stmt = $mysqli->prepare("UPDATE users SET u_count = ? WHERE id = ?");
-                          $stmt->bind_param('ii', $user_u_count, $user_gs);
-                          $stmt->execute();
-                          $stmt->close();
+                          $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                           if (!$ssh->login($dedi_login, $dedi_password)) {
+                             msg_error("Login failed");
+                             exit;
+                           } else {
 
-                          msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
+                             $ssh->exec('sudo useradd -m -d /home/'.$gs_login.' -s /bin/bash '.$gs_login);
+                             $ssh->enablePTY();
+                             $ssh->exec('sudo passwd '.$gs_login);
+                             if ($dedi_language == "Deutsch") {
+                              $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
+                              $ssh->write($gs_password . "\n");
+                              $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
+                              $ssh->write($gs_password . "\n");
+                              $ssh->read('passwd: Passwort erfolgreich geändert');
+                             } elseif ($dedi_language == "Englisch") {
+                               $ssh->read('Enter new UNIX password:');
+                               $ssh->write($gs_password . "\n");
+                               $ssh->read('Retype new UNIX password:');
+                               $ssh->write($gs_password . "\n");
+                               $ssh->read('passwd: password updated successfully');
+                             }
+                             $ssh->disablePTY();
+                             $ssh->read('[prompt]');
+                             $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login.";rm screenlog.0;'";
+                             $ssh->exec($copy);
 
-                          event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
+                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
+                             $stmt->bind_param('isisisssi', $user_gs,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
+                             $stmt->execute();
+                             $stmt->close();
 
+                             $user_u_count = $user_u_count +1;
+
+                             $stmt = $mysqli->prepare("UPDATE users SET u_count = ? WHERE id = ?");
+                             $stmt->bind_param('ii', $user_u_count, $user_gs);
+                             $stmt->execute();
+                             $stmt->close();
+
+                             msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
+
+                             event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
+
+                           }
+                           $i++;
+                           while (1 != 2 ) {
+                            $port =$port +4;
+                              if (port_exists($dedi_ip,$port) == false) { break;}
+                            }
                         }
 
                    } else {
@@ -756,6 +777,21 @@ if ($_SESSION['login'] == 1) {
                       <div class="col-sm-4">
                         <input type="text" class="form-control input-sm" name="slots" placeholder="14">
                       </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-sm-2">Anzahl:</label>
+                      <input data-size="small" data-width="15" type="checkbox" name="mass" data-toggle="toggle">
+                      <div class="col-sm-2">
+                      <select name="mass_ammount" class="form-control input-sm">
+                        <option>2</option>
+                        <option>4</option>
+                        <option>6</option>
+                        <option>8</option>
+                        <option>10</option>
+                        <option>12</option>
+                        <option>14</option>
+                      </select>
+                    </div>
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
