@@ -334,6 +334,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install vsftpd');
                           $ssh->exec('apt-get -y install unzip');
+                          $ssh->exec('apt-get -y install gawk');
                           $os_version = "Debian 7"; $os_bit = "32";
 
                         } elseif ($os == "Debian 7 64bit") {
@@ -349,6 +350,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install lib32gcc1');
                           $ssh->exec('apt-get -y install vsftpd');
                           $ssh->exec('apt-get -y install unzip');
+                          $ssh->exec('apt-get -y install gawk');
                           $os_version = "Debian 7"; $os_bit = "64";
 
                         } elseif ($os == "Debian 8 32bit") {
@@ -361,6 +363,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install lib32stdc++6');
                           $ssh->exec('apt-get -y install vsftpd');
                           $ssh->exec('apt-get -y install unzip');
+                          $ssh->exec('apt-get -y install gawk');
                           $os_version = "Debian 8"; $os_bit = "32";
 
                         } elseif ($os == "Debian 8 64bit") {
@@ -376,6 +379,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install lib32gcc1');
                           $ssh->exec('apt-get -y install vsftpd');
                           $ssh->exec('apt-get -y install unzip');
+                          $ssh->exec('apt-get -y install gawk');
                           $os_version = "Debian 8"; $os_bit = "64";
 
                         } elseif ($os == "Ubuntu 12.04 32bit") {
@@ -388,6 +392,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install vsftpd');
                             $ssh->exec('apt-get -y install unzip');
+                            $ssh->exec('apt-get -y install gawk');
                             $os_version = "Ubuntu 12.04"; $os_bit = "32";
 
                           } elseif ($os == "Ubuntu 12.04 64bit") {
@@ -403,6 +408,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install lib32gcc1');
                             $ssh->exec('apt-get -y install vsftpd');
                             $ssh->exec('apt-get -y install unzip');
+                            $ssh->exec('apt-get -y install gawk');
                             $os_version = "Ubuntu 12.04"; $os_bit = "64";
 
                           } elseif ($os == "Ubuntu 14.04 32bit") {
@@ -415,6 +421,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install lib32stdc++6');
                             $ssh->exec('apt-get -y install vsftpd');
                             $ssh->exec('apt-get -y install unzip');
+                            $ssh->exec('apt-get -y install gawk');
                             $os_version = "Ubuntu 14.04"; $os_bit = "32";
 
                           } elseif ($os == "Ubuntu 14.04 64bit") {
@@ -430,6 +437,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                             $ssh->exec('apt-get -y install lib32gcc1');
                             $ssh->exec('apt-get -y install vsftpd');
                             $ssh->exec('apt-get -y install unzip');
+                            $ssh->exec('apt-get -y install gawk');
                             $os_version = "Ubuntu 14.04"; $os_bit = "64";
 
 
