@@ -19,10 +19,10 @@ function check_gs($servers) {
 }
 
 $wi_id = 1;
-$stmt = $mysqli->prepare("SELECT log_gs_cleanup,gs_check_crash FROM wi_settings WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT log_gs_cleanup,gs_check_crash,gs_check_cpu,gs_check_cpu_msg FROM wi_settings WHERE id = ?");
 $stmt->bind_param('i', $wi_id);
 $stmt->execute();
-$stmt->bind_result($db_log_gs_cleanup,$gs_check_crash);
+$stmt->bind_result($db_log_gs_cleanup,$gs_check_crash,$gs_check_cpu,$gs_check_cpu_msg);
 $stmt->fetch();
 $stmt->close();
 
@@ -95,7 +95,7 @@ if ($result = $mysqli->query($query)) {
          }
        }
     }
-    
+
     /* free result set */
     $result->close();
 }
@@ -107,17 +107,24 @@ if ($result = $mysqli->query($query)) {
     /* fetch object array */
     while ($row = $result->fetch_row()) {
 
-      $stmt = $mysqli->prepare("SELECT type,type_name,gameq FROM templates WHERE name = ?");
-      $stmt->bind_param('s', $row[5]);
-      $stmt->execute();
-      $stmt->bind_result($db_type,$db_type_name,$gameq);
-      $stmt->fetch();
-      $stmt->close();
-
       $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
       $stmt->bind_param('i', $row[1]);
       $stmt->execute();
       $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+      $stmt->fetch();
+      $stmt->close();
+
+      $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
+      $stmt->bind_param('i', $row[3]);
+      $stmt->execute();
+      $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
+      $stmt->fetch();
+      $stmt->close();
+
+      $stmt = $mysqli->prepare("SELECT type,type_name,gameq,name_internal,type FROM templates WHERE name = ?");
+      $stmt->bind_param('s', $row[5]);
+      $stmt->execute();
+      $stmt->bind_result($db_type,$db_type_name,$gameq,$name_internal,$type);
       $stmt->fetch();
       $stmt->close();
 
@@ -126,27 +133,61 @@ if ($result = $mysqli->query($query)) {
       $servers[1]["type"] = $gameq;
       $servers[1]["host"] = $row[6] .':'.$row[7];
       $servers[1]["id"] = "serv";
+      $current_players = 0;
       if ($servers[1]["type"] != "unknown") {
         $results = check_gs($servers);
         foreach ($results as &$element) {
+            $current_players = $element['gq_numplayers'];
             if ($element["gq_online"] == 1) {
 
               $running = 1;
-              $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?  WHERE id = ?");
-              $stmt->bind_param('ii',$running,$row[3]);
+              $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,player_online = ?  WHERE id = ?");
+              $stmt->bind_param('iii',$running,$element['gq_numplayers'],$row[3]);
               $stmt->execute();
               $stmt->close();
 
             } else {
 
               $running = 0;
-              $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?  WHERE id = ?");
-              $stmt->bind_param('ii',$running,$row[3]);
+              $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,player_online = ?  WHERE id = ?");
+              $stmt->bind_param('iii',$running,$element['gq_numplayers'],$row[3]);
               $stmt->execute();
               $stmt->close();
 
             }
         }
+      }
+
+      if ($current_players == 0 AND $gs_check_crash == 1) {
+
+        $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+         if (!$ssh->login($dedi_login, $dedi_password)) {
+           exit;
+         } else {
+
+            $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
+            if ($load > 19) {
+
+              gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
+              event_add(1,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet.");
+            }
+
+
+         }
+      } elseif ($current_players > 0 AND $gs_check_cpu_msg == 1) {
+
+        $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+         if (!$ssh->login($dedi_login, $dedi_password)) {
+           exit;
+         } else {
+
+            $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
+            if ($load > 90) {
+
+              $cmd = "say The CPU load is dam high! Please clean your stuff up.";
+              $ssh->exec('sudo -u '.$gs_login.' screen -S "game'.$gs_login.'" -X stuff "'.$cmd.'\n"');
+            }
+         }
       }
 
       if ($row[2] == 1 AND $row[4] == 0) {
@@ -189,13 +230,6 @@ if ($result = $mysqli->query($query)) {
                }
            } elseif ($status != 1) {
 
-             $stmt = $mysqli->prepare("SELECT type,type_name FROM templates WHERE name = ?");
-             $stmt->bind_param('s', $row[5]);
-             $stmt->execute();
-             $stmt->bind_result($db_type,$db_type_name);
-             $stmt->fetch();
-             $stmt->close();
-
              $ssh->exec('sudo rm /home/'.$row[0].'/game/steam.log');
              $ssh->exec('sudo touch /home/'.$row[0].'/game/steam.log');
              $ssh->exec('sudo chmod 777 /home/'.$row[0].'/game/steam.log');
@@ -206,59 +240,12 @@ if ($result = $mysqli->query($query)) {
       } elseif ($row[8] == 1 AND $row[9] == 0 AND time() > $row[10] AND $gs_check_crash == 1) {
         //If running but is_running false = Restart
 
-        $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
-        $stmt->bind_param('i', $row[3]);
-        $stmt->execute();
-        $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
-        $stmt->fetch();
-        $stmt->close();
-
-        $stmt = $mysqli->prepare("SELECT type,type_name,gameq FROM templates WHERE name = ?");
-        $stmt->bind_param('s', $game);
-        $stmt->execute();
-        $stmt->bind_result($db_type,$db_type_name,$gameq);
-        $stmt->fetch();
-        $stmt->close();
-
-        $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE name = ?");
-        $stmt->bind_param('s', $game);
-        $stmt->execute();
-        $stmt->bind_result($name_internal,$type);
-        $stmt->fetch();
-        $stmt->close();
-
         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
          if (!$ssh->login($dedi_login, $dedi_password)) {
            exit;
          } else {
-           $ssh->exec('sudo pkill -u '.$gs_login);
-           if ($type == "steamcmd") {
-               $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' rm screenlog.0');
-               $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
-           } elseif ($type == "image") {
-             if ($gameq == "minecraft") {
-               $server_port = str_replace("server-port=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "server-port="'));
-               $server_port = preg_replace("/\s+/", "", $server_port);
-               $query_port = str_replace("query.port=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "query.port="'));
-               $query_port = preg_replace("/\s+/", "", $query_port);
-               $max_players = str_replace("max-players=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "max-players="'));
-               $max_players = preg_replace("/\s+/", "", $max_players);
-               echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/server-port=".$server_port."/server-port=".$port."/g' {} \;");
-               echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/query.port=".$query_port."/query.port=".$port."/g' {} \;");
-               echo $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/max-players=".$max_players."/max-players=".$slots."/g' {} \;");
-             }
-              $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' rm screenlog.0');
-              $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' '.$name_internal.' ' .$parameter.'');
-           }
-
-           $deadline = strtotime('+4 minutes', time());
-           $is_running = 2; $running = 1;
-           $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?,deadline = ?  WHERE id = ?");
-           $stmt->bind_param('iiii',$is_running,$running,$deadline,$row[3]);
-           $stmt->execute();
-           $stmt->close();
-
-           event_add(7,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
+            gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
+            event_add(1,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
          }
       }
       //Log Cleanup

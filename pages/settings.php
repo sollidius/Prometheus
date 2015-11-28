@@ -60,24 +60,26 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
 
                  if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm'])) {
 
-                   $maintance = 0;$gs_log_cleanup = 0; $gs_crash = 0;
+                   $maintance = 0;$gs_log_cleanup = 0; $gs_crash = 0;$gs_cpu = 0;$gs_cpu_msg = 0;
                    if (isset($_POST['maintance'])) {  $maintance = 1;}
                    if (isset($_POST['gs_log_cleanup'])) { $gs_log_cleanup = 1;}
                    if (isset($_POST['gs_crash'])) { $gs_crash = 1;}
+                   if (isset($_POST['gs_cpu'])) { $gs_cpu = 1;}
+                   if (isset($_POST['gs_cpu_msg'])) { $gs_cpu_msg = 1;}
 
                    $id = 1;
-                   $stmt = $mysqli->prepare("UPDATE wi_settings SET log_gs_cleanup = ?, wi_maintance = ?,gs_check_crash = ?  WHERE id = ?");
-                   $stmt->bind_param('iiii',$gs_log_cleanup,$maintance,$gs_crash,$id);
+                   $stmt = $mysqli->prepare("UPDATE wi_settings SET log_gs_cleanup = ?, wi_maintance = ?,gs_check_crash = ?,gs_check_cpu = ?,gs_check_cpu_msg = ?  WHERE id = ?");
+                   $stmt->bind_param('iiiiii',$gs_log_cleanup,$maintance,$gs_crash,$gs_cpu,$gs_cpu_msg,$id);
                    $stmt->execute();
                    $stmt->close();
 
                  }
 
                  $wi_id = 1;
-                 $stmt = $mysqli->prepare("SELECT log_gs_cleanup,wi_maintance,cronjob_lastrun,gs_check_crash FROM wi_settings WHERE id = ?");
+                 $stmt = $mysqli->prepare("SELECT log_gs_cleanup,wi_maintance,cronjob_lastrun,gs_check_crash,gs_check_cpu,gs_check_cpu_msg FROM wi_settings WHERE id = ?");
                  $stmt->bind_param('i', $wi_id);
                  $stmt->execute();
-                 $stmt->bind_result($db_log_gs_cleanup,$db_wi_maintance,$db_cronjob_lastrun,$gs_check_crash);
+                 $stmt->bind_result($db_log_gs_cleanup,$db_wi_maintance,$db_cronjob_lastrun,$gs_check_crash,$gs_check_cpu,$gs_check_cpu_msg);
                  $stmt->fetch();
                  $stmt->close();
 
@@ -143,6 +145,36 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       <?php
                     } elseif ($gs_check_crash == 0) { ?>
                       <script> function toggleOffcleanup() { $('#toggle-crash').bootstrapToggle('off'); } addLoadEvent(toggleOffcleanup); </script>
+                      <?php
+                    }
+                    ?>
+                </div>
+                <div class="form-group col-sm-8">
+                  <label class="control-label">
+                    <input data-size="mini" id="toggle-cpu" type="checkbox" name="gs_cpu" data-toggle="toggle">
+                    Gameserver Neustarten bei hoher CPU Last (wenn leer)</label>
+                      <?php
+                     if ($gs_check_cpu == 1) {
+                      ?>
+                      <script> function toggleOncpu() { $('#toggle-cpu').bootstrapToggle('on'); } addLoadEvent(toggleOncpu); </script>
+                      <?php
+                    } elseif ($gs_check_cpu == 0) { ?>
+                      <script> function toggleOffcpu() { $('#toggle-cpu').bootstrapToggle('off'); } addLoadEvent(toggleOffcpu); </script>
+                      <?php
+                    }
+                    ?>
+                </div>
+                <div class="form-group col-sm-8">
+                  <label class="control-label">
+                    <input data-size="mini" id="toggle-msg" type="checkbox" name="gs_cpu_msg" data-toggle="toggle">
+                    Nachricht im Chat, bei mehr als 90% CPU Last</label>
+                      <?php
+                     if ($gs_check_cpu_msg == 1) {
+                      ?>
+                      <script> function toggleOnmsg() { $('#toggle-msg').bootstrapToggle('on'); } addLoadEvent(toggleOnmsg); </script>
+                      <?php
+                    } elseif ($gs_check_cpu_msg == 0) { ?>
+                      <script> function toggleOffmsg() { $('#toggle-msg').bootstrapToggle('off'); } addLoadEvent(toggleOffmsg); </script>
                       <?php
                     }
                     ?>

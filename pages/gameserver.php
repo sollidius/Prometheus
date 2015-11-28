@@ -202,40 +202,9 @@ if ($_SESSION['login'] == 1) {
                                   Login failed
                                 </div>';
                               } else {
-                                $ssh->exec('sudo pkill -u '.$gs_login);
-                                if ($type == "steamcmd") {
-                                    $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' rm screenlog.0');
-                                    $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
-                                } elseif ($type == "image") {
-                                  if ($gameq == "minecraft") {
-                                    $server_port = str_replace("server-port=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "server-port="'));
-                                    $server_port = preg_replace("/\s+/", "", $server_port);
-                                    $query_port = str_replace("query.port=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "query.port="'));
-                                    $query_port = preg_replace("/\s+/", "", $query_port);
-                                    $max_players = str_replace("max-players=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "max-players="'));
-                                    $max_players = preg_replace("/\s+/", "", $max_players);
-                                    $query_enable = str_replace("enable-query=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "enable-query="'));
-                                    $query_enable = preg_replace("/\s+/", "", $query_enable);
-                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/server-port=".$server_port."/server-port=".$port."/g' {} \;");
-                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/query.port=".$query_port."/query.port=".$port."/g' {} \;");
-                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/max-players=".$max_players."/max-players=".$slots."/g' {} \;");
-                                    $ssh->exec("sudo -u ".$gs_login." find /home/".$gs_login."/server.properties -type f -exec sed -i 's/enable-query=".$query_enable."/enable-query=true/g' {} \;");
-                                  }
-                                   $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' rm screenlog.0');
-                                   $ssh->exec('cd /home/'.$gs_login.'/;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' '.$name_internal.' ' .$parameter.'');
-                                }
-
-                                $deadline = strtotime('+4 minutes', time());
-                                $is_running = 2; $running = 1;
-                                $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?,deadline = ?  WHERE id = ?");
-                                $stmt->bind_param('iiii',$is_running,$running,$deadline,$gs_select);
-                                $stmt->execute();
-                                $stmt->close();
-
-                                event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
-
-                                msg_okay("Der Gamesever wurde gestartet.");
-
+                                 gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$gs_select);
+                                 event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
+                                 msg_okay("Der Gamesever wurde gestartet.");
                               }
                               break;
                           }
@@ -821,7 +790,7 @@ if ($_SESSION['login'] == 1) {
                       <tbody>
                      <?php
 
-                     $query = "SELECT user_id, game, ip, port,slots, gs_login, gs_password, id, map,status,is_running FROM gameservers ORDER by id";
+                     $query = "SELECT user_id, game, ip, port,slots, gs_login, gs_password, id, map,status,is_running,player_online FROM gameservers ORDER by id";
 
                      if ($result = $mysqli->query($query)) {
 
@@ -839,7 +808,7 @@ if ($_SESSION['login'] == 1) {
                               echo "<td>" . $db_user_name . "</td>";
                               echo "<td>" . $row["game"] . "</td>";
                               echo "<td>" . $row["ip"] .":".$row["port"]."</td>";
-                              echo "<td>" . $row["slots"] . "</td>";
+                              echo "<td>" .$row['player_online']."/". $row["slots"] . "</td>";
                               echo "<td>" . $row["map"] . "</td>";
                               echo "<td>" . $row["gs_login"] . "</td>";
                               echo "<td>" . $row["gs_password"] . "</td>";
