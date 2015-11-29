@@ -7,15 +7,28 @@ include('Net/SSH2.php');
 
 function check_gs($servers) {
 
-  $gq = new GameQ(); // or $gq = GameQ::factory();
-  $gq->setOption('timeout', 5); // Seconds
-  $gq->setOption('debug', TRUE);
-  $gq->setFilter('normalise');
-  $gq->addServers($servers);
+  $fp = fsockopen("www.google.com", 80, $errno, $errstr, 5);
+  if ($fp) {
+    $gq = new GameQ(); // or $gq = GameQ::factory();
+    $gq->setOption('timeout', 5); // Seconds
+    $gq->setOption('debug', TRUE);
+    $gq->setFilter('normalise');
+    $gq->addServers($servers);
 
-  $results = $gq->requestData();
-  return $results;
+    $results = $gq->requestData();
+    if ($results['serv']["gq_online"] == 1) {
+          return $results;
+    } else {
+      $gq = new GameQ(); // or $gq = GameQ::factory();
+      $gq->setOption('timeout', 5); // Seconds
+      $gq->setOption('debug', TRUE);
+      $gq->setFilter('normalise');
+      $gq->addServers($servers);
 
+      $results = $gq->requestData();
+      return $results;
+    }
+  }
 }
 
 $wi_id = 1;
@@ -133,61 +146,68 @@ if ($result = $mysqli->query($query)) {
       $servers[1]["type"] = $gameq;
       $servers[1]["host"] = $row[6] .':'.$row[7];
       $servers[1]["id"] = "serv";
-      $current_players = 0;
+      $current_players = 1000; $current_status = "unknown"; $current_maxplayers = "0";
       if ($servers[1]["type"] != "unknown") {
         $results = check_gs($servers);
-        foreach ($results as &$element) {
-            $current_players = $element['gq_numplayers'];
-            if ($element["gq_online"] == 1) {
+        //print_r($results);
+        //print "<pre>";
+        //print_r($results);
+        //print "</pre>";
+        //exit;
+            $current_status = "known";
+            $results['serv']["gq_online"] = (int)$results['serv']["gq_online"];
+            if ($results['serv']["gq_online"] === 1) {
 
+              $current_players = $results['serv']['gq_numplayers'];
+              $current_maxplayers = $results['serv']['max_players'];
               $running = 1;
+              echo $current_players ."/".$current_maxplayers;
+              echo "<br>";
               $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,player_online = ?  WHERE id = ?");
-              $stmt->bind_param('iii',$running,$element['gq_numplayers'],$row[3]);
-              $stmt->execute();
+              $stmt->bind_param('iii',$running,$results['serv']['gq_numplayers'],$row[3]);
+              $rc = $stmt->execute();
               $stmt->close();
 
-            } else {
+              if ($current_players === 0 AND $gs_check_crash == 1) {
 
+                $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                 if (!$ssh->login($dedi_login, $dedi_password)) {
+                   exit;
+                 } else {
+
+                    $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
+                    if ($load > 19) {
+                      gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
+                      event_add(1,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet. (".$current_status."-".$current_players."/".$current_maxplayers.")");
+                    }
+                 }
+              } elseif ($current_players > 0 AND $gs_check_cpu_msg == 1 AND $current_players != 1000) {
+
+                $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                 if (!$ssh->login($dedi_login, $dedi_password)) {
+                   exit;
+                 } else {
+                    $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
+                    if ($load > 90) {
+                      $cmd = "say The CPU load is dam high! Please clean your stuff up.";
+                      $ssh->exec('sudo -u '.$gs_login.' screen -S "game'.$gs_login.'" -X stuff "'.$cmd.'\n"');
+                    }
+                 }
+              }
+
+            } elseif ($results['serv']["gq_online"] === 0) {
+
+              $current_players = 0;
+              $current_maxplayers = 0;
+              echo $current_players ."/".$current_maxplayers;
+              echo "<br>";
               $running = 0;
               $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,player_online = ?  WHERE id = ?");
-              $stmt->bind_param('iii',$running,$element['gq_numplayers'],$row[3]);
+              $stmt->bind_param('iii',$running,$results['serv']['gq_numplayers'],$row[3]);
               $stmt->execute();
               $stmt->close();
 
             }
-        }
-      }
-
-      if ($current_players == 0 AND $gs_check_crash == 1) {
-
-        $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-         if (!$ssh->login($dedi_login, $dedi_password)) {
-           exit;
-         } else {
-
-            $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
-            if ($load > 19) {
-
-              gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
-              event_add(1,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet.");
-            }
-
-
-         }
-      } elseif ($current_players > 0 AND $gs_check_cpu_msg == 1) {
-
-        $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-         if (!$ssh->login($dedi_login, $dedi_password)) {
-           exit;
-         } else {
-
-            $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
-            if ($load > 90) {
-
-              $cmd = "say The CPU load is dam high! Please clean your stuff up.";
-              $ssh->exec('sudo -u '.$gs_login.' screen -S "game'.$gs_login.'" -X stuff "'.$cmd.'\n"');
-            }
-         }
       }
 
       if ($row[2] == 1 AND $row[4] == 0) {
