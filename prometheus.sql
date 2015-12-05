@@ -1,6 +1,28 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+CREATE TABLE `addons` (
+  `id` int(11) NOT NULL,
+  `game_id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `folder` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `addons` (`id`, `game_id`, `name`, `url`, `path`, `folder`) VALUES
+(4, 2, 'ULIB', 'http://ulyssesmod.net/archive/ULib/ULib-v2_52.zip', 'game/garrysmod/addons', 'ulib'),
+(5, 2, 'ULX', 'http://ulyssesmod.net/archive/ulx/ulx-v3_62.zip', 'game/garrysmod/addons', 'ulx');
+
+CREATE TABLE `addons_installed` (
+  `id` int(11) NOT NULL,
+  `dedi_id` int(11) NOT NULL,
+  `addons_id` int(11) NOT NULL,
+  `gs_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
+  `status_text` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `dedicated` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -100,8 +122,14 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1448716520, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1449353164, 1, 1, 1);
 
+
+ALTER TABLE `addons`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `addons_installed`
+  ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `dedicated`
   ADD PRIMARY KEY (`id`),
@@ -134,6 +162,10 @@ ALTER TABLE `wi_settings`
   ADD UNIQUE KEY `id` (`id`);
 
 
+ALTER TABLE `addons`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `addons_installed`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `dedicated`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `dedicated_games`
