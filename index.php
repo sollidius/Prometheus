@@ -43,6 +43,10 @@ if (startsWith($page, "rootserver")) {
 if (startsWith($page, "templates")) {
  include 'pages/templates.php';
 }
+//Addons
+if (startsWith($page, "addons")) {
+ include 'pages/addons.php';
+}
 
 //Events
 if (startsWith($page, "events")) {

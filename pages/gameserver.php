@@ -35,11 +35,7 @@ if ($_SESSION['login'] == 1) {
            <div class="row">
                <div class="col-lg-12">
                    <h1 class="page-header"><?php echo $title; ?></h1>
-               </div>
                <!-- /.col-lg-12 -->
-           </div>
-           <div class="row">
-               <div class="col-lg-12">
                  <?php
             //      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -287,7 +283,7 @@ if ($_SESSION['login'] == 1) {
                                }
                                break;
                             }
-                          if ($page == "gameserver?settings-".$row[0] AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?settings-".$row[0] AND $db_rank == 1) {
+                          if (($page == "gameserver?settings-".$row[0] or $page == "gameserver?settings-".$row[0]."-addons") AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?settings-".$row[0] AND $db_rank == 1) {
 
                             $gs_select = $row[0];
 
@@ -305,156 +301,267 @@ if ($_SESSION['login'] == 1) {
                             $stmt->fetch();
                             $stmt->close();
 
+                            if ($page == "gameserver?settings-".$row[0]) {
 
-                            if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm-settings'])) {
+                              if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['confirm-settings'])) {
 
-                              if ($db_rank == 2) {
+                                if ($db_rank == 2) {
 
-                                $map = htmlentities($_POST['map']);
-                                $parameter = htmlentities($_POST['parameter']);
+                                  $map = htmlentities($_POST['map']);
+                                  $parameter = htmlentities($_POST['parameter']);
 
-                                if ($parameter_active == 1) {
+                                  if ($parameter_active == 1) {
 
-                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
-                                  $stmt->bind_param('ssi',$map,$parameter,$row[0]);
-                                  $stmt->execute();
-                                  $stmt->close();
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssi',$map,$parameter,$row[0]);
+                                    $stmt->execute();
+                                    $stmt->close();
 
-                                } else {
+                                  } else {
 
-                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?  WHERE id = ?");
-                                  $stmt->bind_param('si',$map,$row[0]);
-                                  $stmt->execute();
-                                  $stmt->close();
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?  WHERE id = ?");
+                                    $stmt->bind_param('si',$map,$row[0]);
+                                    $stmt->execute();
+                                    $stmt->close();
 
-                                }
+                                  }
 
-                              } elseif ($db_rank == 1) {
+                                } elseif ($db_rank == 1) {
 
-                                $error = false; $parameter_active = 0;
-                                $map = htmlentities($_POST['map']);
-                                $parameter = htmlentities($_POST['parameter']);
-                                $slots = htmlentities($_POST['slots']);
-                                $port = htmlentities($_POST['port']);
-                                if (isset($_POST['parameter_active'])) { $parameter_active = 1;}
+                                  $error = false; $parameter_active = 0;
+                                  $map = htmlentities($_POST['map']);
+                                  $parameter = htmlentities($_POST['parameter']);
+                                  $slots = htmlentities($_POST['slots']);
+                                  $port = htmlentities($_POST['port']);
+                                  if (isset($_POST['parameter_active'])) { $parameter_active = 1;}
 
-                                if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                                if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                                if (port_exists($row[3],$port,$row[2])) { $msg = "Port belegt"; $error = true;}
+                                  if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                                  if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                                  if (port_exists($row[3],$port,$row[2])) { $msg = "Port belegt"; $error = true;}
 
-                                if ($error == false) {
+                                  if ($error == false) {
 
-                                  $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?  WHERE id = ?");
-                                  $stmt->bind_param('ssiiii',$map,$parameter,$slots,$port,$parameter_active,$row[0]);
-                                  $stmt->execute();
-                                  $stmt->close();
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssiiii',$map,$parameter,$slots,$port,$parameter_active,$row[0]);
+                                    $stmt->execute();
+                                    $stmt->close();
 
-                                } else {
-                                  msg_error($msg);
+                                  } else {
+                                    msg_error($msg);
+                                  }
                                 }
                               }
-                            }
 
-                            $stmt = $mysqli->prepare("SELECT map,parameter,slots,port,parameters_active FROM gameservers WHERE id = ?");
-                            $stmt->bind_param('i', $row[0]);
-                            $stmt->execute();
-                            $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port,$db_parameter_active);
-                            $stmt->fetch();
-                            $stmt->close();
+                              $stmt = $mysqli->prepare("SELECT map,parameter,slots,port,parameters_active FROM gameservers WHERE id = ?");
+                              $stmt->bind_param('i', $row[0]);
+                              $stmt->execute();
+                              $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port,$db_parameter_active);
+                              $stmt->fetch();
+                              $stmt->close();
 
-                            $stmt = $mysqli->prepare("SELECT map_path FROM templates WHERE name = ?");
-                            if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-                            $rc = $stmt->bind_param('s', $game);
-                            if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
-                            $rc = $stmt->execute();
-                            if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
-                            $stmt->bind_result($db_path);
-                            $stmt->fetch();
-                            $stmt->close();
+                              $stmt = $mysqli->prepare("SELECT map_path FROM templates WHERE name = ?");
+                              if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+                              $rc = $stmt->bind_param('s', $game);
+                              if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+                              $rc = $stmt->execute();
+                              if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
+                              $stmt->bind_result($db_path);
+                              $stmt->fetch();
+                              $stmt->close();
 
-                            $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                             if (!$ssh->login($dedi_login, $dedi_password)) {
-                               echo '
-                               <div class="alert alert-danger" role="alert">
-                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                 <span class="sr-only">Error:</span>
-                                 Login failed
-                               </div>';
-                             } else {
-                                $msg =  $ssh->exec('cd /home/'.$gs_login.'/game/'.$db_path.'/maps/;ls');
-                                $lines = preg_split('/\s+/', $msg);
-                                foreach ($lines as &$element) {
-                                  if (endsWith($element, ".bsp")) {
-                                    //echo $element;
-                                    //echo "<br>";
+                              $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                               if (!$ssh->login($dedi_login, $dedi_password)) {
+                                 echo '
+                                 <div class="alert alert-danger" role="alert">
+                                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                   <span class="sr-only">Error:</span>
+                                   Login failed
+                                 </div>';
+                               } else {
+                                  $msg =  $ssh->exec('cd /home/'.$gs_login.'/game/'.$db_path.'/maps/;ls');
+                                  $lines = preg_split('/\s+/', $msg);
+                                  foreach ($lines as &$element) {
+                                    if (endsWith($element, ".bsp")) {
+                                      //echo $element;
+                                      //echo "<br>";
+                                    }
                                   }
-                                }
-                             }
-                            ?>
-                            <form class="form-horizontal" action="<?php echo "index.php?page=gameserver?settings-".$row[0]; ?>" method="post">
-                              <div class="form-group">
-                                <label class="control-label col-sm-2">Map:</label>
-                                <div class="col-sm-4">
-                                  <input type="text" class="form-control input-sm typeahead" autocomplete="off" name="map" value="<?php echo $db_map;?>">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label class="control-label col-sm-2">Paramter:</label>
-                                <div class="col-sm-4">
-                                  <?php if ($db_rank == 1) { ?>
-                                <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
-                                <?php } elseif ($db_rank == 2 AND $db_parameter_active == 1) { ?>
-                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>"> <?php
-                                } elseif ($db_rank == 2 AND $db_parameter_active == 0) { ?>
-                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>" readonly="readonly"> <?php
-                                } ?>
-                                </div>
-                                <div class="col-sm-2">
-                                  <?php if ($db_rank == 1) {
-                                    echo '<input data-size="small" id="toggle-parameter" data-height="20" type="checkbox" name="parameter_active" data-toggle="toggle">';
-                                  }
-                                   if ($db_parameter_active == 1) {
-                                    ?>
-                                    <script>
-                                      function toggleOn() {
-                                        $('#toggle-parameter').bootstrapToggle('on');
-                                      }
-                                      window.onload=toggleOn;
-                                    </script>
-                                    <?php
-                                  } elseif ($db_parameter_active == 0) { ?>
-                                    <script>
-                                      function toggleOff() {
-                                        $('#toggle-parameter').bootstrapToggle('off');
-                                      }
-                                      window.onload=toggleOff;
-                                    </script>
-                                    <?php
-                                  }
-                                  ?>
-                                </div>
-                              </div>
-                              <?php if ($db_rank == 1) {
-                                ?>
+                               }
+                              ?>
+                              <form class="form-horizontal" action="<?php echo "index.php?page=gameserver?settings-".$row[0]; ?>" method="post">
                                 <div class="form-group">
-                                  <label class="control-label col-sm-2">Slots/Port:</label>
-                                  <div class="col-sm-2">
-                                    <input type="text" class="form-control input-sm" name="slots" value="<?php echo $db_slots;?>">
-                                  </div>
-                                  <div class="col-sm-2">
-                                    <input type="text" class="form-control input-sm" name="port" value="<?php echo $db_port;?>">
+                                  <label class="control-label col-sm-2">Map:</label>
+                                  <div class="col-sm-4">
+                                    <input type="text" class="form-control input-sm typeahead" autocomplete="off" name="map" value="<?php echo $db_map;?>">
                                   </div>
                                 </div>
-                            <?php  } ?>
-                              <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                  <button type="submit" name="confirm-settings" class="btn btn-default btn-sm">Abschicken</button>
+                                <div class="form-group">
+                                  <label class="control-label col-sm-2">Paramter:</label>
+                                  <div class="col-sm-4">
+                                    <?php if ($db_rank == 1) { ?>
+                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
+                                  <?php } elseif ($db_rank == 2 AND $db_parameter_active == 1) { ?>
+                                    <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>"> <?php
+                                  } elseif ($db_rank == 2 AND $db_parameter_active == 0) { ?>
+                                    <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>" readonly="readonly"> <?php
+                                  } ?>
+                                  </div>
+                                  <div class="col-sm-2">
+                                    <?php if ($db_rank == 1) {
+                                      echo '<input data-size="small" id="toggle-parameter" data-height="20" type="checkbox" name="parameter_active" data-toggle="toggle">';
+                                    }
+                                     if ($db_parameter_active == 1) {
+                                      ?>
+                                      <script>
+                                        function toggleOn() {
+                                          $('#toggle-parameter').bootstrapToggle('on');
+                                        }
+                                        window.onload=toggleOn;
+                                      </script>
+                                      <?php
+                                    } elseif ($db_parameter_active == 0) { ?>
+                                      <script>
+                                        function toggleOff() {
+                                          $('#toggle-parameter').bootstrapToggle('off');
+                                        }
+                                        window.onload=toggleOff;
+                                      </script>
+                                      <?php
+                                    }
+                                    ?>
+                                  </div>
                                 </div>
-                              </div>
-                            </form>
+                                <?php if ($db_rank == 1) {
+                                  ?>
+                                  <div class="form-group">
+                                    <label class="control-label col-sm-2">Slots/Port:</label>
+                                    <div class="col-sm-2">
+                                      <input type="text" class="form-control input-sm" name="slots" value="<?php echo $db_slots;?>">
+                                    </div>
+                                    <div class="col-sm-2">
+                                      <input type="text" class="form-control input-sm" name="port" value="<?php echo $db_port;?>">
+                                    </div>
+                                  </div>
+                              <?php  } ?>
+                                <div class="form-group">
+                                  <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" name="confirm-settings" class="btn btn-default btn-sm">Abschicken</button>
+                                  </div>
+                                </div>
+                              </form>
 
-                            <?php
-                          }
+                              <?php
+                            } elseif ($page == "gameserver?settings-".$row[0]."-addons") {
+
+                              if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+                                $query = "SELECT id, game_id, name,url ,path FROM addons ORDER by id";
+                                  if ($result_2 = $mysqli->query($query)) {
+
+                                   /* fetch object array */
+                                   while ($row_2 = $result_2->fetch_assoc()) {
+                                    if (isset($_POST['install_'.$row_2["id"]])) {
+                                      $stmt = $mysqli->prepare("SELECT url,path FROM addons WHERE id = ?");
+                                      $stmt->bind_param('i', $row_2["id"]);
+                                      $stmt->execute();
+                                      $stmt->bind_result($db_url,$db_path);
+                                      $stmt->fetch();
+                                      $stmt->close();
+
+                                      $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                                       if (!$ssh->login($dedi_login, $dedi_password)) {
+                                         echo '
+                                         <div class="alert alert-danger" role="alert">
+                                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                           <span class="sr-only">Error:</span>
+                                           Login failed
+                                         </div>';
+                                       } else {
+                                         $file = basename($row_2["url"]);
+                                         if (endsWith($file,".zip")) {
+                                          $ssh->exec("sudo -u ".$gs_login." screen -amds addon".$gs_login." bash -c 'cd /home/".$gs_login."/".$db_path.";wget ".$db_url.";unzip ".$file.";rm ".$file.";'");
+                                         } elseif (endsWith($file,".tar")) {
+                                          $ssh->exec("sudo -u ".$gs_login." screen -amds addon".$gs_login." bash -c 'cd /home/".$gs_login."/".$db_path.";wget ".$db_url.";tar xvf ".$file.";rm ".$file.";'");
+                                         }
+                                         $template = "addon";
+                                         $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
+                                         $stmt->bind_param('iiss',$row[0],$dedi_id,$template,$row_2["id"]);
+                                         $stmt->execute();
+                                         $stmt->close();
+                                         msg_okay("Das Addon wird installiert, das kann etwas dauern :)");
+                                       }
+                                    } elseif (isset($_POST['remove_'.$row_2["id"]])) {
+                                      $stmt = $mysqli->prepare("SELECT url,path FROM addons WHERE id = ?");
+                                      $stmt->bind_param('i', $row_2["id"]);
+                                      $stmt->execute();
+                                      $stmt->bind_result($db_url,$db_path);
+                                      $stmt->fetch();
+                                      $stmt->close();
+
+                                      $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                                       if (!$ssh->login($dedi_login, $dedi_password)) {
+                                         echo '
+                                         <div class="alert alert-danger" role="alert">
+                                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                           <span class="sr-only">Error:</span>
+                                           Login failed
+                                         </div>';
+                                       } else {
+                                          $ssh->exec("sudo -u ".$gs_login." bash -c 'rm -r /home/".$gs_login."/".$db_path.";'");
+                                          msg_okay("Das Addon wurde deinstalliert :)");
+
+                                          $stmt = $mysqli->prepare("DELETE FROM addons_installed WHERE id = ?");
+                                          $stmt->bind_param('i', $row_2["id"]);
+                                          $stmt->execute();
+                                          $stmt->close();
+                                       }
+                                    }
+                                   }
+                                  /* free result set */
+                                  $result_2->close();
+                                  }
+
+                              }
+                                echo '<form action="index.php?page=gameserver?settings-'.$row[0].'-addons" method="post">'; ?>
+                             <div class="col-sm-4">
+                             <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                   <th colspan="1">Name</th>
+                                   <th colspan="1">Aktion</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                              <?php
+
+                              $query = "SELECT id, game_id, name,url ,path FROM addons ORDER by id";
+
+                                if ($result_2 = $mysqli->query($query)) {
+
+                                 /* fetch object array */
+                                 while ($row_2 = $result_2->fetch_assoc()) {
+
+                                     $installed = get_addon_installed($dedi_id,$row_2["id"]);
+                                     echo "<tr>";
+                                     echo "<td>" . $row_2["name"] . "</td>";
+                                     if ($installed[0] == 0) {
+                                        echo '<td><button type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-success" disabled>'.$installed[1].'</button>';
+                                        echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">Deinstallieren</button></td>';
+                                     } else {
+                                       echo '<td><button type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-success">Installieren</button> <button style="margin-left:2px;" type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>Deinstallieren</button> </td>';
+                                     }
+                                     echo "</tr>";
+                                   }
+                                   /* free result set */
+                                         $result_2->close();
+                                     } ?>
+                               </tbody>
+                             </table>
+                             </div>
+                           </form>
+                             <?php
+                              }
+                            }
                           if ($page == "gameserver?console-".$row[0]  AND $row[1] == 0 AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?console-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
 
                             $gs_select = $row[0];
@@ -814,10 +921,10 @@ if ($_SESSION['login'] == 1) {
                               echo "<td>" . $row["gs_password"] . "</td>";
                               if ($row["status"] == 0) {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'" class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>  </td>';
                               } else {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               }
                               echo "</tr>";
                             } elseif ($db_rank == 2 AND $row["user_id"] == $_SESSION['user_id']) {
@@ -838,10 +945,10 @@ if ($_SESSION['login'] == 1) {
                               echo "<td>" . $row["gs_password"] . "</td>";
                               if ($row["status"] == 0) {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               } else {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               }
                               echo "</tr>";
                             }

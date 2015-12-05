@@ -324,36 +324,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         $vsftpd.= "################\n";
 
 
-                        if ($os == "Debian 7 32bit") {
-
-                          $ssh->setTimeout(45);
-                          $ssh->exec('apt-get update');
-                          $ssh->exec('apt-get -y install sudo');
-                          $ssh->exec('apt-get -y install screen');
-                          $ssh->exec('apt-get -y install libtinfo5 libncurses5');
-                          $ssh->exec('apt-get -y install lib32stdc++6');
-                          $ssh->exec('apt-get -y install vsftpd');
-                          $ssh->exec('apt-get -y install unzip');
-                          $ssh->exec('apt-get -y install gawk');
-                          $os_version = "Debian 7"; $os_bit = "32";
-
-                        } elseif ($os == "Debian 7 64bit") {
-
-                          $ssh->exec('dpkg --add-architecture i386');
-                          $ssh->setTimeout(45);
-                          $ssh->exec('apt-get update');
-                          $ssh->exec('apt-get -y install sudo');
-                          $ssh->exec('apt-get -y install screen');
-                          $ssh->exec('apt-get -y install ia32-libs');
-                          $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
-                          $ssh->exec('apt-get -y install lib32stdc++6');
-                          $ssh->exec('apt-get -y install lib32gcc1');
-                          $ssh->exec('apt-get -y install vsftpd');
-                          $ssh->exec('apt-get -y install unzip');
-                          $ssh->exec('apt-get -y install gawk');
-                          $os_version = "Debian 7"; $os_bit = "64";
-
-                        } elseif ($os == "Debian 8 32bit") {
+                        if ($os == "Debian 8 32bit") {
 
                           $ssh->setTimeout(45);
                           $ssh->exec('apt-get update');
@@ -381,35 +352,6 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                           $ssh->exec('apt-get -y install unzip');
                           $ssh->exec('apt-get -y install gawk');
                           $os_version = "Debian 8"; $os_bit = "64";
-
-                        } elseif ($os == "Ubuntu 12.04 32bit") {
-
-                            $ssh->setTimeout(45);
-                            $ssh->exec('apt-get update');
-                            $ssh->exec('apt-get -y install sudo');
-                            $ssh->exec('apt-get -y install screen');
-                            $ssh->exec('apt-get -y install libtinfo5 libncurses5');
-                            $ssh->exec('apt-get -y install lib32stdc++6');
-                            $ssh->exec('apt-get -y install vsftpd');
-                            $ssh->exec('apt-get -y install unzip');
-                            $ssh->exec('apt-get -y install gawk');
-                            $os_version = "Ubuntu 12.04"; $os_bit = "32";
-
-                          } elseif ($os == "Ubuntu 12.04 64bit") {
-
-                            $ssh->exec('dpkg --add-architecture i386');
-                            $ssh->setTimeout(45);
-                            $ssh->exec('apt-get update');
-                            $ssh->exec('apt-get -y install sudo');
-                            $ssh->exec('apt-get -y install screen');
-                            $ssh->exec('apt-get -y install ia32-libs');
-                            $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
-                            $ssh->exec('apt-get -y install lib32stdc++6');
-                            $ssh->exec('apt-get -y install lib32gcc1');
-                            $ssh->exec('apt-get -y install vsftpd');
-                            $ssh->exec('apt-get -y install unzip');
-                            $ssh->exec('apt-get -y install gawk');
-                            $os_version = "Ubuntu 12.04"; $os_bit = "64";
 
                           } elseif ($os == "Ubuntu 14.04 32bit") {
 
@@ -479,7 +421,6 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                         unset($root);
 
                       }
-
                       msg_okay("Der Rootserver wurde angelegt.");
 
                   } else {
@@ -499,12 +440,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                     </div>
                     <div class="col-sm-2">
                       <select class="form-control input-sm" name="os">
-                        <option>Debian 7 32bit</option>
-                        <option>Debian 7 64bit</option>
                         <option>Debian 8 32bit</option>
                         <option>Debian 8 64bit</option>
-                        <option>Ubuntu 12.04 32bit</option>
-                        <option>Ubuntu 12.04 64bit</option>
                         <option>Ubuntu 14.04 32bit</option>
                         <option>Ubuntu 14.04 64bit</option>
                       </select>

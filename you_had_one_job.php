@@ -56,7 +56,7 @@ if ($result = $mysqli->query($query)) {
 
       $ssh = new Net_SSH2($ip,$port);
        if (!$ssh->login($user, $password)) {
-         exit;
+         //exit;
        } else {
          if ($row[4] == "template") {
            $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
@@ -105,6 +105,45 @@ if ($result = $mysqli->query($query)) {
              $stmt->close();
 
            }
+         } elseif ($row[4] == "addon") {
+
+           $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+           $stmt->bind_param('i', $row[0]);
+           $stmt->execute();
+           $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+           $stmt->fetch();
+           $stmt->close();
+
+           $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
+           $stmt->bind_param('i', $row[3]);
+           $stmt->execute();
+           $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
+           $stmt->fetch();
+           $stmt->close();
+
+           $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+            if (!$ssh->login($dedi_login, $dedi_password)) {
+              //exit;
+            } else {
+              echo  $status = $ssh->exec("ps -ef | grep -i addon".$gs_login." | grep -v grep; echo $?");
+              if ($status == 1) {
+
+                $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
+                $stmt->bind_param('i', $row[2]);
+                $stmt->execute();
+                $stmt->close();
+
+                $status = 1; $status_text = "Installed";
+                $stmt = $mysqli->prepare("INSERT INTO addons_installed(dedi_id,addons_id,status,status_text) VALUES (?, ?, ?, ?)");
+                if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+                $rc = $stmt->bind_param('iiis', $row[0],$row[1],$status,$status_text);
+                  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+                $rc = $stmt->execute();
+                  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
+                $stmt->close();
+
+              }
+            }
          }
        }
     }
@@ -172,7 +211,7 @@ if ($result = $mysqli->query($query)) {
 
                 $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                  if (!$ssh->login($dedi_login, $dedi_password)) {
-                   exit;
+                   //exit;
                  } else {
 
                     $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
@@ -185,7 +224,7 @@ if ($result = $mysqli->query($query)) {
 
                 $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                  if (!$ssh->login($dedi_login, $dedi_password)) {
-                   exit;
+                   //exit;
                  } else {
                     $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
                     if ($load > 90) {
@@ -214,7 +253,7 @@ if ($result = $mysqli->query($query)) {
 
       $ssh = new Net_SSH2($dedi_ip,$dedi_port);
        if (!$ssh->login($dedi_login, $dedi_password)) {
-         exit;
+         //exit;
        } else {
          $status = $ssh->exec("ps -ef | grep -i cp".$row[0]." | grep -v grep; echo $?");
          if ($status == 1) {
@@ -231,7 +270,7 @@ if ($result = $mysqli->query($query)) {
 
         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
          if (!$ssh->login($dedi_login, $dedi_password)) {
-           exit;
+           //exit;
          } else {
 
            $status = $ssh->exec('cat /home/'.$row[0].'/game/steam.log  | grep "state is 0x402 after update job" ; echo $?');
@@ -262,7 +301,7 @@ if ($result = $mysqli->query($query)) {
 
         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
          if (!$ssh->login($dedi_login, $dedi_password)) {
-           exit;
+           //exit;
          } else {
             gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
             event_add(1,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
@@ -274,7 +313,7 @@ if ($result = $mysqli->query($query)) {
 
         $ssh = new Net_SSH2($dedi_ip,$dedi_port);
          if (!$ssh->login($dedi_login, $dedi_password)) {
-           exit;
+           //exit;
          } else {
            if ($db_type == "steamcmd") {
              $ssh->exec("sudo -u ".$row[0]." bash -c 'tail -n 150 /home/".$row[0]."/game/screenlog.0 > /home/".$row[0]."/game/screenlog.tmp'");

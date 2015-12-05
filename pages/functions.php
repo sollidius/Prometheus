@@ -1,7 +1,7 @@
 <?php
 
 date_default_timezone_set('Europe/Amsterdam');
-$mysqli = new mysqli("localhost", "Prometheus", "aTFGbJjEC9LtUSN4", "prometheus");
+$mysqli = new mysqli("localhost", "prometheus", "GZLUeYPKMDR69H6Z", "prometheus");
 
 if ($mysqli->connect_error) {
    echo "Not connected, error: " . $mysqli_connection->connect_error;
@@ -261,6 +261,40 @@ function get_game_installed($dedi_id,$game) {
   if ($result_id != 0) { $msg[1] = "Spiel ist installiert"; $msg[0] = 0; return $msg;}
 
 
+
+  $msg[0] = 1;
+  return $msg;
+}
+
+function get_addon_installed($dedi_id,$addon_id) {
+  global $mysqli;
+
+  $result_id = 0;
+  $type = "addon";
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('iss', $dedi_id,$type,$addon_id);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
+  $stmt->bind_result($result_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
+
+  $result_id = 0;
+  $stmt = $mysqli->prepare("SELECT id FROM addons_installed WHERE dedi_id = ? AND addons_id = ?");
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('ii',$dedi_id,$addon_id);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
+  $stmt->bind_result($result_id);
+  $stmt->fetch();
+  $stmt->close();
+
+  if ($result_id != 0) { $msg[1] = "Addon ist installiert"; $msg[0] = 0; return $msg;}
 
   $msg[0] = 1;
   return $msg;

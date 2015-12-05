@@ -9,6 +9,7 @@ define('_title_templates','Vorlagen');
 define('_title_usettings','Konfiguration');
 define('_title_users','Benutzer');
 define('_title_events','Events');
+define('_title_addons','Addons');
 
 define('_button_save','Speichern');
 
