@@ -1,7 +1,7 @@
 <?php
 include '../pages/functions.php';
 
-$name = "Test"; $email = "123@123.de"; $password = "123456789"; $rank = 2;
+$name = "Test"; $email = "123@123.de"; $password = "123456789"; $rank = 1;
 
 $hash = password_hash($password, PASSWORD_DEFAULT);
 

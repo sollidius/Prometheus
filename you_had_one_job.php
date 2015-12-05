@@ -134,9 +134,9 @@ if ($result = $mysqli->query($query)) {
                 $stmt->close();
 
                 $status = 1; $status_text = "Installed";
-                $stmt = $mysqli->prepare("INSERT INTO addons_installed(dedi_id,addons_id,status,status_text) VALUES (?, ?, ?, ?)");
+                $stmt = $mysqli->prepare("INSERT INTO addons_installed(dedi_id,addons_id,gs_id,status,status_text) VALUES (?, ?, ?, ?, ?)");
                 if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-                $rc = $stmt->bind_param('iiis', $row[0],$row[1],$status,$status_text);
+                $rc = $stmt->bind_param('iiiis', $row[0],$row[1],$row[3],$status,$status_text);
                   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
                 $rc = $stmt->execute();
                   if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }

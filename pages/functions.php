@@ -266,14 +266,14 @@ function get_game_installed($dedi_id,$game) {
   return $msg;
 }
 
-function get_addon_installed($dedi_id,$addon_id) {
+function get_addon_installed($dedi_id,$addon_id,$gs_id) {
   global $mysqli;
 
   $result_id = 0;
   $type = "addon";
-  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ? and template_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-  $rc = $stmt->bind_param('iss', $dedi_id,$type,$addon_id);
+  $rc = $stmt->bind_param('isii', $dedi_id,$type,$addon_id,$gs_id);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
   $rc = $stmt->execute();
   if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
@@ -284,9 +284,9 @@ function get_addon_installed($dedi_id,$addon_id) {
   if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
 
   $result_id = 0;
-  $stmt = $mysqli->prepare("SELECT id FROM addons_installed WHERE dedi_id = ? AND addons_id = ?");
+  $stmt = $mysqli->prepare("SELECT id FROM addons_installed WHERE dedi_id = ? AND addons_id = ? AND gs_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-  $rc = $stmt->bind_param('ii',$dedi_id,$addon_id);
+  $rc = $stmt->bind_param('iii',$dedi_id,$addon_id,$gs_id);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
   $rc = $stmt->execute();
   if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }

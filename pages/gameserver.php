@@ -460,7 +460,8 @@ if ($_SESSION['login'] == 1) {
 
                                    /* fetch object array */
                                    while ($row_2 = $result_2->fetch_assoc()) {
-                                    if (isset($_POST['install_'.$row_2["id"]])) {
+                                    $installed = get_addon_installed($dedi_id,$row_2["id"],$row[0]);
+                                    if (isset($_POST['install_'.$row_2["id"]]) AND $installed[0] == 1) {
                                       $stmt = $mysqli->prepare("SELECT url,path FROM addons WHERE id = ?");
                                       $stmt->bind_param('i', $row_2["id"]);
                                       $stmt->execute();
@@ -490,11 +491,11 @@ if ($_SESSION['login'] == 1) {
                                          $stmt->close();
                                          msg_okay("Das Addon wird installiert, das kann etwas dauern :)");
                                        }
-                                    } elseif (isset($_POST['remove_'.$row_2["id"]])) {
-                                      $stmt = $mysqli->prepare("SELECT url,path FROM addons WHERE id = ?");
+                                    } elseif (isset($_POST['remove_'.$row_2["id"]]) AND $installed[1] == "Addon ist installiert") {
+                                      $stmt = $mysqli->prepare("SELECT url,path,folder FROM addons WHERE id = ?");
                                       $stmt->bind_param('i', $row_2["id"]);
                                       $stmt->execute();
-                                      $stmt->bind_result($db_url,$db_path);
+                                      $stmt->bind_result($db_url,$db_path,$db_folder);
                                       $stmt->fetch();
                                       $stmt->close();
 
@@ -507,11 +508,11 @@ if ($_SESSION['login'] == 1) {
                                            Login failed
                                          </div>';
                                        } else {
-                                          $ssh->exec("sudo -u ".$gs_login." bash -c 'rm -r /home/".$gs_login."/".$db_path.";'");
+                                          $ssh->exec("sudo -u ".$gs_login." bash -c 'rm -r /home/".$gs_login."/".$db_path."/".$db_folder.";'");
                                           msg_okay("Das Addon wurde deinstalliert :)");
 
-                                          $stmt = $mysqli->prepare("DELETE FROM addons_installed WHERE id = ?");
-                                          $stmt->bind_param('i', $row_2["id"]);
+                                          $stmt = $mysqli->prepare("DELETE FROM addons_installed WHERE dedi_id = ? AND gs_id = ? AND addons_id = ?");
+                                          $stmt->bind_param('iii',$dedi_id,$row[0],$row_2["id"]);
                                           $stmt->execute();
                                           $stmt->close();
                                        }
@@ -541,7 +542,7 @@ if ($_SESSION['login'] == 1) {
                                  /* fetch object array */
                                  while ($row_2 = $result_2->fetch_assoc()) {
 
-                                     $installed = get_addon_installed($dedi_id,$row_2["id"]);
+                                     $installed = get_addon_installed($dedi_id,$row_2["id"],$row[0]);
                                      echo "<tr>";
                                      echo "<td>" . $row_2["name"] . "</td>";
                                      if ($installed[0] == 0) {
@@ -924,7 +925,7 @@ if ($_SESSION['login'] == 1) {
                                 echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'" class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>  </td>';
                               } else {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs" disabled>Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               }
                               echo "</tr>";
                             } elseif ($db_rank == 2 AND $row["user_id"] == $_SESSION['user_id']) {
@@ -948,7 +949,7 @@ if ($_SESSION['login'] == 1) {
                                 echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               } else {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs" disabled>Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               }
                               echo "</tr>";
                             }

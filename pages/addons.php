@@ -78,6 +78,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                  $game = htmlentities($_POST['game']);
                                  $url = htmlentities($_POST['url']);
                                  $path = htmlentities($_POST['path']);
+                                 $folder = htmlentities($_POST['folder']);
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
@@ -91,8 +92,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                                      $stmt->fetch();
                                      $stmt->close();
 
-                                     $stmt = $mysqli->prepare("UPDATE addons SET name = ?,url = ?,path = ?,game_id = ?  WHERE id = ?");
-                                     $stmt->bind_param('sssii',$name,$url,$path,$template_id,$row[0]);
+                                     $stmt = $mysqli->prepare("UPDATE addons SET name = ?,url = ?,path = ?,game_id = ?, folder = ?  WHERE id = ?");
+                                     $stmt->bind_param('sssisi',$name,$url,$path,$template_id,$folder,$row[0]);
                                      $stmt->execute();
                                      $stmt->close();
 
@@ -106,10 +107,10 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               }
                           }
 
-                          $stmt = $mysqli->prepare("SELECT name,game_id,url,path FROM addons WHERE id = ?");
+                          $stmt = $mysqli->prepare("SELECT name,game_id,url,path,folder FROM addons WHERE id = ?");
                           $stmt->bind_param('i', $row[0]);
                           $stmt->execute();
-                          $stmt->bind_result($db_name,$db_game_id,$db_url,$db_path);
+                          $stmt->bind_result($db_name,$db_game_id,$db_url,$db_path,$db_folder);
                           $stmt->fetch();
                           $stmt->close();
 
@@ -146,6 +147,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                               </div>
                             </div>
                             <div class="form-group">
+                              <label class="control-label col-sm-2">Ordner:</label>
+                              <div class="col-sm-3">
+                                <input type="text" class="form-control input-sm" name="folder" value="<?php echo $db_folder;?>">
+                              </div>
+                            </div>
+                            <div class="form-group">
                               <div class="col-sm-offset-2 col-sm-10">
                                 <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
                               </div>
@@ -173,6 +180,7 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                          $game = htmlentities($_POST['game']);
                          $url = htmlentities($_POST['url']);
                          $path = htmlentities($_POST['path']);
+                         $folder = htmlentities($_POST['folder']);
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
@@ -186,8 +194,8 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                            $stmt->fetch();
                            $stmt->close();
 
-                           $stmt = $mysqli->prepare("INSERT INTO addons(game_id,name,url,path) VALUES (?, ?, ?, ?)");
-                           $stmt->bind_param('isss', $template_id, $name,$url,$path);
+                           $stmt = $mysqli->prepare("INSERT INTO addons(game_id,name,url,path,folder) VALUES (?, ?, ?, ?, ?)");
+                           $stmt->bind_param('issss', $template_id, $name,$url,$path,$folder);
                            $stmt->execute();
                            $stmt->close();
 
@@ -230,6 +238,12 @@ if ($_SESSION['login'] == 1 and $db_rank == 1) {
                       </div>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="path" placeholder="csgo">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-sm-2">Ordner:</label>
+                      <div class="col-sm-3">
+                        <input type="text" class="form-control input-sm" name="folder" placeholder="ulib">
                       </div>
                     </div>
                     <div class="form-group">
