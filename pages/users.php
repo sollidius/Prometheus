@@ -21,7 +21,7 @@ if ($db_language == "de") {
 $title = _title_users;
 include 'header.php';
 
-if ($_SESSION['login'] == 1 and $db_rank == 1) {
+if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 
 

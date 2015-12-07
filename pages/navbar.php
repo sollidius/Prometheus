@@ -20,32 +20,32 @@
           <li>
               <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
           </li>
-          <?php if  ($db_rank == 1) { echo '
+          <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> Addons</a>
           </li>
            '; } ?>
-          <?php if  ($db_rank == 1) { echo '
+          <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
           </li>
            '; } ?>
-           <?php if  ($db_rank == 1) { echo '
+           <?php if  ($db_rank === 1) { echo '
            <li>
                <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> Events</a>
            </li>
             '; } ?>
-          <?php if  ($db_rank == 1) { echo '
+          <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
           </li>
            '; } ?>
-           <?php if  ($db_rank == 1) { echo '
+           <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> Rootserver</a>
           </li>
            '; } ?>
-           <?php if  ($db_rank == 1) { echo '
+           <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> Vorlagen</a>
           </li>
@@ -81,32 +81,32 @@
           <li>
               <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
           </li>
-          <?php if  ($db_rank == 1) { echo '
+          <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> Addons</a>
           </li>
            '; } ?>
-          <?php if  ($db_rank == 1) { echo '
+          <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
           </li>
            '; } ?>
-           <?php if  ($db_rank == 1) { echo '
+           <?php if  ($db_rank === 1) { echo '
            <li>
                <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> Events</a>
            </li>
             '; } ?>
-          <?php if  ($db_rank == 1) { echo '
+          <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
           </li>
            '; } ?>
-           <?php if  ($db_rank == 1) { echo '
+           <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> Rootserver</a>
           </li>
            '; } ?>
-           <?php if  ($db_rank == 1) { echo '
+           <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> Vorlagen</a>
           </li>

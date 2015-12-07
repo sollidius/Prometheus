@@ -21,7 +21,7 @@ if ($db_language == "de") {
 $title = _title_usettings;
 include 'header.php';
 
-if ($_SESSION['login'] == 1) {
+if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
   $msg = "";
   $success = false;

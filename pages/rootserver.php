@@ -24,7 +24,7 @@ set_include_path('components/phpseclib');
 include('Net/SSH2.php');
 
 
-if ($_SESSION['login'] == 1 and $db_rank == 1) {
+if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 
 ?>

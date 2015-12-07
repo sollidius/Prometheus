@@ -22,7 +22,7 @@ $title = _title_templates;
 include 'header.php';
 
 
-if ($_SESSION['login'] == 1 and $db_rank == 1) {
+if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 ?>
 <div id="wrapper">
