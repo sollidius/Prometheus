@@ -29,6 +29,22 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 ?>
 <div id="wrapper">
 
+      <script>
+        function addLoadEvent(func) {
+        var oldonload = window.onload;
+        if (typeof window.onload != 'function') {
+          window.onload = func;
+        } else {
+          window.onload = function() {
+            if (oldonload) {
+              oldonload();
+            }
+            func();
+          }
+        }
+      }
+      </script>
+
       <?php include 'navbar.php'; ?>
 
        <div id="page-wrapper">
@@ -309,18 +325,22 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                   $map = htmlentities($_POST['map']);
                                   $parameter = htmlentities($_POST['parameter']);
+                                  $time = htmlentities($_POST['time']);
+                                  $time = str_replace(" Uhr", "",$time);
+                                  $restart_active = 0;
+                                  if (isset($_POST['restart_active'])) { $restart_active = 1;}
 
                                   if ($parameter_active == 1) {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?  WHERE id = ?");
-                                    $stmt->bind_param('ssi',$map,$parameter,$row[0]);
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?,restart = ?,restart_time = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssiii',$map,$parameter,$restart_active,$time,$row[0]);
                                     $stmt->execute();
                                     $stmt->close();
 
                                   } else {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?  WHERE id = ?");
-                                    $stmt->bind_param('si',$map,$row[0]);
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?, restart = ?,restart_time = ?  WHERE id = ?");
+                                    $stmt->bind_param('siii',$map,$restart_active,$time,$row[0]);
                                     $stmt->execute();
                                     $stmt->close();
 
@@ -328,12 +348,15 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                 } elseif ($db_rank == 1) {
 
-                                  $error = false; $parameter_active = 0;
+                                  $error = false; $parameter_active = 0; $restart_active = 0;
                                   $map = htmlentities($_POST['map']);
                                   $parameter = htmlentities($_POST['parameter']);
                                   $slots = htmlentities($_POST['slots']);
                                   $port = htmlentities($_POST['port']);
+                                  $time = htmlentities($_POST['time']);
+                                  $time = str_replace(" Uhr", "",$time);
                                   if (isset($_POST['parameter_active'])) { $parameter_active = 1;}
+                                  if (isset($_POST['restart_active'])) { $restart_active = 1;}
 
                                   if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
                                   if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
@@ -341,8 +364,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                   if ($error == false) {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?  WHERE id = ?");
-                                    $stmt->bind_param('ssiiii',$map,$parameter,$slots,$port,$parameter_active,$row[0]);
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?, restart = ?,restart_time = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssiiiiii',$map,$parameter,$slots,$port,$parameter_active,$restart_active,$time,$row[0]);
                                     $stmt->execute();
                                     $stmt->close();
 
@@ -352,10 +375,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                 }
                               }
 
-                              $stmt = $mysqli->prepare("SELECT map,parameter,slots,port,parameters_active FROM gameservers WHERE id = ?");
+                              $stmt = $mysqli->prepare("SELECT map,parameter,slots,port,parameters_active,restart,restart_time FROM gameservers WHERE id = ?");
                               $stmt->bind_param('i', $row[0]);
                               $stmt->execute();
-                              $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port,$db_parameter_active);
+                              $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port,$db_parameter_active,$db_restart,$restart_time);
                               $stmt->fetch();
                               $stmt->close();
 
@@ -411,27 +434,39 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                       echo '<input data-size="small" id="toggle-parameter" data-height="20" type="checkbox" name="parameter_active" data-toggle="toggle">';
                                     }
                                      if ($db_parameter_active == 1) {
-                                      ?>
-                                      <script>
-                                        function toggleOn() {
-                                          $('#toggle-parameter').bootstrapToggle('on');
-                                        }
-                                        window.onload=toggleOn;
-                                      </script>
-                                      <?php
-                                    } elseif ($db_parameter_active == 0) { ?>
-                                      <script>
-                                        function toggleOff() {
-                                          $('#toggle-parameter').bootstrapToggle('off');
-                                        }
-                                        window.onload=toggleOff;
-                                      </script>
-                                      <?php
+                                      ?>  <script> function toggleOnparam() { $('#toggle-parameter').bootstrapToggle('on'); }  addLoadEvent(toggleOnparam); </script> <?php
+                                    } elseif ($db_parameter_active == 0) {
+                                      ?>  <script> function toggleOffparam() { $('#toggle-parameter').bootstrapToggle('off'); }  addLoadEvent(toggleOffparam); </script> <?php
                                     }
                                     ?>
                                   </div>
                                 </div>
-                                <?php if ($db_rank == 1) {
+                                <div class="form-group">
+                                  <label class="control-label col-sm-2">Neustart:</label>
+                                  <div class="col-sm-2">
+                                    <select class="form-control input-sm" name="time">
+                                      <?php
+                                      for ($i = 1; $i <= 24; $i++) {
+                                        if ($i == $restart_time) {
+                                          echo '<option selected="selected">'.$i.' Uhr</option>';
+                                        } else {
+                                          echo "<option>".$i." Uhr</option>";
+                                        }
+                                      }
+                                      ?>
+                                    </select>
+                                  </div>
+                                  <div class="col-sm-2">
+                                      <input data-size="small" id="toggle-restart" data-height="20" type="checkbox" name="restart_active" data-toggle="toggle">
+                                  </div>
+                                </div>
+                                <?php
+                                if ($db_restart == 1) {
+                                 ?>  <script> function toggleOnrestart() { $('#toggle-restart').bootstrapToggle('on'); }  addLoadEvent(toggleOnrestart); </script> <?php
+                               } elseif ($db_restart == 0) {
+                                 ?>  <script> function toggleOffrestart() { $('#toggle-restart').bootstrapToggle('off'); }  addLoadEvent(toggleOffrestart); </script> <?php
+                               }
+                                 if ($db_rank == 1) {
                                   ?>
                                   <div class="form-group">
                                     <label class="control-label col-sm-2">Slots/Port:</label>

@@ -152,7 +152,7 @@ if ($result = $mysqli->query($query)) {
     $result->close();
 }
 
-$query = "SELECT gs_login,dedi_id,status,id,status_update,game,ip,port,running,is_running,deadline FROM gameservers ORDER by id";
+$query = "SELECT gs_login,dedi_id,status,id,status_update,game,ip,port,running,is_running,deadline,restart,restart_time FROM gameservers ORDER by id";
 
 if ($result = $mysqli->query($query)) {
 
@@ -324,6 +324,15 @@ if ($result = $mysqli->query($query)) {
              $ssh->exec("sudo -u ".$row[0]." bash -c 'cat /home/".$row[0]."/screenlog.tmp > /home/".$row[0]."/screenlog.0'");
              $ssh->exec("sudo -u ".$row[0]." bash -c 'rm /home/".$row[0]."/screenlog.tmp'");
            }
+       }
+     }
+     if ($row[11] == 1 AND date('H') == $row['12'] AND date('i') == 5) {
+       $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+        if (!$ssh->login($dedi_login, $dedi_password)) {
+          //exit;
+        } else {
+       gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
+       event_add(1,"Der Gameserver wurde neugestartet.");
        }
      }
     }
