@@ -480,7 +480,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               <?php  } ?>
                                 <div class="form-group">
                                   <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="submit" name="confirm-settings" class="btn btn-default btn-sm">Abschicken</button>
+                                    <button type="submit" name="confirm-settings" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                                   </div>
                                 </div>
                               </form>
@@ -564,7 +564,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                <thead>
                                  <tr>
                                    <th colspan="1">Name</th>
-                                   <th colspan="1">Aktion</th>
+                                   <th colspan="1"><?php echo _table_action; ?></th>
                                  </tr>
                                </thead>
                                <tbody>
@@ -687,7 +687,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                      <?php
                                     echo '<a href="index.php?page=gameserver?console-'.$gs_select.'"  class="btn btn-success btn-sm">Update</a>';
                                      ?>
-                                      <button class="btn btn-primary btn-sm" name="console_submit" type="submit">Abschicken</button>
+                                      <button class="btn btn-primary btn-sm" name="console_submit" type="submit"><?php echo _button_save; ?></button>
                                    </span>
                                  </div>
                                </div>
@@ -821,7 +821,6 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                      msg_error('Something went wrong, '.$msg);
                    }
                 }
-                  msg_info("Die Installation kann ca. 5-30 Minuten dauern, je nach Bandbreite und Downloadgröße, wenn die SteamCMD abstürtzt, wird der Updatevorgang neu gestartet.");
                   ?>
                   <form class="form-horizontal" action="index.php?page=gameserver?add" method="post">
                     <div class="form-group">
@@ -907,7 +906,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                        <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                       </div>
                     </div>
                   </form>
@@ -927,7 +926,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                           <th>FTP Login</th>
                           <th>FTP Passwort</th>
                           <th>Start/Stop</th>
-                          <th>Aktion</th>
+                          <th><?php echo _table_action; ?></th>
                         </tr>
                       </thead>
                       <tbody>

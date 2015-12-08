@@ -12,6 +12,7 @@ define('_title_events','Events');
 define('_title_addons','Addons');
 
 define('_button_save','Speichern');
+define('_table_action','Aktion');
 
 //Settings
 define('_settings_msgbox','Der Cronjob wurde am');

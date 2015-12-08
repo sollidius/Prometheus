@@ -158,13 +158,14 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                   $result_2->close();
                               }
                             }
+                        msg_info("Die Installation kann ca. 5-30 Minuten dauern, je nach Bandbreite und Downloadgröße, wenn die SteamCMD abstürtzt, wird der Updatevorgang neu gestartet.");
                         echo '<form class="form-horizontal" action="index.php?page=rootserver?manage='.$row["id"].'" method="post">'; ?>
                          <div class="col-sm-4">
                          <table class="table table-bordered">
                            <thead>
                              <tr>
                                <th colspan="1">Name</th>
-                               <th colspan="1">Aktion</th>
+                               <th colspan="1"><?php echo _table_action; ?></th>
                              </tr>
                            </thead>
                            <tbody>
@@ -239,7 +240,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                            </div>
                            <div class="form-group">
                              <div class="col-sm-offset-2 col-sm-10">
-                               <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                               <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                              </div>
                            </div>
                          </form>
@@ -484,7 +485,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                   </div>
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                      <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                      <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                     </div>
                   </div>
                 </form>
@@ -503,7 +504,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         <th>Benutzer</th>
                         <th>Passwort</th>
                         <th>Status</th>
-                        <th>Aktion</th>
+                        <th><?php echo _table_action; ?></th>
                       </tr>
                     </thead>
                     <tbody>

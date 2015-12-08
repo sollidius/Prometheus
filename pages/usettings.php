@@ -103,7 +103,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                  </div>
                       <div style="margin-top:2px;" class="col-lg-8">
                       <div style="margin-top:2px;" class="col-lg-6">
-                        <button type="submit" name="confirm" class="btn pull-right btn-success btn-sm">Abschicken</button
+                        <button type="submit" name="confirm" class="btn pull-right btn-default btn-sm"><?php echo _button_save; ?></button
                         </div>
                         </div>
                  </div>

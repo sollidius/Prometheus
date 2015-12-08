@@ -9,8 +9,10 @@ define('_title_templates','Templates');
 define('_title_usettings','Settings');
 define('_title_users','Users');
 define('_title_events','Events');
+define('_title_addons','Addons');
 
 define('_button_save','Save');
+define('_table_action','Action');
 
 //Settings
 define('_settings_msgbox','Last run');

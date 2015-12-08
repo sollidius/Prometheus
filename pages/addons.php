@@ -154,7 +154,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             </div>
                             <div class="form-group">
                               <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                                <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                               </div>
                             </div>
                           </form>
@@ -248,7 +248,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" name="confirm" class="btn btn-default btn-sm">Abschicken</button>
+                        <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                       </div>
                     </div>
                   </form>
@@ -265,7 +265,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           <th>Game</th>
                           <th>URL</th>
                           <th>Pfad</th>
-                          <th>Aktion</th>
+                          <th><?php echo _table_action; ?></th>
                         </tr>
                       </thead>
                       <tbody>
