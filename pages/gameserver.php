@@ -246,7 +246,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                  Login failed
                                </div>';
                              } else {
-                               $ssh->exec('sudo pkill -u '.$gs_login);
+                               $ssh->exec('sudo -u '.$gs_login.' screen -S game'.$gs_login.' -p 0 -X quit');
                                msg_okay("Der Gameserver wurde angehalten.");
 
                                event_add(2,"Der Gameserver ".$ip.":".$port." wurde angehalten.");
@@ -821,7 +821,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                      msg_error('Something went wrong, '.$msg);
                    }
                 }
-
+                  msg_info("Die Installation kann ca. 5-30 Minuten dauern, je nach Bandbreite und Downloadgröße, wenn die SteamCMD abstürtzt, wird der Updatevorgang neu gestartet.");
                   ?>
                   <form class="form-horizontal" action="index.php?page=gameserver?add" method="post">
                     <div class="form-group">

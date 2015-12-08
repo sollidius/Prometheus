@@ -162,6 +162,15 @@ function msg_error($msg) {
  </div>';
 }
 
+function msg_info($msg) {
+  echo'
+  <div class="alert alert-dismissible alert-info">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <h4>Info!</h4>
+    <p>'.$msg.'</p>
+ </div>';
+}
+
 function port_exists($ip,$port,$id=0) {
   global $mysqli;
   $query = "SELECT `user_id` FROM `gameservers` WHERE ip=? AND port=?";
@@ -676,7 +685,7 @@ function event_id_to_ico($id) {
 
 function gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$gs_select) {
   global $mysqli;
-  $ssh->exec('sudo pkill -u '.$gs_login);
+  $ssh->exec('sudo -u '.$gs_login.' screen -S game'.$gs_login.' -p 0 -X quit');
   if ($type == "steamcmd") {
       $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' rm screenlog.0');
       $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);

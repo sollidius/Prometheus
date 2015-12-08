@@ -430,8 +430,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                  }
                }
 
-                ?>
-
+                msg_info("Die Installation kann 1-2 Minuten dauern, abbruch des Ladevorgangs führt zur fehlerhafter installation.");
+                  ?>
                 <form class="form-horizontal" action="index.php?page=rootserver?add" method="post">
                   <div class="form-group">
                     <label class="control-label col-sm-2">Name:</label>
@@ -440,8 +440,10 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     </div>
                     <div class="col-sm-2">
                       <select class="form-control input-sm" name="os">
+                        <option disabled selected>Debian</option>
                         <option>Debian 8 32bit</option>
                         <option>Debian 8 64bit</option>
+                        <option disabled selected>Ubuntu</option>
                         <option>Ubuntu 14.04 32bit</option>
                         <option>Ubuntu 14.04 64bit</option>
                       </select>
