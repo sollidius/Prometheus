@@ -678,8 +678,9 @@ function event_id_to_ico($id) {
     return "plus";
   } elseif ($id == 7) {
     return "exclamation-triangle";
+  } elseif ($id == 8) {
+    return "exclamation";
   }
-
 
 }
 
@@ -715,6 +716,12 @@ function gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$
   $stmt->execute();
   $stmt->close();
 
+}
+
+function isSecure() {
+  return
+    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || $_SERVER['SERVER_PORT'] == 443;
 }
 
 

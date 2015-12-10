@@ -217,7 +217,7 @@ if ($result = $mysqli->query($query)) {
                     $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
                     if ($load > 19) {
                       gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
-                      event_add(1,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet. (".$current_status."-".$current_players."/".$current_maxplayers.")");
+                      event_add(8,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet. (".$current_status."-".$current_players."/".$current_maxplayers.")");
                     }
                  }
               } elseif ($current_players > 0 AND $gs_check_cpu_msg == 1 AND $current_players != 1000) {

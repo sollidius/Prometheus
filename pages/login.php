@@ -3,6 +3,7 @@
 $title = "Login";
 include 'header.php';
 
+
 $error = false; $msg = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -15,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   $password = $_POST['password'];
 
-  $stmt = $mysqli->prepare("SELECT password,id,name FROM users WHERE email = ?");
+  $stmt = $mysqli->prepare("SELECT password,id,name FROM users WHERE email = ?  LIMIT 1");
   $stmt->bind_param('s', $_POST['email']);
   $stmt->execute();
   $stmt->bind_result($password_db,$id,$name);

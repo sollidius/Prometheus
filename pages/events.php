@@ -4,7 +4,7 @@ session_start();
 
 $db_rank = 2;
 //Load user Data from DB
-$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ? LIMIT 1");
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
 $stmt->bind_result($db_rank,$db_id,$db_language);

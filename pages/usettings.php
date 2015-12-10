@@ -4,10 +4,10 @@ session_start();
 
 $db_rank = 2;
 //Load user Data from DB
-$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT rank,id,language,session_strict FROM users WHERE id = ? LIMIT 1");
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
-$stmt->bind_result($db_rank,$db_id,$db_language);
+$stmt->bind_result($db_rank,$db_id,$db_language,$session_strict);
 $stmt->fetch();
 $stmt->close();
 
@@ -51,7 +51,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
        $stmt->execute();
        $stmt->close();
 
-       $msg = "Okay";
+       $msg = "Das Passwort wurde geändert.";
        $success = true;
      } else {
        $msg = "Altes Passwort falsch";
@@ -65,6 +65,22 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
       <?php include 'navbar.php'; ?>
 
+      <script>
+        function addLoadEvent(func) {
+        var oldonload = window.onload;
+        if (typeof window.onload != 'function') {
+          window.onload = func;
+        } else {
+          window.onload = function() {
+            if (oldonload) {
+              oldonload();
+            }
+            func();
+          }
+        }
+      }
+      </script>
+
        <div id="page-wrapper">
            <div class="row">
                <div class="col-lg-12">
@@ -73,7 +89,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                <!-- /.col-lg-12 -->
            </div>
            <div class="row">
-               <div class="col-lg-8">
+             <div class="col-lg-8">
                  <?php
                  if ($msg != "" and $success == false) {
                    msg_error('Something went wrong, '.$msg);
@@ -81,34 +97,54 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                    msg_okay($msg);
                  }
                   ?>
-                 <form class="form-horizontal" action="index.php?page=usettings" method="post">
-                 <div class="form-group">
-                  <div class="col-lg-8">
-                   <label class="control-label col-sm-3">Altes Passwort:</label>
-                   <div class="col-sm-3">
-                     <input type="password" class="form-control input-sm" name="old_pw">
-                   </div>
-                 </div>
-                     <div style="margin-top:2px;" class="col-lg-8">
-                   <label class="control-label col-sm-3">Neues Passwort:</label>
-                   <div class="col-sm-3">
-                     <input type="password" class="form-control input-sm" name="new_pw">
-                   </div>
-                 </div>
-                     <div style="margin-top:2px;" class="col-lg-8">
-                   <label class="control-label col-sm-3">Wiederholen:</label>
-                   <div class="col-sm-3">
-                     <input type="password" class="form-control input-sm" name="new_pw2">
-                   </div>
-                 </div>
-                      <div style="margin-top:2px;" class="col-lg-8">
-                      <div style="margin-top:2px;" class="col-lg-6">
-                        <button type="submit" name="confirm" class="btn pull-right btn-default btn-sm"><?php echo _button_save; ?></button
-                        </div>
-                        </div>
-                 </div>
-               </form>
-                 </div>
+               <h2>Allgemein</h2>
+                <form class="form-horizontal" action="index.php?page=usettings" method="post">
+                <div class="form-group">
+                  <label class="control-label col-sm-2" for="email">Altes Passwort:</label>
+                  <div class="col-sm-10">
+                    <input type="password" class="form-control input-sm" name="old_pw">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2" for="pwd">Neues Passwort:</label>
+                  <div class="col-sm-10">
+                    <input type="password" class="form-control input-sm" name="new_pw">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2" for="pwd">Wiederholen:</label>
+                  <div class="col-sm-10">
+                    <input type="password" class="form-control input-sm" name="new_pw2">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
+                  </div>
+                </div>
+              </form>
+              <h2>Sicherheit</h2>
+              <div class="form-group col-sm-8">
+                <label class="control-label">
+                  <input data-size="mini" id="toggle-strict" type="checkbox" name="gs_log_cleanup" data-toggle="toggle">
+                  Session Strict
+                  </label>
+                  <?php
+                   if ($session_strict == 1) {
+                    ?>
+                    <script> function toggleOnstrict() { $('#toggle-strict').bootstrapToggle('on'); } addLoadEvent(toggleOnstrict); </script>
+                    <?php
+                  } elseif ($session_strict == 0) { ?>
+                    <script> function toggleOffstrict() { $('#toggle-strict').bootstrapToggle('off'); } addLoadEvent(toggleOffstrict); </script>
+                    <?php
+                  }
+                  ?>
+              </div>
+
+
+
+
+              </div>
 
 
                </div>

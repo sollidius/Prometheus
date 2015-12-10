@@ -6,7 +6,7 @@ define('_title_gameserver','Gameserver');
 define('_title_dasboard','Dashboard');
 define('_title_rootserver','Rootserver');
 define('_title_templates','Vorlagen');
-define('_title_usettings','Konfiguration');
+define('_title_usettings','Account Einstellungen');
 define('_title_users','Benutzer');
 define('_title_events','Events');
 define('_title_addons','Addons');

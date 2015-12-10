@@ -4,7 +4,7 @@ session_start();
 
 $db_rank = 2;
 //Load user Data from DB
-$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ?");
+$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ? LIMIT 1");
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
 $stmt->bind_result($db_rank,$db_id,$db_language);
@@ -102,6 +102,22 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                   </div>
                   <?php
                 }
+                if (isSecure() == true) {
+                  ?>
+                  <div class="alert alert-dismissible alert-info">
+                    <span class="fa fa-check" aria-hidden="true"></span>
+                    Es wird SSL benutzt, um die Verbindung zu verschlüsseln. Um die Sicherheit der Verbindung zu Testen: <a href="https://www.ssllabs.com/ssltest/">ssllabs.com</a>
+                 </div>
+                 <?php
+               } else {
+                 ?>
+                 <div class="alert alert-danger" role="alert">
+                  <span class="fa fa-warning" aria-hidden="true"></span>
+                  <span class="sr-only">Error:</span>
+                  Es wird kein SSL benutzt, um die Verbindung zu verschlüsseln.
+                </div>
+                 <?php
+               }
                 ?>
                 <form action="index.php?page=settings" method="post">
                 <div class="form-group col-sm-8">
