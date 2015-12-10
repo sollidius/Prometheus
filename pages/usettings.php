@@ -4,10 +4,13 @@ session_start();
 
 $db_rank = 2;
 //Load user Data from DB
-$stmt = $mysqli->prepare("SELECT rank,id,language,session_strict FROM users WHERE id = ? LIMIT 1");
-$stmt->bind_param('i', $_SESSION['user_id']);
-$stmt->execute();
-$stmt->bind_result($db_rank,$db_id,$db_language,$session_strict);
+$stmt = $mysqli->prepare("SELECT rank,id,language FROM users WHERE id = ? LIMIT 1");
+if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+$rc = $stmt->bind_param('i', $_SESSION['user_id']);
+if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+$rc = $stmt->execute();
+if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
+$stmt->bind_result($db_rank,$db_id,$db_language);
 $stmt->fetch();
 $stmt->close();
 
@@ -130,6 +133,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                   Session Strict
                   </label>
                   <?php
+                  $session_strict = 0;
                    if ($session_strict == 1) {
                     ?>
                     <script> function toggleOnstrict() { $('#toggle-strict').bootstrapToggle('on'); } addLoadEvent(toggleOnstrict); </script>

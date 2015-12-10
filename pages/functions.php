@@ -712,8 +712,11 @@ function gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$
   $deadline = strtotime('+4 minutes', time());
   $is_running = 2; $running = 1;
   $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?,deadline = ?  WHERE id = ?");
-  $stmt->bind_param('iiii',$is_running,$running,$deadline,$gs_select);
-  $stmt->execute();
+  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
+  $rc = $stmt->bind_param('iiii',$is_running,$running,$deadline,$gs_select);
+  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
+  $rc = $stmt->execute();
+  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->close();
 
 }
@@ -722,6 +725,35 @@ function isSecure() {
   return
     (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
     || $_SERVER['SERVER_PORT'] == 443;
+}
+
+function check_blocked_ip($ip_forward,$ip_remote) {
+  global $mysqli;
+  $time = time();
+  $query = "SELECT `id` FROM `blacklist` WHERE (ip_forward=? OR ip_remote = ?) AND timestamp_expires > ? ";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("ssi", $ip_forward,$ip_remote,$time);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows >= 3){
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+          }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+      }
 }
 
 

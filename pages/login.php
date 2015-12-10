@@ -3,10 +3,16 @@
 $title = "Login";
 include 'header.php';
 
+$remote = htmlentities($_SERVER['REMOTE_ADDR']);
+if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+  $forward = $_SERVER['HTTP_X_FORWARDED_FOR'];
+} else {
+  $forward = "0000";
+}
 
 $error = false; $msg = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' AND check_blocked_ip($forward,$remote) == false) {
 
   if (isValidEmail($_POST['email']) == false) { $msg ="E-Mail ungültig."; $error = true;}
   if (strlen($_POST['email']) < 6) { $msg ="E-Mail zu kurz."; $error = true;}
@@ -34,6 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Invalid credentials
         $error = true;
         $msg = "E-Mail/Passwort ungültig.";
+
+        $timestamp = time();
+        $expires = strtotime('+30 minutes', $timestamp);
+
+        $stmt = $mysqli->prepare("INSERT INTO blacklist(ip_remote,ip_forward,timestamp,timestamp_expires) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param('ssii', $remote,$forward,$timestamp,$expires);
+        $stmt->execute();
+        $stmt->close();
     }
 }
 
@@ -48,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="panel-heading">
                         <h3 style="margin-bottom:2px;" class="panel-title">Please Sign In</h3>
                         <?php if ($error == true) { msg_warning($msg);} ?>
+                        <?php if (check_blocked_ip($forward,$remote)) { msg_error("Login blockiert für diese IP"); } ?>
                     </div>
                     <div class="panel-body">
                         <form action="index.php?page=login" method="post">
