@@ -10,6 +10,7 @@ define('_title_usettings','Account Einstellungen');
 define('_title_users','Benutzer');
 define('_title_events','Events');
 define('_title_addons','Addons');
+define('_title_bans','Bans');
 
 define('_button_save','Speichern');
 define('_table_action','Aktion');

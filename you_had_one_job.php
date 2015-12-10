@@ -217,7 +217,7 @@ if ($result = $mysqli->query($query)) {
                     $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
                     if ($load > 19) {
                       gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
-                      event_add(8,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet. (".$current_status."-".$current_players."/".$current_maxplayers.")");
+                      event_add(5,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet. (".$current_status."-".$current_players."/".$current_maxplayers.")");
                     }
                  }
               } elseif ($current_players > 0 AND $gs_check_cpu_msg == 1 AND $current_players != 1000) {
@@ -304,7 +304,7 @@ if ($result = $mysqli->query($query)) {
            //exit;
          } else {
             gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
-            event_add(1,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
+            event_add(7,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
          }
       }
       //Log Cleanup
@@ -333,7 +333,7 @@ if ($result = $mysqli->query($query)) {
           //exit;
         } else {
        gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
-       event_add(1,"Der Gameserver wurde neugestartet.");
+       event_add(5,"Der Gameserver wurde neugestartet.");
        }
      }
     }
@@ -353,6 +353,26 @@ if ($result = $mysqli->query($query)) {
       $delete = strtotime('+1 day', $row[3]);
       if ($time > $delete) {
         $stmt = $mysqli->prepare("DELETE FROM events WHERE id = ?");
+        $stmt->bind_param('i', $row[0]);
+        $stmt->execute();
+        $stmt->close();
+      }
+    }
+    /* free result set */
+    $result->close();
+}
+//Bans Cleanup
+
+$query = "SELECT id,timestamp_expires FROM blacklist ORDER by id";
+
+if ($result = $mysqli->query($query)) {
+
+    /* fetch object array */
+    while ($row = $result->fetch_row()) {
+      $time = time();
+      $delete = strtotime('+1 day', $row[1]);
+      if ($time > $delete) {
+        $stmt = $mysqli->prepare("DELETE FROM blacklist WHERE id = ?");
         $stmt->bind_param('i', $row[0]);
         $stmt->execute();
         $stmt->close();

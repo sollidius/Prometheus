@@ -449,7 +449,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   <div class="col-sm-2">
                                     <select class="form-control input-sm" name="time">
                                       <?php
-                                      for ($i = 1; $i <= 24; $i++) {
+                                      for ($i = 0; $i <= 23; $i++) {
                                         if ($i == $restart_time) {
                                           echo '<option selected="selected">'.$i.' Uhr</option>';
                                         } else {

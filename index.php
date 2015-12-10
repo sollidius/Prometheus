@@ -58,6 +58,11 @@ if (startsWith($page, "gameserver")) {
  include 'pages/gameserver.php';
 }
 
+//Gameserver
+if (startsWith($page, "bans")) {
+ include 'pages/bans.php';
+}
+
 //Logout
 if ($page=="logout") {
   session_start();

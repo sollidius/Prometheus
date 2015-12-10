@@ -23,6 +23,14 @@ CREATE TABLE `addons_installed` (
   `status_text` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `blacklist` (
+  `id` int(11) NOT NULL,
+  `ip_remote` varchar(255) NOT NULL,
+  `ip_forward` varchar(255) DEFAULT NULL,
+  `timestamp` int(11) NOT NULL,
+  `timestamp_expires` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `dedicated` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -109,7 +117,8 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `rank` int(11) NOT NULL DEFAULT '2',
   `u_count` int(3) NOT NULL DEFAULT '1',
-  `language` varchar(2) NOT NULL DEFAULT 'de'
+  `language` varchar(2) NOT NULL DEFAULT 'de',
+  `session_strict` int(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `wi_settings` (
@@ -124,13 +133,16 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1449503823, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1449753483, 1, 1, 1);
 
 
 ALTER TABLE `addons`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `addons_installed`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `blacklist`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `dedicated`
@@ -167,6 +179,8 @@ ALTER TABLE `wi_settings`
 ALTER TABLE `addons`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `addons_installed`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `blacklist`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `dedicated`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

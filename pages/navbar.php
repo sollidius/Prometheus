@@ -25,6 +25,11 @@
               <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> Addons</a>
           </li>
            '; } ?>
+           <?php if  ($db_rank === 1) { echo '
+          <li>
+              <a href="index.php?page=bans"><i class="fa fa-ban fa-fw"></i> Bans</a>
+          </li>
+           '; } ?>
           <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
@@ -84,6 +89,11 @@
           <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> Addons</a>
+          </li>
+           '; } ?>
+           <?php if  ($db_rank === 1) { echo '
+          <li>
+              <a href="index.php?page=bans"><i class="fa fa-ban fa-fw"></i> Bans</a>
           </li>
            '; } ?>
           <?php if  ($db_rank === 1) { echo '
