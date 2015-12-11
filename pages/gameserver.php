@@ -202,10 +202,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT type,type_name,gameq FROM templates WHERE name = ?");
+                             $stmt = $mysqli->prepare("SELECT type,type_name,gameq,app_set_config FROM templates WHERE name = ?");
                              $stmt->bind_param('s', $game);
                              $stmt->execute();
-                             $stmt->bind_result($db_type,$db_type_name,$gameq);
+                             $stmt->bind_result($db_type,$db_type_name,$gameq,$db_app_set_config);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -218,7 +218,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   Login failed
                                 </div>';
                               } else {
-                                 gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$gs_select);
+                                 gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$gs_select,$db_app_set_config);
                                  event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
                                  msg_okay("Der Gamesever wurde gestartet.");
                               }
@@ -290,7 +290,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                    Login failed
                                  </div>';
                                } else {
-                                 $ssh->exec('sudo pkill -u '.$gs_login.';sudo userdel -r '.$gs_login);
+                                 $ssh->exec('sudo -u '.$gs_login.' screen -S game'.$gs_login.' -p 0 -X quit');
+                                 $ssh->exec('sudo pkill -u '.$gs_login.';sleep 2;sudo userdel -r '.$gs_login);
 
                                  $stmt = $mysqli->prepare("DELETE FROM gameservers WHERE id = ?");
                                  $stmt->bind_param('i', $gs_select);

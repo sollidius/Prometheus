@@ -84,6 +84,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  $internal = htmlentities($_POST['internal']);
                                  $path = htmlentities($_POST['path']);
                                  $gameq = htmlentities($_POST['gameq']);
+                                 $app_set_config = htmlentities($_POST['app_set_config']);
                                  if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if ($type == "steamcmd") {
                                    if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
@@ -108,15 +109,15 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                                    if ($limited == true) {
 
-                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?, map_path = ?, gameq = ? WHERE id = ?");
-                                     $stmt->bind_param('ssssi',$internal,$type_name,$path,$gameq,$row[0]);
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?, map_path = ?, gameq = ?, app_set_config = ? WHERE id = ?");
+                                     $stmt->bind_param('sssssi',$internal,$type_name,$path,$gameq,$app_set_config,$row[0]);
                                      $stmt->execute();
                                      $stmt->close();
 
                                    } else {
 
-                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?,type = ?,name = ?,map_path = ?, gameq = ?  WHERE id = ?");
-                                     $stmt->bind_param('ssssssi',$internal,$type_name,$type,$name,$path,$gameq,$row[0]);
+                                     $stmt = $mysqli->prepare("UPDATE templates SET name_internal = ?,type_name = ?,type = ?,name = ?,map_path = ?, gameq = ?, app_set_config = ?  WHERE id = ?");
+                                     $stmt->bind_param('sssssssi',$internal,$type_name,$type,$name,$path,$gameq,$app_set_config,$row[0]);
                                      $stmt->execute();
                                      $stmt->close();
 
@@ -132,10 +133,10 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               }
                           }
 
-                          $stmt = $mysqli->prepare("SELECT name,name_internal,type,type_name,map_path,gameq FROM templates WHERE id = ?");
+                          $stmt = $mysqli->prepare("SELECT name,name_internal,type,type_name,map_path,gameq,app_set_config FROM templates WHERE id = ?");
                           $stmt->bind_param('i', $row[0]);
                           $stmt->execute();
-                          $stmt->bind_result($db_name,$db_internal,$db_type,$db_type_name,$db_path,$db_gameq);
+                          $stmt->bind_result($db_name,$db_internal,$db_type,$db_type_name,$db_path,$db_gameq,$db_app_set_config);
                           $stmt->fetch();
                           $stmt->close();
 
@@ -180,6 +181,12 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               </div>
                             </div>
                             <div class="form-group">
+                              <label class="control-label col-sm-2">App_set_config:</label>
+                              <div class="col-sm-3">
+                                <input type="text" class="form-control input-sm" name="app_set_config"  value="<?php echo $db_app_set_config;?>">
+                              </div>
+                            </div>
+                            <div class="form-group">
                               <div class="col-sm-offset-2 col-sm-10">
                                 <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                               </div>
@@ -209,6 +216,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          $internal = htmlentities($_POST['internal']);
                          $map_path = htmlentities($_POST['path']);
                          $gameq = htmlentities($_POST['gameq']);
+                         $app_set_config = htmlentities($_POST['app_set_config']);
                          if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                          if ($type == "steamcmd") {
                            if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
@@ -232,8 +240,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          if ($error == false) {
 
 
-                           $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal,map_path,gameq) VALUES (?, ?, ?, ? ,? ,?)");
-                           $stmt->bind_param('ssssss', $name, $type,$type_name,$internal,$map_path,$gameq);
+                           $stmt = $mysqli->prepare("INSERT INTO templates(name,type,type_name,name_internal,map_path,gameq,app_set_config) VALUES (?, ?, ?, ? ,? ,?, ?)");
+                           $stmt->bind_param('sssssss', $name, $type,$type_name,$internal,$map_path,$gameq,$app_set_config);
                            $stmt->execute();
                            $stmt->close();
 
@@ -275,6 +283,12 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                       </div>
                     </div>
                     <div class="form-group">
+                      <label class="control-label col-sm-2">App_set_config:</label>
+                      <div class="col-sm-3">
+                        <input type="text" class="form-control input-sm" name="app_set_config" placeholder="ricochet">
+                      </div>
+                    </div>
+                    <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" name="confirm" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
                       </div>
@@ -294,6 +308,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           <th>Internal</th>
                           <th>Type</th>
                           <th>Type Name</th>
+                          <th>App Config</th>
                           <th>Map pfad</th>
                           <th>GameQ</th>
                           <th><?php echo _table_action; ?></th>
@@ -302,11 +317,11 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                       <tbody>
                      <?php
 
-                     $query = "SELECT name, type,type_name,name_internal,id,map_path,gameq FROM templates ORDER by id";
+                     $query = "SELECT name, type,type_name,name_internal,id,map_path,gameq,app_set_config FROM templates ORDER by name ASC";
 
                       if ($stmt = $mysqli->prepare($query)) {
                           $stmt->execute();
-                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal,$db_id,$db_path,$db_gameq);
+                          $stmt->bind_result($db_name, $db_type,$db_type_name,$db_name_internal,$db_id,$db_path,$db_gameq,$db_app_set_config);
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
@@ -326,6 +341,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             } else {
                               echo "<td>" . $db_type_name . "</td>";
                             }
+                            echo "<td>" . $db_app_set_config . "</td>";
                             echo "<td>" . $db_path . "</td>";
                             echo "<td>" . $db_gameq . "</td>";
                             echo '<td> <a href="index.php?page=templates?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</i></a>

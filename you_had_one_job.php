@@ -59,7 +59,21 @@ if ($result = $mysqli->query($query)) {
          //exit;
        } else {
          if ($row[4] == "template") {
-           $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
+
+           $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config FROM templates WHERE name = ?");
+           $stmt->bind_param('s', $row[1]);
+           $stmt->execute();
+           $stmt->bind_result($db_type,$db_type_name,$db_app_set_config);
+           $stmt->fetch();
+           $stmt->close();
+
+           if ($db_app_set_config == "") {
+               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
+           } elseif ($db_app_set_config != "") {
+               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9] after update job" ; echo $?');
+           }
+
+
            if ($status == 1) {
                $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "Success!" ; echo $?');
                if ($status != 1) {
@@ -78,14 +92,18 @@ if ($result = $mysqli->query($query)) {
                }
            } elseif ($status != 1) {
 
-             $stmt = $mysqli->prepare("SELECT type,type_name FROM templates WHERE name = ?");
+             $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config FROM templates WHERE name = ?");
              $stmt->bind_param('s', $row[1]);
              $stmt->execute();
-             $stmt->bind_result($db_type,$db_type_name);
+             $stmt->bind_result($db_type,$db_type_name,$db_app_set_config);
              $stmt->fetch();
              $stmt->close();
 
-             $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+             if ($db_app_set_config == "") {
+                $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+             } elseif ($db_app_set_config != "") {
+                $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_set_config '.$db_type_name.' mod '.$db_app_set_config.' +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+             }
 
            }
          } elseif ($row[4] == "image") {
@@ -173,16 +191,19 @@ if ($result = $mysqli->query($query)) {
       $stmt->fetch();
       $stmt->close();
 
-      $stmt = $mysqli->prepare("SELECT type,type_name,gameq,name_internal,type FROM templates WHERE name = ?");
+      $stmt = $mysqli->prepare("SELECT type,type_name,gameq,name_internal,type,app_set_config FROM templates WHERE name = ?");
       $stmt->bind_param('s', $row[5]);
       $stmt->execute();
-      $stmt->bind_result($db_type,$db_type_name,$gameq,$name_internal,$type);
+      $stmt->bind_result($db_type,$db_type_name,$gameq,$name_internal,$type,$app_set_config);
       $stmt->fetch();
       $stmt->close();
 
       //Status
-      $servers[1]["type"] = "unknown";
-      $servers[1]["type"] = $gameq;
+      if ($gameq == "") {
+        $servers[1]["type"] = "gmod";
+      } else {
+        $servers[1]["type"] = $gameq;
+      }
       $servers[1]["host"] = $row[6] .':'.$row[7];
       $servers[1]["id"] = "serv";
       $current_players = 1000; $current_status = "unknown"; $current_maxplayers = "0";
@@ -216,7 +237,7 @@ if ($result = $mysqli->query($query)) {
 
                     $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
                     if ($load > 19) {
-                      gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
+                      gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
                       event_add(5,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet. (".$current_status."-".$current_players."/".$current_maxplayers.")");
                     }
                  }
@@ -304,7 +325,7 @@ if ($result = $mysqli->query($query)) {
          if (!$ssh->login($dedi_login, $dedi_password)) {
            //exit;
          } else {
-            gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
+            gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
             event_add(7,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
          }
       }
@@ -333,7 +354,7 @@ if ($result = $mysqli->query($query)) {
         if (!$ssh->login($dedi_login, $dedi_password)) {
           //exit;
         } else {
-       gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3]);
+       gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
        event_add(5,"Der Gameserver wurde neugestartet.");
        }
      }

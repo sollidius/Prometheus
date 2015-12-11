@@ -57,7 +57,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                             //Install Games
 
-                              $query = "SELECT id,name,type,type_name FROM templates ORDER by id";
+                              $query = "SELECT id,name,type,type_name,app_set_config FROM templates ORDER by id";
 
                               if ($result_2 = $mysqli->query($query)) {
 
@@ -92,7 +92,12 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                             //$ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';wget --no-check-certificate https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
                                             $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz');
                                             $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';tar xvf steamcmd_linux.tar.gz');
-                                            $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
+                                            $db_app_set_config = $row_2["app_set_config"];
+                                            if ($db_app_set_config == "") {
+                                                $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
+                                            } elseif ($db_app_set_config != "") {
+                                                $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_set_config '.$row_2["type_name"].' mod '.$db_app_set_config.' +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
+                                            }
 
                                             $template = "template";
                                             $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");

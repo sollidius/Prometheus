@@ -684,12 +684,15 @@ function event_id_to_ico($id) {
 
 }
 
-function gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$gs_select) {
+function gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$gs_select,$app_set_config) {
   global $mysqli;
   $ssh->exec('sudo -u '.$gs_login.' screen -S game'.$gs_login.' -p 0 -X quit');
-  if ($type == "steamcmd") {
+  if ($type == "steamcmd" AND $app_set_config == "") {
       $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' rm screenlog.0');
-      $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' -port '.$port.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
+      $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/srcds_run -game '.$name_internal.' +port '.$port.' +ip '.$ip.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
+  } elseif ($type == "steamcmd" AND  $app_set_config != "") {
+      $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' rm screenlog.0');
+      $ssh->exec('cd /home/'.$gs_login.'/game;sudo -u '.$gs_login.' screen -A -m -d -L -S game'.$gs_login.' /home/'.$gs_login.'/game/hlds_run -game '.$name_internal.' +port '.$port.' +ip '.$ip.' +map '.$map.' -maxplayers '.$slots .' ' .$parameter);
   } elseif ($type == "image") {
     if ($gameq == "minecraft") {
       $server_port = str_replace("server-port=","",$ssh->exec('cat /home/'.$gs_login.'/server.properties | grep "server-port="'));

@@ -108,7 +108,7 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `ga
 (14, 'L4D2', 'left4dead2', 'steamcmd', '222860', 'l4d2', ''),
 (20, 'L4D', 'left4dead', 'steamcmd', '222840', 'l4d', ''),
 (21, 'DODS', 'dod', 'steamcmd', '232290', 'dods', ''),
-(31, 'MinecraftVanilla', 'java -jar minecraft_server.1.8.8.jar', 'image', 'http://185.58.194.253/mc1.8.8.zip', 'minecraft', '');
+(31, 'MinecraftVanilla', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1449753483, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1449836645, 1, 1, 1);
 
 
 ALTER TABLE `addons`
