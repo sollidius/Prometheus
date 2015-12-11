@@ -14,7 +14,12 @@
     <link href="components/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="components/dashboard.css" rel="stylesheet">
-	<link href="components/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
+	  <link href="components/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+    <script src="components/jquery.min.js"></script>
+    <script src="components/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+
+    <script src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
 	<!-- Custom Fonts -->
     <link href="components/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->

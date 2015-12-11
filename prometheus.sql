@@ -87,7 +87,7 @@ CREATE TABLE `jobs` (
   `dedicated_id` int(11) NOT NULL,
   `template_id` int(11) NOT NULL DEFAULT '0',
   `type` varchar(25) NOT NULL,
-  `type_id` varchar(25) NOT NULL
+  `type_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `templates` (
@@ -105,7 +105,7 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `ga
 (2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020', 'gmod', 'garrysmod', ''),
 (7, 'CounterStrikeSource', 'cstrike', 'steamcmd', '232330', 'css', '', ''),
 (9, 'CounterStrikeGlobalOffensive', 'csgo', 'steamcmd', '740', 'csgo', 'csgo', ''),
-(10, 'TeamFortress2', 'tf', 'steamcmd', '232250', 'tf2', '', ''),
+(10, 'TeamFortress2', 'tf', 'steamcmd', '232250', 'tf2', 'tf', ''),
 (14, 'Left4Dead2', 'left4dead2', 'steamcmd', '222860', 'l4d2', '', ''),
 (20, 'Left4Dead', 'left4dead', 'steamcmd', '222840', 'l4d', '', ''),
 (21, 'DayofDefeatSource', 'dod', 'steamcmd', '232290', 'dods', '', ''),
@@ -115,8 +115,8 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `ga
 (34, 'CounterStrikeConditionZero', 'cstrike', 'steamcmd', '90', '', '', 'czero'),
 (35, 'Half-Life', 'hl', 'steamcmd', '90', '', '', ''),
 (36, 'Half-LifeDeathmatchSource', 'hldm', 'steamcmd', '255470', '', '', ''),
-(37, 'Half-Life2Deathmatch', 'hl2dm', 'steamcmd', '232370', '', '', ''),
-(38, 'Counter-Strike', 'cs', 'steamcmd', '90', '', '', '');
+(37, 'Half-Life2Deathmatch', 'hl2mp', 'steamcmd', '232370', '', '', ''),
+(38, 'Counter-Strike', 'cstrike', 'steamcmd', '90', '', '', '');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -141,7 +141,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1449846002, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1449875525, 1, 1, 1);
 
 
 ALTER TABLE `addons`

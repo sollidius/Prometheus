@@ -117,6 +117,13 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           $stmt->fetch();
                           $stmt->close();
 
+                          $stmt = $mysqli->prepare("SELECT name FROM templates WHERE id = ?");
+                          $stmt->bind_param('i',$db_game_id);
+                          $stmt->execute();
+                          $stmt->bind_result($db_game_name);
+                          $stmt->fetch();
+                          $stmt->close();
+
                           echo'<form class="form-horizontal" action="index.php?page=addons?edit-'.$row[0].'" method="post">';?>
                             <div class="form-group">
                               <label class="control-label col-sm-2">Name/Game:</label>
@@ -126,14 +133,18 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               <div class="col-sm-3">
                                 <select class="form-control input-sm" name="game">
                                 <?php
-                                $query = "SELECT name FROM templates ORDER by id";
+                                $query = "SELECT name FROM templates ORDER by name ASC";
 
                                  if ($stmt = $mysqli->prepare($query)) {
                                      $stmt->execute();
                                      $stmt->bind_result($db_name);
 
                                      while ($stmt->fetch()) {
-                                       echo "<option>" . $db_name . "</option>";
+                                       if ($db_name == $db_game_name) {
+                                         echo '<option selected="selected">'.$db_name.'</option>';
+                                       } else {
+                                         echo "<option>".$db_name."</option>";
+                                       }
                                      }
                                      $stmt->close();
                                  }  ?>
@@ -220,7 +231,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                       <div class="col-sm-3">
                         <select class="form-control input-sm" name="game">
                         <?php
-                        $query = "SELECT name FROM templates ORDER by id";
+                        $query = "SELECT name FROM templates ORDER by name ASC";
 
                          if ($stmt = $mysqli->prepare($query)) {
                              $stmt->execute();

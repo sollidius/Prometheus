@@ -397,31 +397,95 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               $stmt->fetch();
                               $stmt->close();
 
-                              $ssh = new Net_SSH2($dedi_ip,$dedi_port);
-                               if (!$ssh->login($dedi_login, $dedi_password)) {
-                                 echo '
-                                 <div class="alert alert-danger" role="alert">
-                                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                   <span class="sr-only">Error:</span>
-                                   Login failed
-                                 </div>';
-                               } else {
-                                  $msg =  $ssh->exec('cd /home/'.$gs_login.'/game/'.$db_path.'/maps/;ls');
-                                  $lines = preg_split('/\s+/', $msg);
-                                  foreach ($lines as &$element) {
-                                    if (endsWith($element, ".bsp")) {
-                                      //echo $element;
-                                      //echo "<br>";
-                                    }
-                                  }
-                               }
                               ?>
                               <form class="form-horizontal" action="<?php echo "index.php?page=gameserver?settings-".$row[0]; ?>" method="post">
                                 <div class="form-group">
-                                  <label class="control-label col-sm-2">Map:</label>
-                                  <div class="col-sm-4">
-                                    <input type="text" class="form-control input-sm typeahead" autocomplete="off" name="map" value="<?php echo $db_map;?>">
+                                  <label class="control-label col-sm-2">Map/Neustart:</label>
+                                  <div class="col-sm-2">
+                                    <input class="typeahead form-control input-sm" type="text" name="map" value="<?php echo $db_map; ?>">
+                                    <?php
+                                    $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                                     if (!$ssh->login($dedi_login, $dedi_password)) {
+                                       echo '
+                                       <div class="alert alert-danger" role="alert">
+                                         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                         <span class="sr-only">Error:</span>
+                                         Login failed
+                                       </div>';
+                                     } else {
+                                        $msg =  $ssh->exec('cd /home/'.$gs_login.'/game/'.$db_path.'/maps/;ls');
+                                        $lines = preg_split('/\s+/', $msg);
+                                        $maps=array();
+                                        foreach ($lines as &$element) {
+                                          if (endsWith($element, ".bsp")) {
+                                            //echo  "<option>".$element."</option>";
+                                            //echo "<br>";
+                                            $element = str_replace(".bsp","",$element);
+                                            array_push($maps,$element);
+                                          }
+                                        }
+                                     }
+                                     ?>
                                   </div>
+                                  <div class="col-sm-2">
+                                    <select class="form-control input-sm" name="time">
+                                      <?php
+                                      for ($i = 0; $i <= 23; $i++) {
+                                        if ($i == $restart_time) {
+                                          echo '<option selected="selected">'.$i.' Uhr</option>';
+                                        } else {
+                                          echo "<option>".$i." Uhr</option>";
+                                        }
+                                      }
+                                      ?>
+                                    </select>
+                                  </div>
+                                  <?php
+                                  if ($db_restart == 1) {
+                                   ?>  <script> function toggleOnrestart() { $('#toggle-restart').bootstrapToggle('on'); }  addLoadEvent(toggleOnrestart); </script> <?php
+                                 } elseif ($db_restart == 0) {
+                                   ?>  <script> function toggleOffrestart() { $('#toggle-restart').bootstrapToggle('off'); }  addLoadEvent(toggleOffrestart); </script> <?php
+                                 }
+                                   ?>
+                                  <div class="col-sm-2">
+                                      <input data-size="small" id="toggle-restart" data-height="20" type="checkbox" name="restart_active" data-toggle="toggle">
+                                  </div>
+                                  <script type="text/javascript">
+
+                                    var substringMatcher = function(strs) {
+                                    return function findMatches(q, cb) {
+                                    var matches, substringRegex;
+
+                                    // an array that will be populated with substring matches
+                                    matches = [];
+
+                                    // regex used to determine if a string contains the substring `q`
+                                    substrRegex = new RegExp(q, 'i');
+
+                                    // iterate through the pool of strings and for any string that
+                                    // contains the substring `q`, add it to the `matches` array
+                                    $.each(strs, function(i, str) {
+                                      if (substrRegex.test(str)) {
+                                        matches.push(str);
+                                      }
+                                    });
+
+                                    cb(matches);
+                                    };
+                                    };
+
+                                    var maps =  <?php echo json_encode($maps) ?>;
+
+                                    $('.typeahead').typeahead({
+                                    hint: true,
+                                    highlight: true,
+                                    minLength: 1
+                                    },
+                                    {
+                                    name: 'maps',
+                                    source: substringMatcher(maps)
+                                    });
+                                    </script>
                                 </div>
                                 <div class="form-group">
                                   <label class="control-label col-sm-2">Paramter:</label>
@@ -446,31 +510,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                     ?>
                                   </div>
                                 </div>
-                                <div class="form-group">
-                                  <label class="control-label col-sm-2">Neustart:</label>
-                                  <div class="col-sm-2">
-                                    <select class="form-control input-sm" name="time">
-                                      <?php
-                                      for ($i = 0; $i <= 23; $i++) {
-                                        if ($i == $restart_time) {
-                                          echo '<option selected="selected">'.$i.' Uhr</option>';
-                                        } else {
-                                          echo "<option>".$i." Uhr</option>";
-                                        }
-                                      }
-                                      ?>
-                                    </select>
-                                  </div>
-                                  <div class="col-sm-2">
-                                      <input data-size="small" id="toggle-restart" data-height="20" type="checkbox" name="restart_active" data-toggle="toggle">
-                                  </div>
-                                </div>
                                 <?php
-                                if ($db_restart == 1) {
-                                 ?>  <script> function toggleOnrestart() { $('#toggle-restart').bootstrapToggle('on'); }  addLoadEvent(toggleOnrestart); </script> <?php
-                               } elseif ($db_restart == 0) {
-                                 ?>  <script> function toggleOffrestart() { $('#toggle-restart').bootstrapToggle('off'); }  addLoadEvent(toggleOffrestart); </script> <?php
-                               }
                                  if ($db_rank == 1) {
                                   ?>
                                   <div class="form-group">
@@ -836,7 +876,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                       <div class="col-sm-4">
                         <select class="form-control input-sm" name="type">
                         <?php
-                        $query = "SELECT name FROM templates ORDER by id";
+                        $query = "SELECT name FROM templates ORDER by name ASC";
 
                          if ($stmt = $mysqli->prepare($query)) {
                              $stmt->execute();

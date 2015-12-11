@@ -168,7 +168,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             }
                         msg_info("Die Installation kann ca. 5-30 Minuten dauern, je nach Bandbreite und Downloadgröße, wenn die SteamCMD abstürtzt, wird der Updatevorgang neu gestartet.");
                         echo '<form class="form-horizontal" action="index.php?page=rootserver?manage='.$row["id"].'" method="post">'; ?>
-                         <div class="col-sm-4">
+                         <div class="col-sm-5">
                          <table class="table table-bordered">
                            <thead>
                              <tr>
@@ -179,7 +179,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                            <tbody>
                           <?php
 
-                          $query = "SELECT name, type,type_name,id FROM templates ORDER by id";
+                          $query = "SELECT name, type,type_name,id FROM templates ORDER by name ASC";
 
                             if ($result_2 = $mysqli->query($query)) {
 
