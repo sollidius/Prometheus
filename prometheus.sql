@@ -11,8 +11,8 @@ CREATE TABLE `addons` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `addons` (`id`, `game_id`, `name`, `url`, `path`, `folder`) VALUES
-(4, 2, 'ULIB', 'http://ulyssesmod.net/archive/ULib/ULib-v2_52.zip', 'game/garrysmod/addons', 'ulib'),
-(5, 2, 'ULX', 'http://ulyssesmod.net/archive/ulx/ulx-v3_62.zip', 'game/garrysmod/addons', 'ulx');
+(1, 2, 'ULIB', 'http://ulyssesmod.net/archive/ULib/ULib-v2_52.zip', 'game/garrysmod/addons', 'ulib'),
+(2, 2, 'ULX', 'http://ulyssesmod.net/archive/ulx/ulx-v3_62.zip', 'game/garrysmod/addons', 'ulx');
 
 CREATE TABLE `addons_installed` (
   `id` int(11) NOT NULL,
@@ -97,18 +97,22 @@ CREATE TABLE `templates` (
   `type` varchar(50) NOT NULL,
   `type_name` varchar(255) NOT NULL,
   `gameq` varchar(50) NOT NULL,
-  `map_path` varchar(255) NOT NULL
+  `map_path` varchar(255) NOT NULL,
+  `app_set_config` varchar(50) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `gameq`, `map_path`) VALUES
-(2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020', 'gmod', 'garrysmod'),
-(7, 'CSS', 'cstrike', 'steamcmd', '232330', 'css', ''),
-(9, 'CSGO', 'csgo', 'steamcmd', '740', 'csgo', 'csgo'),
-(10, 'TF2', 'tf', 'steamcmd', '232250', 'tf2', ''),
-(14, 'L4D2', 'left4dead2', 'steamcmd', '222860', 'l4d2', ''),
-(20, 'L4D', 'left4dead', 'steamcmd', '222840', 'l4d', ''),
-(21, 'DODS', 'dod', 'steamcmd', '232290', 'dods', ''),
-(31, 'MinecraftVanilla', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '');
+INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `gameq`, `map_path`, `app_set_config`) VALUES
+(2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020', 'gmod', 'garrysmod', ''),
+(7, 'CounterStrikeSource', 'cstrike', 'steamcmd', '232330', 'css', '', ''),
+(9, 'CounterStrikeGlobalOffensive', 'csgo', 'steamcmd', '740', 'csgo', 'csgo', ''),
+(10, 'TeamFortress2', 'tf', 'steamcmd', '232250', 'tf2', '', ''),
+(14, 'Left4Dead2', 'left4dead2', 'steamcmd', '222860', 'l4d2', '', ''),
+(20, 'Left4Dead', 'left4dead', 'steamcmd', '222840', 'l4d', '', ''),
+(21, 'DayofDefeatSource', 'dod', 'steamcmd', '232290', 'dods', '', ''),
+(31, 'MinecraftVanilla', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '', ''),
+(32, 'TeamFortressClassic', 'tfc', 'steamcmd', '90', '', '', 'tfc'),
+(33, 'DayofDefeat', 'dod', 'steamcmd', '90', '', '', 'dod'),
+(34, 'CounterStrikeConditionZero', 'cstrike', 'steamcmd', '90', '', '', 'czero');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -133,7 +137,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1449836645, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1449844442, 1, 1, 1);
 
 
 ALTER TABLE `addons`
