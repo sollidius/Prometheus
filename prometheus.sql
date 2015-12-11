@@ -11,8 +11,8 @@ CREATE TABLE `addons` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `addons` (`id`, `game_id`, `name`, `url`, `path`, `folder`) VALUES
-(1, 2, 'ULIB', 'http://ulyssesmod.net/archive/ULib/ULib-v2_52.zip', 'game/garrysmod/addons', 'ulib'),
-(2, 2, 'ULX', 'http://ulyssesmod.net/archive/ulx/ulx-v3_62.zip', 'game/garrysmod/addons', 'ulx');
+(1, 2, 'ULIB_2.52', 'http://ulyssesmod.net/archive/ULib/ULib-v2_52.zip', 'game/garrysmod/addons', 'ulib'),
+(2, 2, 'ULX_3.62', 'http://ulyssesmod.net/archive/ulx/ulx-v3_62.zip', 'game/garrysmod/addons', 'ulx');
 
 CREATE TABLE `addons_installed` (
   `id` int(11) NOT NULL,
@@ -109,10 +109,14 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `ga
 (14, 'Left4Dead2', 'left4dead2', 'steamcmd', '222860', 'l4d2', '', ''),
 (20, 'Left4Dead', 'left4dead', 'steamcmd', '222840', 'l4d', '', ''),
 (21, 'DayofDefeatSource', 'dod', 'steamcmd', '232290', 'dods', '', ''),
-(31, 'MinecraftVanilla', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '', ''),
+(31, 'MinecraftVanilla-1.8.9', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '', ''),
 (32, 'TeamFortressClassic', 'tfc', 'steamcmd', '90', '', '', 'tfc'),
 (33, 'DayofDefeat', 'dod', 'steamcmd', '90', '', '', 'dod'),
-(34, 'CounterStrikeConditionZero', 'cstrike', 'steamcmd', '90', '', '', 'czero');
+(34, 'CounterStrikeConditionZero', 'cstrike', 'steamcmd', '90', '', '', 'czero'),
+(35, 'Half-Life', 'hl', 'steamcmd', '90', '', '', ''),
+(36, 'Half-LifeDeathmatchSource', 'hldm', 'steamcmd', '255470', '', '', ''),
+(37, 'Half-Life2Deathmatch', 'hl2dm', 'steamcmd', '232370', '', '', ''),
+(38, 'Counter-Strike', 'cs', 'steamcmd', '90', '', '', '');
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -137,7 +141,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1449844442, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1449846002, 1, 1, 1);
 
 
 ALTER TABLE `addons`

@@ -82,8 +82,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  $url = htmlentities($_POST['url']);
                                  $path = htmlentities($_POST['path']);
                                  $folder = htmlentities($_POST['folder']);
-                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                                  if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
 
                                  if ($error == false) {
@@ -184,8 +184,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          $url = htmlentities($_POST['url']);
                          $path = htmlentities($_POST['path']);
                          $folder = htmlentities($_POST['folder']);
-                         if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                         if(!preg_match("/^[a-zA-Z0-9]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;}
                          if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
 
                          if ($error == false) {
