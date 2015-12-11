@@ -59,7 +59,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
             //      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
-                    $query = "SELECT id,status,user_id,ip FROM gameservers ORDER by id";
+                    $query = "SELECT id,status,user_id,ip,game FROM gameservers ORDER by id";
 
                     if ($result = $mysqli->query($query)) {
 
@@ -158,9 +158,9 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $stmt->fetch();
                                   $stmt->close();
 
-                                  $status = 1;
-                                  $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?  WHERE id = ?");
-                                  $stmt->bind_param('iii',$status,$status,$gs_select);
+                                  $status = 1; $running = 0;
+                                  $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?,is_running = ?,running = ?  WHERE id = ?");
+                                  $stmt->bind_param('iiiii',$status,$status,$running,$running,$gs_select);
                                   $stmt->execute();
                                   $stmt->close();
 
@@ -574,7 +574,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                <tbody>
                               <?php
 
-                              $query = "SELECT id, game_id, name,url ,path FROM addons ORDER by id";
+                              $query = "SELECT id, game_id, name,url ,path FROM addons WHERE game_id = ".$row[0]." ORDER by id";
 
                                 if ($result_2 = $mysqli->query($query)) {
 
@@ -797,7 +797,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              }
                              $ssh->disablePTY();
                              $ssh->read('[prompt]');
-                             $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login.";rm screenlog.0;'";
+                             $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login.";sudo rm /home/".$gs_login."/screenlog.0;'";
                              $ssh->exec($copy);
 
                              $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");

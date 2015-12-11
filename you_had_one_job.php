@@ -90,7 +90,7 @@ if ($result = $mysqli->query($query)) {
            }
          } elseif ($row[4] == "image") {
 
-          echo  $status = $ssh->exec("ps -ef | grep -i image".$row[1]." | grep -v grep; echo $?");
+           $status = $ssh->exec("ps -ef | grep -i image".$row[1]." | grep -v grep; echo $?");
            if ($status == 1) {
 
              $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
@@ -125,7 +125,7 @@ if ($result = $mysqli->query($query)) {
             if (!$ssh->login($dedi_login, $dedi_password)) {
               //exit;
             } else {
-              echo  $status = $ssh->exec("ps -ef | grep -i addon".$gs_login." | grep -v grep; echo $?");
+              $status = $ssh->exec("ps -ef | grep -i addon".$gs_login." | grep -v grep; echo $?");
               if ($status == 1) {
 
                 $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
@@ -278,7 +278,8 @@ if ($result = $mysqli->query($query)) {
                $status = $ssh->exec('cat /home/'.$row[0].'/game/steam.log  | grep "Success!" ; echo $?');
                if ($status != 1) {
 
-                 echo "Updated finished....";
+                 //echo "Updated finished....";
+                 event_add(4,"Der Gameserver ".$ip.":".$port." wurde aktualisiert.");
 
                  $status = 0;
                  $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?  WHERE id = ?");
