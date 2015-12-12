@@ -191,8 +191,8 @@ if ($result = $mysqli->query($query)) {
       $stmt->fetch();
       $stmt->close();
 
-      $stmt = $mysqli->prepare("SELECT type,type_name,gameq,name_internal,type,app_set_config FROM templates WHERE name = ?");
-      $stmt->bind_param('s', $row[5]);
+      $stmt = $mysqli->prepare("SELECT type,type_name,gameq,name_internal,type,app_set_config FROM templates WHERE id = ?");
+      $stmt->bind_param('i', $row[5]);
       $stmt->execute();
       $stmt->bind_result($db_type,$db_type_name,$gameq,$name_internal,$type,$app_set_config);
       $stmt->fetch();

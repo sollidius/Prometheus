@@ -93,9 +93,16 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                </div>';
                              } else {
 
+                               $stmt = $mysqli->prepare("SELECT name FROM templates WHERE id = ?");
+                               $stmt->bind_param('i', $game);
+                               $stmt->execute();
+                               $stmt->bind_result($game_name);
+                               $stmt->fetch();
+                               $stmt->close();
+
                                $ssh->exec('sudo pkill -u '.$gs_login);
                                $ssh->exec('sudo rm -r /home/'.$gs_login.'/*');
-                               $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";'";
+                               $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game_name."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game_name."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";'";
                                $ssh->exec($copy);
 
                                $status = 1;
@@ -123,10 +130,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE name = ?");
-                             $stmt->bind_param('s', $game);
+                             $stmt = $mysqli->prepare("SELECT type FROM templates WHERE id = ?");
+                             $stmt->bind_param('i', $game);
                              $stmt->execute();
-                             $stmt->bind_result($name_internal,$type);
+                             $stmt->bind_result($type);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -151,10 +158,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   </div>';
                                 } else {
 
-                                  $stmt = $mysqli->prepare("SELECT type_name FROM templates WHERE name = ?");
-                                  $stmt->bind_param('s',$game);
+                                  $stmt = $mysqli->prepare("SELECT type_name,name FROM templates WHERE id = ?");
+                                  $stmt->bind_param('i',$game);
                                   $stmt->execute();
-                                  $stmt->bind_result($type_name);
+                                  $stmt->bind_result($type_name,$game_name);
                                   $stmt->fetch();
                                   $stmt->close();
 
@@ -168,7 +175,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $ssh->exec('sudo rm /home/'.$gs_login.'/game/steam.log');
                                   $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
                                   $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
-                                  $ssh->exec('cd /home/'.$gs_login.'/; sudo cp /home/'.$dedi_login.'/templates/'.$game.'/steamcmd_linux.tar.gz /home/'.$gs_login.'/; sudo tar xvf steamcmd_linux.tar.gz; sudo rm steamcmd_linux.tar.gz;sudo chown -R '.$gs_login.':'.$gs_login.' /home/'.$gs_login.'');
+                                  $ssh->exec('cd /home/'.$gs_login.'/; sudo cp /home/'.$dedi_login.'/templates/'.$game_name.'/steamcmd_linux.tar.gz /home/'.$gs_login.'/; sudo tar xvf steamcmd_linux.tar.gz; sudo rm steamcmd_linux.tar.gz;sudo chown -R '.$gs_login.':'.$gs_login.' /home/'.$gs_login.'');
                                   $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
                                   msg_okay("Der Gameserver wird aktualisiert.");
 
@@ -188,13 +195,6 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE name = ?");
-                             $stmt->bind_param('s', $game);
-                             $stmt->execute();
-                             $stmt->bind_result($name_internal,$type);
-                             $stmt->fetch();
-                             $stmt->close();
-
                              $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
                              $stmt->bind_param('i', $dedi_id);
                              $stmt->execute();
@@ -202,10 +202,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT type,type_name,gameq,app_set_config FROM templates WHERE name = ?");
-                             $stmt->bind_param('s', $game);
+                             $stmt = $mysqli->prepare("SELECT gameq,app_set_config,name_internal,type FROM templates WHERE id = ?");
+                             $stmt->bind_param('i', $game);
                              $stmt->execute();
-                             $stmt->bind_result($db_type,$db_type_name,$gameq,$db_app_set_config);
+                             $stmt->bind_result($db_gameq,$db_app_set_config,$db_name_internal,$type);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -218,7 +218,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   Login failed
                                 </div>';
                               } else {
-                                 gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$gs_select,$db_app_set_config);
+                                 gameserver_restart($type,$ssh,$gs_login,$db_name_internal,$port,$ip,$map,$slots,$parameter,$db_gameq,$gs_select,$db_app_set_config);
                                  event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
                                  msg_okay("Der Gamesever wurde gestartet.");
                               }
@@ -387,9 +387,9 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               $stmt->fetch();
                               $stmt->close();
 
-                              $stmt = $mysqli->prepare("SELECT map_path FROM templates WHERE name = ?");
+                              $stmt = $mysqli->prepare("SELECT map_path FROM templates WHERE id = ?");
                               if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-                              $rc = $stmt->bind_param('s', $game);
+                              $rc = $stmt->bind_param('i', $game);
                               if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
                               $rc = $stmt->execute();
                               if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
@@ -615,7 +615,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                <tbody>
                               <?php
 
-                              $query = "SELECT id, game_id, name,url ,path FROM addons WHERE game_id = ".$row[0]." ORDER by id";
+                              $query = "SELECT id, game_id, name,url ,path FROM addons WHERE game_id = ".$row[4]." ORDER by id";
 
                                 if ($result_2 = $mysqli->query($query)) {
 
@@ -647,23 +647,23 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                             $gs_select = $row[0];
 
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
+                            $stmt->bind_param('i', $gs_select);
+                            $stmt->execute();
+                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+                            $stmt->bind_param('i', $dedi_id);
+                            $stmt->execute();
+                            $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
+                            $stmt->fetch();
+                            $stmt->close();
+
 
                             if ($_SERVER['REQUEST_METHOD'] == 'POST' AND isset($_POST['console_submit'])) {
 
-
-                              $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
-                              $stmt->bind_param('i', $gs_select);
-                              $stmt->execute();
-                              $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
-                              $stmt->fetch();
-                              $stmt->close();
-
-                              $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
-                              $stmt->bind_param('i', $dedi_id);
-                              $stmt->execute();
-                              $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
-                              $stmt->fetch();
-                              $stmt->close();
 
                               $cmd = htmlentities($_POST['cmd']);
 
@@ -681,24 +681,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                }
                             }
 
-                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id FROM gameservers WHERE id = ?");
-                            $stmt->bind_param('i', $gs_select);
-                            $stmt->execute();
-                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id);
-                            $stmt->fetch();
-                            $stmt->close();
-
-                            $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE name = ?");
-                            $stmt->bind_param('s', $game);
+                            $stmt = $mysqli->prepare("SELECT name_internal,type FROM templates WHERE id = ?");
+                            $stmt->bind_param('i', $game);
                             $stmt->execute();
                             $stmt->bind_result($name_internal,$type);
-                            $stmt->fetch();
-                            $stmt->close();
-
-                            $stmt = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
-                            $stmt->bind_param('i', $dedi_id);
-                            $stmt->execute();
-                            $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password);
                             $stmt->fetch();
                             $stmt->close();
 
@@ -789,12 +775,21 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                      $stmt->fetch();
                      $stmt->close();
 
+                     $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
+                     $stmt->bind_param('s', $type);
+                     $stmt->execute();
+                     $stmt->bind_result($game);
+                     $stmt->fetch();
+                     $stmt->close();
+
+                     if ($game == "") { exit; }
+
                      if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
                      if (check_dedi_id($dedicated)) {$msg = "Ungültige Dedicated ID"; $error = true;}
-                     if (check_template($type)) { $msg = "Ungültiges Template"; $error = true;}
+                     if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
                      if (check_user_id($user_gs)) { $msg = "Ungültiger User"; $error = true;}
 
-                     $installed = check_game_installed($dedicated,$type);
+                     $installed = check_game_installed($dedicated,$game);
 
                      if ($installed[0] != 1) { $error = true;$msg = $installed[1];}
 
@@ -842,7 +837,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $ssh->exec($copy);
 
                              $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
-                             $stmt->bind_param('isisisssi', $user_gs,$type,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
+                             $stmt->bind_param('isisisssi', $user_gs,$game,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
                              $stmt->execute();
                              $stmt->close();
 
@@ -996,7 +991,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   echo '<tr class="danger">';
                               }
                               echo "<td>" . $db_user_name . "</td>";
-                              echo "<td>" . $row["game"] . "</td>";
+                              echo "<td>" . get_template_by_id($row["game"]) . "</td>";
                               echo "<td>" . $row["ip"] .":".$row["port"]."</td>";
                               echo "<td>" .$row['player_online']."/". $row["slots"] . "</td>";
                               echo "<td>" . $row["map"] . "</td>";

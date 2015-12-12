@@ -62,9 +62,9 @@ CREATE TABLE `events` (
 CREATE TABLE `gameservers` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `dedi_id` int(15) NOT NULL DEFAULT '0',
-  `game` varchar(50) NOT NULL,
-  `slots` int(2) NOT NULL,
+  `dedi_id` int(11) NOT NULL DEFAULT '0',
+  `game` int(11) NOT NULL,
+  `slots` int(11) NOT NULL,
   `map` varchar(30) NOT NULL,
   `parameter` varchar(150) NOT NULL,
   `ip` varchar(15) NOT NULL,
@@ -141,7 +141,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1449875525, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1449921782, 1, 1, 1);
 
 
 ALTER TABLE `addons`

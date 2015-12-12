@@ -316,7 +316,7 @@ function check_game_installed($dedi_id,$game) {
   $type_t = "template";
   $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-  $rc = $stmt->bind_param('iss', $dedi_id,$type_t,$game);
+  $rc = $stmt->bind_param('isi', $dedi_id,$type_t,$game);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
   $rc = $stmt->execute();
   if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
@@ -326,20 +326,10 @@ function check_game_installed($dedi_id,$game) {
 
   if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
 
-  $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
-  if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-  $rc = $stmt->bind_param('s',$game);
-  if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
-  $rc = $stmt->execute();
-  if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
-  $stmt->bind_result($template_id);
-  $stmt->fetch();
-  $stmt->close();
-
   $result_id = 0;
   $stmt = $mysqli->prepare("SELECT id FROM dedicated_games WHERE dedi_id = ? AND template_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-  $rc = $stmt->bind_param('ii',$dedi_id,$template_id);
+  $rc = $stmt->bind_param('ii',$dedi_id,$game);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
   $rc = $stmt->execute();
   if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
@@ -373,11 +363,11 @@ function get_template_by_id($id) {
 
 function check_template($template,$id = 0) {
   global $mysqli;
-  $query = "SELECT `id` FROM `templates` WHERE name=?";
+  $query = "SELECT `id` FROM `templates` WHERE id=?";
 
   if ($stmt = $mysqli->prepare($query)){
 
-          $stmt->bind_param("s", $template);
+          $stmt->bind_param("i", $template);
 
           if($stmt->execute()){
               $stmt->store_result();
