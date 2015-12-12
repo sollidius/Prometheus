@@ -101,7 +101,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                                             $template = "template";
                                             $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
-                                            $stmt->bind_param('iiss', $row_2["id"], $id,$template,$row_2["name"]);
+                                            $stmt->bind_param('iisi', $row_2["id"], $id,$template,$row_2["id"]);
                                             $stmt->execute();
                                             $stmt->close();
 
@@ -124,7 +124,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                             }
                                             $template = "image";
                                             $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
-                                            $stmt->bind_param('iiss', $row_2["id"], $id,$template,$row_2["name"]);
+                                            $stmt->bind_param('iisi', $row_2["id"], $id,$template,$row_2["id"]);
                                             $stmt->execute();
                                             $stmt->close();
                                             msg_okay("Das Image wird erstellt, das kann etwas dauern :)");
@@ -185,7 +185,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                              /* fetch object array */
                              while ($row_2 = $result_2->fetch_assoc()) {
-                                 $installed = get_game_installed($row['id'],$row_2["name"]);
+                                 $installed = get_game_installed($row['id'],$row_2["id"]);
                                  echo "<tr>";
                                  echo "<td>" . $row_2["name"] . "</td>";
                                  if ($installed[0] == 0) {

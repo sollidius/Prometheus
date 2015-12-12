@@ -60,22 +60,22 @@ if ($result = $mysqli->query($query)) {
        } else {
          if ($row[4] == "template") {
 
-           $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config FROM templates WHERE name = ?");
-           $stmt->bind_param('s', $row[1]);
+           $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config,name FROM templates WHERE id = ?");
+           $stmt->bind_param('i', $row[1]);
            $stmt->execute();
-           $stmt->bind_result($db_type,$db_type_name,$db_app_set_config);
+           $stmt->bind_result($db_type,$db_type_name,$db_app_set_config,$db_game_name);
            $stmt->fetch();
            $stmt->close();
 
            if ($db_app_set_config == "") {
-               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
+               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$db_game_name.'/steam.log  | grep "state is 0x[0-9][0-9][0-9] after update job" ; echo $?');
            } elseif ($db_app_set_config != "") {
-               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "state is 0x[0-9] after update job" ; echo $?');
+               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$db_game_name.'/steam.log  | grep "state is 0x[0-9] after update job" ; echo $?');
            }
 
 
            if ($status == 1) {
-               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$row[1].'/steam.log  | grep "Success!" ; echo $?');
+               $status = $ssh->exec('cat /home/'.$user.'/templates/'.$db_game_name.'/steam.log  | grep "Success!" ; echo $?');
                if ($status != 1) {
 
                  $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
@@ -92,23 +92,16 @@ if ($result = $mysqli->query($query)) {
                }
            } elseif ($status != 1) {
 
-             $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config FROM templates WHERE name = ?");
-             $stmt->bind_param('s', $row[1]);
-             $stmt->execute();
-             $stmt->bind_result($db_type,$db_type_name,$db_app_set_config);
-             $stmt->fetch();
-             $stmt->close();
-
              if ($db_app_set_config == "") {
-                $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+                $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$db_game_name.'/steam.log &');
              } elseif ($db_app_set_config != "") {
-                $ssh->exec('cd /home/'.$user.'/templates/'.$row[1] . ';rm steam.log;/home/'.$user.'/templates/'.$row[1].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row[1].'/game  +login anonymous +app_set_config '.$db_type_name.' mod '.$db_app_set_config.' +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+                $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_set_config '.$db_type_name.' mod '.$db_app_set_config.' +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
              }
 
            }
          } elseif ($row[4] == "image") {
 
-           $status = $ssh->exec("ps -ef | grep -i image".$row[1]." | grep -v grep; echo $?");
+           $status = $ssh->exec("ps -ef | grep -i image".$db_game_name." | grep -v grep; echo $?");
            if ($status == 1) {
 
              $stmt = $mysqli->prepare("DELETE FROM jobs WHERE id = ?");
