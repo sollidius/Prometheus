@@ -18,45 +18,45 @@
         </a>
         <ul class="dropdown-menu dropdown-user">
           <li>
-              <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+              <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> <?php echo _sidebar_dasboard; ?></a>
           </li>
           <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> Addons</a>
+              <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> '. _sidebar_addons.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=bans"><i class="fa fa-ban fa-fw"></i> Bans</a>
+              <a href="index.php?page=bans"><i class="fa fa-ban fa-fw"></i> '. _sidebar_bans.'</a>
           </li>
            '; } ?>
           <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
+              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> '. _sidebar_settings.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
            <li>
-               <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> Events</a>
+               <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> '. _sidebar_events.'</a>
            </li>
             '; } ?>
           <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
+              <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> '. _sidebar_users.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> Rootserver</a>
+              <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> '. _sidebar_rootserver.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> Vorlagen</a>
+              <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> '. _sidebar_templates.'</a>
           </li>
            '; } ?>
           <li>
-              <a href="index.php?page=gameserver"><i class="fa fa-list fa-fw"></i> Gameserver</a>
+              <a href="index.php?page=gameserver"><i class="fa fa-list fa-fw"></i> <?php echo  _sidebar_gameserver; ?></a>
           </li>
         </ul>
         <!-- /.dropdown-user -->
@@ -66,10 +66,10 @@
           <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
       </a>
       <ul class="dropdown-menu dropdown-user">
-          <li><a href="index.php?page=usettings"><i class="fa fa-gear fa-fw"></i> Einstellungen</a>
+          <li><a href="index.php?page=usettings"><i class="fa fa-gear fa-fw"></i>  <?php echo  _dropdown_settings; ?></a>
           </li>
           <li class="divider"></li>
-          <li><a href="index.php?page=logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+          <li><a href="index.php?page=logout"><i class="fa fa-sign-out fa-fw"></i>  <?php echo  _dropdown_logout; ?></a>
           </li>
       </ul>
       <!-- /.dropdown-user -->
@@ -84,45 +84,45 @@
       <div class="col-sm-3 col-md-1 sidebar">
         <ul class="nav nav-sidebar">
           <li>
-              <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+              <a href="index.php?page=dashboard"><i class="fa fa-dashboard fa-fw"></i> <?php echo _sidebar_dasboard; ?></a>
           </li>
           <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> Addons</a>
+              <a href="index.php?page=addons"><i class="fa fa-file-image-o  fa-fw"></i> '. _sidebar_addons.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=bans"><i class="fa fa-ban fa-fw"></i> Bans</a>
+              <a href="index.php?page=bans"><i class="fa fa-ban fa-fw"></i> '. _sidebar_bans.'</a>
           </li>
            '; } ?>
           <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> Konfig</a>
+              <a href="index.php?page=settings"><i class="fa fa-gears fa-fw"></i> '. _sidebar_settings.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
            <li>
-               <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> Events</a>
+               <a href="index.php?page=events"><i class="fa fa-newspaper-o fa-fw"></i> '. _sidebar_events.'</a>
            </li>
             '; } ?>
           <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> Benutzer</a>
+              <a href="index.php?page=users"><i class="fa fa-users fa-fw"></i> '. _sidebar_users.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> Rootserver</a>
+              <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> '. _sidebar_rootserver.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
           <li>
-              <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> Vorlagen</a>
+              <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> '. _sidebar_templates.'</a>
           </li>
            '; } ?>
           <li>
-              <a href="index.php?page=gameserver"><i class="fa fa-list fa-fw"></i> Gameserver</a>
+              <a href="index.php?page=gameserver"><i class="fa fa-list fa-fw"></i> <?php echo  _sidebar_gameserver; ?></a>
           </li>
         </ul>
       </div>

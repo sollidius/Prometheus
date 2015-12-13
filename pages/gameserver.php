@@ -359,7 +359,9 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $slots = htmlentities($_POST['slots']);
                                   $port = htmlentities($_POST['port']);
                                   $time = htmlentities($_POST['time']);
+                                  $clock = "o'clock";
                                   $time = str_replace(" Uhr", "",$time);
+                                  $time = str_replace(" ".$clock, "",$time);
                                   if (isset($_POST['parameter_active'])) { $parameter_active = 1;}
                                   if (isset($_POST['restart_active'])) { $restart_active = 1;}
 
@@ -400,7 +402,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               ?>
                               <form class="form-horizontal" action="<?php echo "index.php?page=gameserver?settings-".$row[0]; ?>" method="post">
                                 <div class="form-group">
-                                  <label class="control-label col-sm-2">Map/Neustart:</label>
+                                  <label class="control-label col-sm-2"><?php echo _gameserver_map; ?>/<?php echo _gameserver_restart; ?>:</label>
                                   <div class="col-sm-2">
                                     <input class="typeahead form-control input-sm" type="text" name="map" value="<?php echo $db_map; ?>">
                                     <?php
@@ -430,11 +432,20 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   <div class="col-sm-2">
                                     <select class="form-control input-sm" name="time">
                                       <?php
+                                       $clock = "o'clock";
                                       for ($i = 0; $i <= 23; $i++) {
                                         if ($i == $restart_time) {
-                                          echo '<option selected="selected">'.$i.' Uhr</option>';
+                                          if ($db_language == "de") {
+                                            echo '<option selected="selected">'.$i.' Uhr</option>';
+                                          } elseif ($db_language == "en") {
+                                            echo '<option selected="selected">'.$i.' '.$clock.'</option>';
+                                          }
                                         } else {
-                                          echo "<option>".$i." Uhr</option>";
+                                          if ($db_language == "de") {
+                                            echo '<option>'.$i.' Uhr</option>';
+                                          } elseif ($db_language == "en") {
+                                            echo '<option>'.$i.' '.$clock.'</option>';
+                                          }
                                         }
                                       }
                                       ?>
@@ -488,7 +499,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                     </script>
                                 </div>
                                 <div class="form-group">
-                                  <label class="control-label col-sm-2">Paramter:</label>
+                                  <label class="control-label col-sm-2"><?php echo  _gameserver_parameter; ?>:</label>
                                   <div class="col-sm-4">
                                     <?php if ($db_rank == 1) { ?>
                                   <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
@@ -961,13 +972,13 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                     <table class="table table-bordered">
                       <thead>
                         <tr>
-                          <th>Benutzer</th>
-                          <th>Game</th>
+                          <th><?php echo _gameserver_user; ?></th>
+                          <th><?php echo _gameserver_game; ?></th>
                           <th>IP+Port</th>
-                          <th>Slots</th>
-                          <th>Map</th>
-                          <th>FTP Login</th>
-                          <th>FTP Passwort</th>
+                          <th><?php echo _gameserver_slots; ?></th>
+                          <th><?php echo _gameserver_map; ?></th>
+                          <th><?php echo _gameserver_ftp_login; ?></th>
+                          <th><?php echo _gameserver_ftp_password; ?></th>
                           <th>Start/Stop</th>
                           <th><?php echo _table_action; ?></th>
                         </tr>
@@ -998,11 +1009,11 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               echo "<td>" . $row["gs_login"] . "</td>";
                               echo "<td>" . $row["gs_password"] . "</td>";
                               if ($row["status"] == 0) {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'" class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">'._gameserver_button_stop.'</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'" class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>  </td>';
                               } else {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >'._gameserver_button_stop.'</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               }
                               echo "</tr>";
                             } elseif ($db_rank == 2 AND $row["user_id"] == $_SESSION['user_id']) {
@@ -1022,11 +1033,11 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               echo "<td>" . $row["gs_login"] . "</td>";
                               echo "<td>" . $row["gs_password"] . "</td>";
                               if ($row["status"] == 0) {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">'._gameserver_button_stop.'</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               } else {
-                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>(Re)Start</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >Stop</a>  </td>';
-                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>Reinstall</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>Update</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">Console</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">Addons</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">Einstellungen</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs" disabled>'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled >'._gameserver_button_stop.'</a>  </td>';
+                                echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs" disabled>'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs" disabled>'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';
                               }
                               echo "</tr>";
                             }

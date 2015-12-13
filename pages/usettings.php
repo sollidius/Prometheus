@@ -32,6 +32,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+  if (isset($_POST['confirm'])) {
+
    $old_pw = $_POST['old_pw'];
    $pw = $_POST['new_pw'];
    $pw2 = $_POST['new_pw2'];
@@ -61,6 +63,27 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
        $success = false;
      }
    }
+ }    elseif (isset($_POST['general'])) {
+
+      $language = htmlentities($_POST['language']);
+
+      $lang = "en";
+      if ($language == "German") {
+          $lang = "de";
+      } elseif ($language == "English") {
+          $lang = "en";
+      }
+
+      $stmt = $mysqli->prepare("UPDATE users SET language = ?  WHERE id = ?");
+      $stmt->bind_param('si',$lang,$_SESSION['user_id']);
+      $stmt->execute();
+      $stmt->close();
+
+
+
+
+
+ }
  }
 
 ?>
@@ -100,22 +123,22 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                    msg_okay($msg);
                  }
                   ?>
-               <h2>Allgemein</h2>
+               <h2><?php echo _usettings_password; ?></h2>
                 <form class="form-horizontal" action="index.php?page=usettings" method="post">
                 <div class="form-group">
-                  <label class="control-label col-sm-2" for="email">Altes Passwort:</label>
+                  <label class="control-label col-sm-2" for="email"><?php echo _usettings_oldpwd; ?>:</label>
                   <div class="col-sm-10">
                     <input type="password" class="form-control input-sm" name="old_pw">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-sm-2" for="pwd">Neues Passwort:</label>
+                  <label class="control-label col-sm-2" for="pwd"><?php echo _usettings_newpwd; ?>:</label>
                   <div class="col-sm-10">
                     <input type="password" class="form-control input-sm" name="new_pw">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-sm-2" for="pwd">Wiederholen:</label>
+                  <label class="control-label col-sm-2" for="pwd"><?php echo _usettings_repeatpwd; ?>:</label>
                   <div class="col-sm-10">
                     <input type="password" class="form-control input-sm" name="new_pw2">
                   </div>
@@ -126,25 +149,23 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                   </div>
                 </div>
               </form>
-              <h2>Sicherheit</h2>
-              <div class="form-group col-sm-8">
-                <label class="control-label">
-                  <input data-size="mini" id="toggle-strict" type="checkbox" name="gs_log_cleanup" data-toggle="toggle">
-                  Session Strict
-                  </label>
-                  <?php
-                  $session_strict = 0;
-                   if ($session_strict == 1) {
-                    ?>
-                    <script> function toggleOnstrict() { $('#toggle-strict').bootstrapToggle('on'); } addLoadEvent(toggleOnstrict); </script>
-                    <?php
-                  } elseif ($session_strict == 0) { ?>
-                    <script> function toggleOffstrict() { $('#toggle-strict').bootstrapToggle('off'); } addLoadEvent(toggleOffstrict); </script>
-                    <?php
-                  }
-                  ?>
+              <h2><?php echo _usettings_general; ?></h2>
+              <form class="form-horizontal" action="index.php?page=usettings" method="post">
+              <div class="form-group">
+                <label class="control-label col-sm-2">Language:</label>
+                <div class="col-sm-2">
+                  <select class="form-control input-sm" name="language">
+                    <?php if ($db_language == "de") { echo '<option selected="selected">German</option>';  } else { echo "<option>German</option>"; } ?>
+                    <?php if ($db_language == "en") { echo '<option selected="selected">English</option>';  } else { echo "<option>English</option>"; } ?>
+                  </select>
+                </div>
               </div>
-
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" name="general" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
+                </div>
+              </div>
+            </form>
 
 
 
