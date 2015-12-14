@@ -139,8 +139,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                     }   elseif (isset($_POST['remove_'.$row_2["id"]])) {
                                       $error = false;
 
-                                      if (check_game_in_use($row_2["name"],$row["ip"])) { $msg ="Es exestieren noch Installierte Gameserver mit diesen Spiel."; $error = true;}
-                                      if (check_template_job_exists($row["id"],$row_2["id"])) { $msg ="Installation des Templates läuft noch."; $error = true;}
+                                      if (check_game_in_use($row_2["id"],$row["ip"])) { $msg ="Es exestieren noch Installierte Gameserver mit diesen Spiel."; $error = true;}
+                                      if (check_template_job_exists($row_2["id"],$row_2["id"])) { $msg ="Installation des Templates läuft noch."; $error = true;}
 
                                       if ($error == false) {
 

@@ -234,16 +234,16 @@ function get_game_installed($dedi_id,$game) {
   $result_id = 0;
   $type_t = "template";
   $type_i = "image";
-  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND (type = ? OR type = ?) AND template_id = ?");
+  $type_x = "template_update";
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND (type = ? OR type = ? OR type = ?) AND template_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
-  $rc = $stmt->bind_param('issi', $dedi_id,$type_t,$type_i,$game);
+  $rc = $stmt->bind_param('isssi', $dedi_id,$type_t,$type_i,$type_x,$game);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
   $rc = $stmt->execute();
   if ( false===$rc ) { die('execute() failed: ' . htmlspecialchars($stmt->error)); }
   $stmt->bind_result($result_id);
   $stmt->fetch();
   $stmt->close();
-
   if ($result_id != 0) {
     $stmt = $mysqli->prepare("SELECT type FROM jobs WHERE id = ?");
     $stmt->bind_param('i', $result_id);
@@ -464,7 +464,7 @@ function check_game_in_use($game,$ip) {
 
   if ($stmt = $mysqli->prepare($query)){
 
-          $stmt->bind_param("ss", $game,$ip);
+          $stmt->bind_param("is", $game,$ip);
 
           if($stmt->execute()){
               $stmt->store_result();
