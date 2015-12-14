@@ -80,7 +80,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                          exit;
                                        } else {
 
-                                         $installed = get_game_installed($id,$row_2["name"]);
+                                         $installed = get_game_installed($id,$row_2["id"]);
                                         $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates; then echo "1"; fi');
                                         if ($output == 1) { $ssh->exec('mkdir /home/'.$user.'/templates'); }
                                         $output =  $ssh->exec('if ! test -d /home/'.$user.'/templates/'.$row_2["name"].'; then echo "1"; fi');
@@ -95,13 +95,15 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                             $db_app_set_config = $row_2["app_set_config"];
                                             if ($db_app_set_config == "") {
                                                 $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
+                                            } elseif ($db_app_set_config == "needed") {
+                                                 $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$db_game_name.'/steam.log &');
                                             } elseif ($db_app_set_config != "") {
                                                 $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_set_config '.$row_2["type_name"].' mod '.$db_app_set_config.' +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
                                             }
 
-                                            $template = "template";
+                                            $template = "template"; $zero = 0;
                                             $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
-                                            $stmt->bind_param('iisi', $row_2["id"], $id,$template,$row_2["id"]);
+                                            $stmt->bind_param('iisi', $row_2["id"], $id,$template,$zero);
                                             $stmt->execute();
                                             $stmt->close();
 
@@ -122,9 +124,9 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                               msg_error("Nur .tar oder .zip");
                                               exit;
                                             }
-                                            $template = "image";
+                                            $template = "image"; $zero = 0;
                                             $stmt = $mysqli->prepare("INSERT INTO jobs(template_id,dedicated_id,type,type_id) VALUES (?, ?, ?, ?)");
-                                            $stmt->bind_param('iisi', $row_2["id"], $id,$template,$row_2["id"]);
+                                            $stmt->bind_param('iisi', $row_2["id"], $id,$template,$zero);
                                             $stmt->execute();
                                             $stmt->close();
                                             msg_okay("Das Image wird erstellt, das kann etwas dauern :)");

@@ -234,7 +234,7 @@ function get_game_installed($dedi_id,$game) {
   $result_id = 0;
   $type_t = "template";
   $type_i = "image";
-  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND (type = ? OR type = ?) AND type_id = ?");
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND (type = ? OR type = ?) AND template_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
   $rc = $stmt->bind_param('issi', $dedi_id,$type_t,$type_i,$game);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
@@ -244,7 +244,20 @@ function get_game_installed($dedi_id,$game) {
   $stmt->fetch();
   $stmt->close();
 
-  if ($result_id != 0) { $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;}
+  if ($result_id != 0) {
+    $stmt = $mysqli->prepare("SELECT type FROM jobs WHERE id = ?");
+    $stmt->bind_param('i', $result_id);
+    $stmt->execute();
+    $stmt->bind_result($type);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($type == "image" OR $type == "template") {
+      $msg[1] = "Installation läuft noch!"; $msg[0] = 0; return $msg;
+    } elseif ($type == "template_update") {
+      $msg[1] = "Update läuft noch!"; $msg[0] = 0; return $msg;
+    }
+  }
 
   $result_id = 0;
   $stmt = $mysqli->prepare("SELECT id FROM dedicated_games WHERE dedi_id = ? AND template_id = ?");
@@ -304,7 +317,7 @@ function check_game_installed($dedi_id,$game) {
 
   $result_id = 0;
   $type_t = "template";
-  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND type_id = ?");
+  $stmt = $mysqli->prepare("SELECT id FROM jobs WHERE dedicated_id = ? AND type = ? AND template_id = ?");
   if ( false===$stmt ) { die('prepare() failed: ' . htmlspecialchars($mysqli->error));}
   $rc = $stmt->bind_param('isi', $dedi_id,$type_t,$game);
   if ( false===$rc ) { die('bind_param() failed: ' . htmlspecialchars($stmt->error));}
@@ -739,5 +752,32 @@ function check_blocked_ip($ip_forward,$ip_remote) {
       }
 }
 
+function check_game_in_use_id($template_id) {
+  global $mysqli;
+  $query = "SELECT `id` FROM `dedicated_games` WHERE template_id=?";
+
+  if ($stmt = $mysqli->prepare($query)){
+
+          $stmt->bind_param("i", $template_id);
+
+          if($stmt->execute()){
+              $stmt->store_result();
+
+              $check= "";
+              $stmt->bind_result($check);
+              $stmt->fetch();
+
+              if ($stmt->num_rows >= 1){
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+          }
+      } else {
+        die('prepare() failed: ' . htmlspecialchars($mysqli->error));
+      }
+}
 
  ?>

@@ -47,10 +47,10 @@ if ($result = $mysqli->query($query)) {
     /* fetch object array */
     while ($row = $result->fetch_row()) {
 
-      $stmtz = $mysqli->prepare("SELECT ip,port,user,password FROM dedicated WHERE id = ?");
+      $stmtz = $mysqli->prepare("SELECT ip,port,user,password,name FROM dedicated WHERE id = ?");
       $stmtz->bind_param('i', $row[0]);
       $stmtz->execute();
-      $stmtz->bind_result($ip,$port,$user,$password);
+      $stmtz->bind_result($ip,$port,$user,$password,$dedi_name);
       $stmtz->fetch();
       $stmtz->close();
 
@@ -58,10 +58,10 @@ if ($result = $mysqli->query($query)) {
        if (!$ssh->login($user, $password)) {
          //exit;
        } else {
-         if ($row[4] == "template") {
+         if ($row[4] == "template" or $row[4] == "template_update" ) {
 
            $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config,name FROM templates WHERE id = ?");
-           $stmt->bind_param('i', $row[1]);
+           $stmt->bind_param('i', $row[3]);
            $stmt->execute();
            $stmt->bind_result($db_type,$db_type_name,$db_app_set_config,$db_game_name);
            $stmt->fetch();
@@ -73,7 +73,6 @@ if ($result = $mysqli->query($query)) {
                $status = $ssh->exec('cat /home/'.$user.'/templates/'.$db_game_name.'/steam.log  | grep "state is 0x[0-9] after update job" ; echo $?');
            }
 
-
            if ($status == 1) {
                $status = $ssh->exec('cat /home/'.$user.'/templates/'.$db_game_name.'/steam.log  | grep "Success!" ; echo $?');
                if ($status != 1) {
@@ -83,19 +82,29 @@ if ($result = $mysqli->query($query)) {
                  $stmt->execute();
                  $stmt->close();
 
-                 $status = 1; $status_text = "Installed";
-                 $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,status_text) VALUES (?, ?, ?, ?)");
-                 $stmt->bind_param('iiis', $row[0],$row[3],$status,$status_text);
-                 $stmt->execute();
-                 $stmt->close();
+                 if ($row[4] == "template") {
+
+                   $status = 1; $status_text = "Installed";
+                   $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,status_text) VALUES (?, ?, ?, ?)");
+                   $stmt->bind_param('iiis', $row[0],$row[3],$status,$status_text);
+                   $stmt->execute();
+                   $stmt->close();
+
+                 } elseif ($row[4] == "template_update") {
+
+                   event_add(4,"Das Template ".$db_game_name. " auf dem Rootserver ".$dedi_name. " wurde aktualisiert");
+
+                 }
 
                }
            } elseif ($status != 1) {
 
              if ($db_app_set_config == "") {
                 $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$db_game_name.'/steam.log &');
+             } elseif ($db_app_set_config == "needed") {
+                $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$db_game_name.'/steam.log &');
              } elseif ($db_app_set_config != "") {
-                $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_set_config '.$db_type_name.' mod '.$db_app_set_config.' +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$row[1].'/steam.log &');
+                $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_set_config '.$db_type_name.' mod '.$db_app_set_config.' +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$db_game_name.'/steam.log &');
              }
 
            }

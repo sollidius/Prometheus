@@ -49,7 +49,8 @@ CREATE TABLE `dedicated_games` (
   `dedi_id` int(11) NOT NULL,
   `template_id` int(11) NOT NULL,
   `status` int(5) NOT NULL,
-  `status_text` varchar(255) NOT NULL
+  `status_text` varchar(255) NOT NULL,
+  `version` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `events` (
@@ -87,7 +88,7 @@ CREATE TABLE `jobs` (
   `dedicated_id` int(11) NOT NULL,
   `template_id` int(11) NOT NULL DEFAULT '0',
   `type` varchar(25) NOT NULL,
-  `type_id` varchar(255) NOT NULL
+  `type_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `templates` (
@@ -98,25 +99,26 @@ CREATE TABLE `templates` (
   `type_name` varchar(255) NOT NULL,
   `gameq` varchar(50) NOT NULL,
   `map_path` varchar(255) NOT NULL,
-  `app_set_config` varchar(50) NOT NULL DEFAULT ''
+  `app_set_config` varchar(50) NOT NULL DEFAULT '',
+  `appid` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `gameq`, `map_path`, `app_set_config`) VALUES
-(2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020', 'gmod', 'garrysmod', ''),
-(7, 'CounterStrikeSource', 'cstrike', 'steamcmd', '232330', 'css', '', ''),
-(9, 'CounterStrikeGlobalOffensive', 'csgo', 'steamcmd', '740', 'csgo', 'csgo', ''),
-(10, 'TeamFortress2', 'tf', 'steamcmd', '232250', 'tf2', 'tf', ''),
-(14, 'Left4Dead2', 'left4dead2', 'steamcmd', '222860', 'l4d2', '', ''),
-(20, 'Left4Dead', 'left4dead', 'steamcmd', '222840', 'l4d', '', ''),
-(21, 'DayofDefeatSource', 'dod', 'steamcmd', '232290', 'dods', '', ''),
-(31, 'MinecraftVanilla-1.8.9', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '', ''),
-(32, 'TeamFortressClassic', 'tfc', 'steamcmd', '90', '', '', 'tfc'),
-(33, 'DayofDefeat', 'dod', 'steamcmd', '90', '', '', 'dod'),
-(34, 'CounterStrikeConditionZero', 'cstrike', 'steamcmd', '90', '', '', 'czero'),
-(35, 'Half-Life', 'hl', 'steamcmd', '90', '', '', ''),
-(36, 'Half-LifeDeathmatchSource', 'hldm', 'steamcmd', '255470', '', '', ''),
-(37, 'Half-Life2Deathmatch', 'hl2mp', 'steamcmd', '232370', '', '', ''),
-(38, 'Counter-Strike', 'cstrike', 'steamcmd', '90', '', '', '');
+INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `gameq`, `map_path`, `app_set_config`, `appid`) VALUES
+(2, 'Garrysmod', 'garrysmod', 'steamcmd', '4020', 'gmod', 'garrysmod', '', 4000),
+(7, 'CounterStrikeSource', 'cstrike', 'steamcmd', '232330', 'css', '', '', 0),
+(9, 'CounterStrikeGlobalOffensive', 'csgo', 'steamcmd', '740', 'csgo', 'csgo', '', 730),
+(10, 'TeamFortress2', 'tf', 'steamcmd', '232250', 'tf2', 'tf', '', 440),
+(14, 'Left4Dead2', 'left4dead2', 'steamcmd', '222860', 'l4d2', '', '', 0),
+(20, 'Left4Dead', 'left4dead', 'steamcmd', '222840', 'l4d', '', '', 0),
+(21, 'DayofDefeatSource', 'dod', 'steamcmd', '232290', 'dods', '', '', 0),
+(31, 'MinecraftVanilla-1.8.9', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '', '', 0),
+(32, 'TeamFortressClassic', 'tfc', 'steamcmd', '90', '', '', 'tfc', 0),
+(33, 'DayofDefeat', 'dod', 'steamcmd', '90', '', '', 'dod', 0),
+(34, 'CounterStrikeConditionZero', 'cstrike', 'steamcmd', '90', '', '', 'czero', 0),
+(35, 'Half-Life', 'hl', 'steamcmd', '90', '', '', '', 0),
+(36, 'Half-LifeDeathmatchSource', 'hldm', 'steamcmd', '255470', '', '', '', 0),
+(37, 'Half-Life2Deathmatch', 'hl2mp', 'steamcmd', '232370', '', '', '', 0),
+(38, 'Counter-Strike', 'cstrike', 'steamcmd', '90', '', '', 'needed', 0);
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -141,7 +143,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1449921782, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1450094601, 1, 1, 1);
 
 
 ALTER TABLE `addons`
