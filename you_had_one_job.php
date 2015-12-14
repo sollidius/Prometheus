@@ -60,10 +60,10 @@ if ($result = $mysqli->query($query)) {
        } else {
          if ($row[4] == "template" or $row[4] == "template_update" ) {
 
-           $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config,name FROM templates WHERE id = ?");
+           $stmt = $mysqli->prepare("SELECT type,type_name,app_set_config,name,appid FROM templates WHERE id = ?");
            $stmt->bind_param('i', $row[3]);
            $stmt->execute();
-           $stmt->bind_result($db_type,$db_type_name,$db_app_set_config,$db_game_name);
+           $stmt->bind_result($db_type,$db_type_name,$db_app_set_config,$db_game_name,$db_appid);
            $stmt->fetch();
            $stmt->close();
 
@@ -84,9 +84,15 @@ if ($result = $mysqli->query($query)) {
 
                  if ($row[4] == "template") {
 
+                   $version = 0;
+
+                   if ($db_appid != 0) {
+                     $version = ask_steam_for_cookies($db_appid);
+                   }
+
                    $status = 1; $status_text = "Installed";
-                   $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,status_text) VALUES (?, ?, ?, ?)");
-                   $stmt->bind_param('iiis', $row[0],$row[3],$status,$status_text);
+                   $stmt = $mysqli->prepare("INSERT INTO dedicated_games(dedi_id,template_id,status,version,status_text) VALUES (?, ?, ?, ?, ?)");
+                   $stmt->bind_param('iiiis', $row[0],$row[3],$status,$version,$status_text);
                    $stmt->execute();
                    $stmt->close();
 

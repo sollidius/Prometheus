@@ -799,10 +799,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                      $stmt->fetch();
                      $stmt->close();
 
-                     $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
+                     $stmt = $mysqli->prepare("SELECT id,appid FROM templates WHERE name = ?");
                      $stmt->bind_param('s', $type);
                      $stmt->execute();
-                     $stmt->bind_result($game);
+                     $stmt->bind_result($game,$db_appid);
                      $stmt->fetch();
                      $stmt->close();
 
@@ -860,10 +860,14 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login.";sudo rm /home/".$gs_login."/screenlog.0;'";
                              $ssh->exec($copy);
 
+                             $version = 0;
+                             if ($db_appid != "") {
+                               $version = ask_steam_for_cookies($db_appid);
+                             }
 
 
-                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
-                             $stmt->bind_param('isisisssi', $user_gs,$game,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
+                             $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id,version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                             $stmt->bind_param('isisisssii', $user_gs,$game,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id,$version);
                              $stmt->execute();
                              $stmt->close();
 

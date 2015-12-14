@@ -96,7 +96,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                             if ($db_app_set_config == "") {
                                                 $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
                                             } elseif ($db_app_set_config == "needed") {
-                                                 $ssh->exec('cd /home/'.$user.'/templates/'.$db_game_name . ';rm steam.log;/home/'.$user.'/templates/'.$db_game_name.'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$db_game_name.'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$user.'/templates/'.$db_game_name.'/steam.log &');
+                                                 $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';rm steam.log;/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
                                             } elseif ($db_app_set_config != "") {
                                                 $ssh->exec('cd /home/'.$user.'/templates/'.$row_2["name"] . ';/home/'.$user.'/templates/'.$row_2["name"].'/steamcmd.sh +force_install_dir /home/'.$user.'/templates/'.$row_2["name"].'/game  +login anonymous +app_set_config '.$row_2["type_name"].' mod '.$db_app_set_config.' +app_update '.$row_2["type_name"].' validate +quit >> /home/'.$user.'/templates/'.$row_2["name"].'/steam.log &');
                                             }
@@ -140,7 +140,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                       $error = false;
 
                                       if (check_game_in_use($row_2["id"],$row["ip"])) { $msg ="Es exestieren noch Installierte Gameserver mit diesen Spiel."; $error = true;}
-                                      if (check_template_job_exists($row_2["id"],$row_2["id"])) { $msg ="Installation des Templates läuft noch."; $error = true;}
+                                      if (check_template_job_exists($row["id"],$row_2["id"])) { $msg ="Installation des Templates läuft noch."; $error = true;}
 
                                       if ($error == false) {
 
