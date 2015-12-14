@@ -130,10 +130,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->fetch();
                              $stmt->close();
 
-                             $stmt = $mysqli->prepare("SELECT type FROM templates WHERE id = ?");
+                             $stmt = $mysqli->prepare("SELECT type,type_name,name,app_set_config FROM templates WHERE id = ?");
                              $stmt->bind_param('i', $game);
                              $stmt->execute();
-                             $stmt->bind_result($type);
+                             $stmt->bind_result($type,$type_name,$game_name,$app_set_config);
                              $stmt->fetch();
                              $stmt->close();
 
@@ -158,13 +158,6 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   </div>';
                                 } else {
 
-                                  $stmt = $mysqli->prepare("SELECT type_name,name FROM templates WHERE id = ?");
-                                  $stmt->bind_param('i',$game);
-                                  $stmt->execute();
-                                  $stmt->bind_result($type_name,$game_name);
-                                  $stmt->fetch();
-                                  $stmt->close();
-
                                   $status = 1; $running = 0;
                                   $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?,is_running = ?,running = ?  WHERE id = ?");
                                   $stmt->bind_param('iiiii',$status,$status,$running,$running,$gs_select);
@@ -176,7 +169,13 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
                                   $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
                                   $ssh->exec('cd /home/'.$gs_login.'/; sudo cp /home/'.$dedi_login.'/templates/'.$game_name.'/steamcmd_linux.tar.gz /home/'.$gs_login.'/; sudo tar xvf steamcmd_linux.tar.gz; sudo rm steamcmd_linux.tar.gz;sudo chown -R '.$gs_login.':'.$gs_login.' /home/'.$gs_login.'');
-                                  $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                                  if ($app_set_config == "") {
+                                    $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                                  } elseif ($app_set_config == "needed") {
+                                    $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                                  } elseif ($app_set_config != "") {
+                                    $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_set_config '.$type_name.' mod '.$app_set_config.' +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                                  }
                                   msg_okay("Der Gameserver wird aktualisiert.");
 
                                   event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");

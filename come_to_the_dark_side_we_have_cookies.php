@@ -33,7 +33,7 @@ if ($result = $mysqli->query($query)) {
          sleep(1);
          $answerz = ask_steam_for_cookies($row["appid"]);
 
-         //Check if we have something outdated
+         //Check if we have outdated templates
          $quary = "SELECT version,dedi_id,template_id,id FROM dedicated_games WHERE template_id = ".$row["id"]." ORDER by id ASC";
          if ($result2 = $mysqli->query($quary)) {
             /* fetch object array */
@@ -77,6 +77,55 @@ if ($result = $mysqli->query($query)) {
 
                    event_add(4,"Das Template ".$row['name']. " auf dem Rootserver ".$dedi_name. " wird aktualisiert");
 
+                 }
+              }
+            }
+            /* free result set */
+            $result2->close();
+         }
+         //Check if we have outdated gameservers
+         $quary = "SELECT dedi_id,gs_login,version,autoupdate,id,app_set_config FROM gameservers WHERE game = ".$row["id"]." ORDER by id ASC";
+         if ($result2 = $mysqli->query($quary)) {
+            /* fetch object array */
+            while ($row2 = $result2->fetch_assoc()) {
+              if ($answerz > $row2['version']) {
+                echo "Outdated<br>";
+
+                //Get Dedicated Info
+                $stmt = $mysqli->prepare("SELECT ip,port,user,password,name FROM dedicated WHERE id = ?");
+                $stmt->bind_param('i', $row2['dedi_id']);
+                $stmt->execute();
+                $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$dedi_name);
+                $stmt->fetch();
+                $stmt->close();
+
+                $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                 if (!$ssh->login($dedi_login, $dedi_password)) {
+                   msg_error('Login failed');
+                   //exit;
+                 } else {
+
+                   $status = 1; $running = 0;
+                   $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?,is_running = ?,running = ?,version = ?  WHERE id = ?");
+                   $stmt->bind_param('iiiiii',$status,$status,$running,$running,$answerz,$row2['id']);
+                   $stmt->execute();
+                   $stmt->close();
+
+                   $gs_login  = $row2['gs_login']; $game_name = $row['name']; $type_name = $row['type_name']; $app_set_config = $row['app_set_config'];
+                   $ssh->exec('sudo -u '.$gs_login.' screen -S game'.$gs_login.' -p 0 -X quit');
+                   $ssh->exec('sudo rm /home/'.$gs_login.'/game/steam.log');
+                   $ssh->exec('sudo touch /home/'.$gs_login.'/game/steam.log');
+                   $ssh->exec('sudo chmod 777 /home/'.$gs_login.'/game/steam.log');
+                   $ssh->exec('cd /home/'.$gs_login.'/; sudo cp /home/'.$dedi_login.'/templates/'.$game_name.'/steamcmd_linux.tar.gz /home/'.$gs_login.'/; sudo tar xvf steamcmd_linux.tar.gz; sudo rm steamcmd_linux.tar.gz;sudo chown -R '.$gs_login.':'.$gs_login.' /home/'.$gs_login.'');
+                   if ($app_set_config == "") {
+                     $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                   } elseif ($app_set_config == "needed") {
+                     $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                   } elseif ($app_set_config != "") {
+                     $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_set_config '.$type_name.' mod '.$app_set_config.' +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
+                   }
+
+                   event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
 
                  }
               }

@@ -316,7 +316,13 @@ if ($result = $mysqli->query($query)) {
              $ssh->exec('sudo rm /home/'.$row[0].'/game/steam.log');
              $ssh->exec('sudo touch /home/'.$row[0].'/game/steam.log');
              $ssh->exec('sudo chmod 777 /home/'.$row[0].'/game/steam.log');
-             $ssh->exec('sudo -u '.$row[0].' /home/'.$row[0].'/steamcmd.sh +force_install_dir /home/'.$row[0].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$row[0].'/game/steam.log &');
+             if ($app_set_config == "") {
+                $ssh->exec('sudo -u '.$row[0].' /home/'.$row[0].'/steamcmd.sh +force_install_dir /home/'.$row[0].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$row[0].'/game/steam.log &');
+             } elseif ($app_set_config == "needed") {
+                $ssh->exec('sudo -u '.$row[0].' /home/'.$row[0].'/steamcmd.sh +force_install_dir /home/'.$row[0].'/game  +login anonymous +app_update '.$db_type_name.' validate +quit >> /home/'.$row[0].'/game/steam.log &');
+             } elseif ($app_set_config != "") {
+                $ssh->exec('sudo -u '.$row[0].' /home/'.$row[0].'/steamcmd.sh +force_install_dir /home/'.$row[0].'/game  +login anonymous +app_set_config '.$db_type_name.' mod '.$db_app_set_config.' +app_update '.$db_type_name.' validate +quit >> /home/'.$row[0].'/game/steam.log &');
+             }
 
            }
         }
