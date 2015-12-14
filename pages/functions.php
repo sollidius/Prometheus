@@ -780,4 +780,18 @@ function check_game_in_use_id($template_id) {
       }
 }
 
+function ask_steam_for_cookies($appid) {
+
+  $cookies = file_get_contents('https://api.steampowered.com/ISteamApps/UpToDateCheck/v1?appid='.$appid.'&version=1&format=json');
+  $cookies = json_decode($cookies,true);
+
+  foreach ($cookies as $value) {
+    if (is_array($value)) {
+     if ($value['success'] == 1) {
+       return $value['required_version'];
+     }
+    }
+  }
+}
+
  ?>

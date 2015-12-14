@@ -238,7 +238,7 @@ if ($result = $mysqli->query($query)) {
                  } else {
 
                     $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
-                    if ($load > 19) {
+                    if ($load > 25) {
                       gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
                       event_add(5,"Der Gameserver ".$ip.":".$port." wurde wegen hoher CPU Last neugestartet. (".$current_status."-".$current_players."/".$current_maxplayers.")");
                     }
@@ -310,6 +310,9 @@ if ($result = $mysqli->query($query)) {
                  $stmt->execute();
                  $stmt->close();
 
+                 gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
+                 event_add(5,"Der Gameserver ".$ip.":".$port." wurde neugestartet.");
+
                }
            } elseif ($status != 1) {
 
@@ -363,7 +366,7 @@ if ($result = $mysqli->query($query)) {
           //exit;
         } else {
        gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
-       event_add(5,"Der Gameserver wurde neugestartet.");
+       event_add(5,"Der Gameserver ".$ip.":".$port." wurde neugestartet.");
        }
      }
     }

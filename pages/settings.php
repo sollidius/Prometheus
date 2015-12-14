@@ -171,7 +171,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                 <div class="form-group col-sm-8">
                   <label class="control-label">
                     <input data-size="mini" id="toggle-cpu" type="checkbox" name="gs_cpu" data-toggle="toggle">
-                    Gameserver Neustarten bei mehr als 19% CPU Last (wenn leer)</label>
+                    Gameserver Neustarten bei mehr als 25% CPU Last (wenn leer)</label>
                       <?php
                      if ($gs_check_cpu == 1) {
                       ?>

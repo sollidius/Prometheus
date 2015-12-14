@@ -5,20 +5,6 @@ include('components/GameQ-2/GameQ.php');
 set_include_path('components/phpseclib');
 include('Net/SSH2.php');
 
-function ask_steam_for_cookies($appid) {
-
-  $cookies = file_get_contents('https://api.steampowered.com/ISteamApps/UpToDateCheck/v1?appid='.$appid.'&version=1&format=json');
-  $cookies = json_decode($cookies,true);
-
-  foreach ($cookies as $value) {
-    if (is_array($value)) {
-     if ($value['success'] == 1) {
-       return $value['required_version'];
-     }
-    }
-  }
-}
-
 $query = "SELECT id,type,appid,name,name_internal,app_set_config,type_name FROM templates ORDER by id ASC";
 
 if ($result = $mysqli->query($query)) {
@@ -84,11 +70,11 @@ if ($result = $mysqli->query($query)) {
             $result2->close();
          }
          //Check if we have outdated gameservers
-         $quary = "SELECT dedi_id,gs_login,version,autoupdate,id,app_set_config FROM gameservers WHERE game = ".$row["id"]." ORDER by id ASC";
+         $quary = "SELECT dedi_id,gs_login,version,autoupdate,id,ip,port,player_online FROM gameservers WHERE game = ".$row["id"]." ORDER by id ASC";
          if ($result2 = $mysqli->query($quary)) {
             /* fetch object array */
             while ($row2 = $result2->fetch_assoc()) {
-              if ($answerz > $row2['version']) {
+              if ($answerz > $row2['version'] AND $row2['autoupdate'] == 1 AND $row2['player_online'] == 0) {
                 echo "Outdated<br>";
 
                 //Get Dedicated Info
@@ -125,7 +111,7 @@ if ($result = $mysqli->query($query)) {
                      $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_set_config '.$type_name.' mod '.$app_set_config.' +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
                    }
 
-                   event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
+                   event_add(4,"Der Gameserver ".$row2['ip'].":".$row2['port']." wird aktualisiert.");
 
                  }
               }

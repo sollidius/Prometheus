@@ -331,20 +331,21 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $parameter = htmlentities($_POST['parameter']);
                                   $time = htmlentities($_POST['time']);
                                   $time = str_replace(" Uhr", "",$time);
-                                  $restart_active = 0;
+                                  $restart_active = 0; $updates_active = 0;
                                   if (isset($_POST['restart_active'])) { $restart_active = 1;}
+                                  if (isset($_POST['updates_active'])) { $updates_active = 1;}
 
                                   if ($parameter_active == 1) {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?,restart = ?,restart_time = ?  WHERE id = ?");
-                                    $stmt->bind_param('ssiii',$map,$parameter,$restart_active,$time,$row[0]);
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?,restart = ?,restart_time = ?, updates_active = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssiiii',$map,$parameter,$restart_active,$time,$updates_active,$row[0]);
                                     $stmt->execute();
                                     $stmt->close();
 
                                   } else {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?, restart = ?,restart_time = ?  WHERE id = ?");
-                                    $stmt->bind_param('siii',$map,$restart_active,$time,$row[0]);
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?, restart = ?,restart_time = ?, updates_active = ?  WHERE id = ?");
+                                    $stmt->bind_param('siiii',$map,$restart_active,$time,$updates_active,$row[0]);
                                     $stmt->execute();
                                     $stmt->close();
 
@@ -352,7 +353,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                 } elseif ($db_rank == 1) {
 
-                                  $error = false; $parameter_active = 0; $restart_active = 0;
+                                  $error = false; $parameter_active = 0; $restart_active = 0; $updates_active = 0;
                                   $map = htmlentities($_POST['map']);
                                   $parameter = htmlentities($_POST['parameter']);
                                   $slots = htmlentities($_POST['slots']);
@@ -363,6 +364,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $time = str_replace(" ".$clock, "",$time);
                                   if (isset($_POST['parameter_active'])) { $parameter_active = 1;}
                                   if (isset($_POST['restart_active'])) { $restart_active = 1;}
+                                  if (isset($_POST['updates_active'])) { $updates_active = 1;}
 
                                   if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
                                   if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
@@ -370,8 +372,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                   if ($error == false) {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?, restart = ?,restart_time = ?  WHERE id = ?");
-                                    $stmt->bind_param('ssiiiiii',$map,$parameter,$slots,$port,$parameter_active,$restart_active,$time,$row[0]);
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?, restart = ?,restart_time = ?,autoupdate = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssiiiiiii',$map,$parameter,$slots,$port,$parameter_active,$restart_active,$time,$updates_active,$row[0]);
                                     $stmt->execute();
                                     $stmt->close();
 
@@ -381,10 +383,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                 }
                               }
 
-                              $stmt = $mysqli->prepare("SELECT map,parameter,slots,port,parameters_active,restart,restart_time FROM gameservers WHERE id = ?");
+                              $stmt = $mysqli->prepare("SELECT map,parameter,slots,port,parameters_active,restart,restart_time,autoupdate FROM gameservers WHERE id = ?");
                               $stmt->bind_param('i', $row[0]);
                               $stmt->execute();
-                              $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port,$db_parameter_active,$db_restart,$restart_time);
+                              $stmt->bind_result($db_map,$db_parameter,$db_slots,$db_port,$db_parameter_active,$db_restart,$restart_time,$autoupdate);
                               $stmt->fetch();
                               $stmt->close();
 
@@ -533,6 +535,18 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                     </div>
                                   </div>
                               <?php  } ?>
+                              <div class="form-group">
+                                <label class="control-label col-sm-2">Updates:</label>
+                                <div class="col-sm-2">
+                                    <input data-size="small" id="toggle-updates" data-height="20" type="checkbox" name="updates_active" data-toggle="toggle">
+                                <?php   if ($autoupdate == 1) {
+                                    ?>  <script> function toggleOnupdates() { $('#toggle-updates').bootstrapToggle('on'); }  addLoadEvent(toggleOnupdates); </script> <?php
+                                  } elseif ($autoupdate == 0) {
+                                    ?>  <script> function toggleOffupdates() { $('#toggle-updates').bootstrapToggle('off'); }  addLoadEvent(toggleOffupdates); </script> <?php
+                                  }
+                                  ?>
+                                </div>
+                              </div>
                                 <div class="form-group">
                                   <div class="col-sm-offset-2 col-sm-10">
                                     <button type="submit" name="confirm-settings" class="btn btn-default btn-sm"><?php echo _button_save; ?></button>
@@ -845,6 +859,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $ssh->read('[prompt]');
                              $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$type."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$type."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";chmod a-w /home/".$gs_login.";sudo rm /home/".$gs_login."/screenlog.0;'";
                              $ssh->exec($copy);
+
+
 
                              $stmt = $mysqli->prepare("INSERT INTO gameservers(user_id,game,slots,ip,port,gs_login,gs_password,map,dedi_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
                              $stmt->bind_param('isisisssi', $user_gs,$game,$slots,$dedi_ip,$port,$gs_login,$gs_password,$map,$dedi_id);
