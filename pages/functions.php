@@ -613,7 +613,6 @@ function ip_exists($ip,$id = 0) {
 }
 
 function event_add($type,$msg) {
-
   global $mysqli;
 
   $time = time();
@@ -663,16 +662,14 @@ function event_id_to_ico($id) {
     return "stop";
   } elseif ($id == 3) {
     return "remove";
-  } elseif ($id == 4) {
+  } elseif ($id == 4 or $id == 7 or $id == 8) {
     return "download";
-  } elseif ($id == 5) {
+  } elseif ($id == 5 or $id == 9) {
     return "refresh";
   } elseif ($id == 6) {
     return "plus";
-  } elseif ($id == 7) {
+  } elseif ($id == 10) {
     return "exclamation-triangle";
-  } elseif ($id == 8) {
-    return "exclamation";
   }
 
 }

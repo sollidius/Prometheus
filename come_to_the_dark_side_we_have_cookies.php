@@ -60,7 +60,8 @@ if ($result = $mysqli->query($query)) {
                    $stmt->execute();
                    $stmt->close();
 
-                   event_add(4,"Das Template ".$row['name']. " auf dem Rootserver ".$dedi_name. " wird aktualisiert");
+                   //event_add(7,"Das Template ".$row['name']. " auf dem Rootserver ".$dedi_name. " wird aktualisiert");
+                   event_add(7,$row['name'].":".$dedi_name);
 
                  }
               }
@@ -109,7 +110,7 @@ if ($result = $mysqli->query($query)) {
                      $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_set_config '.$type_name.' mod '.$app_set_config.' +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
                    }
 
-                   event_add(4,"Der Gameserver ".$row2['ip'].":".$row2['port']." wird aktualisiert.");
+                   event_add(4,$row2['ip'].":".$row2['port']);
 
                  }
               }

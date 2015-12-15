@@ -145,7 +145,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1450180864, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1450195205, 1, 1, 1);
 
 
 ALTER TABLE `addons`

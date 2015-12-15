@@ -310,7 +310,8 @@ if ($result = $mysqli->query($query)) {
                if ($status != 1) {
 
                  //echo "Updated finished....";
-                 event_add(4,"Der Gameserver ".$ip.":".$port." wurde aktualisiert.");
+                 //event_add(4,"Der Gameserver ".$ip.":".$port." wurde aktualisiert.");
+                 event_add(8,$ip.":".$port);
 
                  $status = 0;
                  $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?,status_update = ?  WHERE id = ?");
@@ -319,7 +320,8 @@ if ($result = $mysqli->query($query)) {
                  $stmt->close();
 
                  gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
-                 event_add(5,"Der Gameserver ".$ip.":".$port." wurde neugestartet.");
+                 //event_add(5,"Der Gameserver ".$ip.":".$port." wurde neugestartet.");
+                 event_add(9,$ip.":".$port);
 
                }
            } elseif ($status != 1) {
@@ -345,7 +347,8 @@ if ($result = $mysqli->query($query)) {
            //exit;
          } else {
             gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
-            event_add(7,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
+            //event_add(7,"Der Gameserver ".$ip.":".$port." ist abgestürtzt und wurde neu gestartet.");
+            event_add(10,$ip.":".$port);
          }
       }
       //Log Cleanup
@@ -374,7 +377,8 @@ if ($result = $mysqli->query($query)) {
           //exit;
         } else {
        gameserver_restart($type,$ssh,$gs_login,$name_internal,$port,$ip,$map,$slots,$parameter,$gameq,$row[3],$app_set_config);
-       event_add(5,"Der Gameserver ".$ip.":".$port." wurde neugestartet.");
+       //event_add(5,"Der Gameserver ".$ip.":".$port." wurde neugestartet.");
+       event_add(9,$ip.":".$port);
        }
      }
     }

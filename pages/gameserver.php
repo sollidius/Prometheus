@@ -113,7 +113,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                msg_okay("Der Gameserver wird neuinstalliert.");
 
-                               event_add(5,"Gameserver ".$ip.":".$port." wird neuinstalliert.");
+                               //event_add(5,"Gameserver ".$ip.":".$port." wird neuinstalliert.");
+                               event_add(5,$ip.":".$port);
 
                              }
                           }
@@ -178,7 +179,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   }
                                   msg_okay("Der Gameserver wird aktualisiert.");
 
-                                  event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
+                                  //event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
+                                  event_add(4,$ip.":".$port);
                                 }
                              } else {
                                msg_warning($msg);
@@ -218,7 +220,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                 </div>';
                               } else {
                                  gameserver_restart($type,$ssh,$gs_login,$db_name_internal,$port,$ip,$map,$slots,$parameter,$db_gameq,$gs_select,$db_app_set_config);
-                                 event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
+                                 //event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
+                                 event_add(1,$ip.":".$port);
                                  msg_okay("Der Gamesever wurde gestartet.");
                               }
                               break;
@@ -252,7 +255,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                $ssh->exec('sudo -u '.$gs_login.' screen -S game'.$gs_login.' -p 0 -X quit');
                                msg_okay("Der Gameserver wurde angehalten.");
 
-                               event_add(2,"Der Gameserver ".$ip.":".$port." wurde angehalten.");
+                               //event_add(2,"Der Gameserver ".$ip.":".$port." wurde angehalten.");
+                               event_add(2,$ip.":".$port);
 
                                $is_running = 0; $running = 0;
                                $stmt = $mysqli->prepare("UPDATE gameservers SET is_running = ?,running = ?  WHERE id = ?");
@@ -297,7 +301,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                  $stmt->execute();
                                  $stmt->close();
 
-                                 event_add(3,"Der Gameserver ".$ip.":".$port." wurde gelöscht.");
+                                 //event_add(3,"Der Gameserver ".$ip.":".$port." wurde gelöscht.");
+                                 event_add(3,$ip.":".$port);
 
                                  msg_okay("Der Gameserver wurde gelöscht.");
                                }
@@ -880,7 +885,8 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                              msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
 
-                             event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
+                            // event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
+                            event_add(6,$dedi_ip.":".$port);
 
                            }
                            $i++;
