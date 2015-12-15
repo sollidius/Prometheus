@@ -16,6 +16,7 @@ Prometheus in a Nutshell:
 - Templates: Add/Edit/Delete/Chill around while the Webinterface takes care of Steamupdates, also Support for Images (Minecraft..)
 - Gameservers: Add/Edit/Delete, Console, Daily Restart, Autocomplete for Maps
 - Bans: Blocks users after 3 incorrect guesses of there password, such wow
+- Languages: German, (English, translation is still in progress)
 
 BEWARE: The Software is still in Alpha (Unstable), could possibly blow something up on your site
 
