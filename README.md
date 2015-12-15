@@ -20,6 +20,7 @@ Quick Installation
 - Add "you_had_one_job.php" and "come_to_the_dark_side_we_have_cookies.php" to your crontab, for example:
 
 */1 * * * * /usr/bin/wget --spider http://wi.yourdomain.com/you_had_one_job.php
+
 */5 * * * * /usr/bin/wget --spider http://wi.yourdomain.com/come_to_the_dark_side_we_have_cookies.php
 
 - Run /toolbox/create_account.php in your browser, you should now able to login with Email: 123@123.de and Password: 123456789
