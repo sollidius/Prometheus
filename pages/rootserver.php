@@ -312,7 +312,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                    if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = "Exestiert bereits";}
                    if (exists_entry("ip","dedicated","ip",$ip) == true) { $error = true; $msg = "Exestiert bereits";}
-                   if(!preg_match("/^[a-zA-Z0-9]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                   if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                    if(!preg_match("/^[a-zA-Z0-9]+$/",$user)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                    if(!preg_match("/^[a-zA-Z0-9]+$/",$root)){ $msg = "Der Root Benutzer enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
                    if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
@@ -332,6 +332,16 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         $vsftpd.= "write_enable=YES\n";
                         $vsftpd.= "local_enable=YES\n";
                         $vsftpd.= "allow_writeable_chroot=YES\n";
+                        //SSL
+                        $vsftpd.= "rsa_cert_file=/etc/ssl/private/vsftpd.pem\n";
+                        $vsftpd.= "rsa_private_key_file=/etc/ssl/private/vsftpd.pem\n";
+                        $vsftpd.= "ssl_enable=YES\n";
+                        $vsftpd.= "allow_anon_ssl=NO\n";
+                        $vsftpd.= "ssl_tlsv1=YES\n";
+                        $vsftpd.= "ssl_sslv2=NO\n";
+                        $vsftpd.= "ssl_sslv3=NO\n";
+                        $vsftpd.= "require_ssl_reuse=NO\n";
+                        $vsftpd.= "ssl_ciphers=HIGH\n";
                         $vsftpd.= "################\n";
 
 
@@ -346,6 +356,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           $ssh->exec('apt-get -y install vsftpd');
                           $ssh->exec('apt-get -y install unzip');
                           $ssh->exec('apt-get -y install gawk');
+                          $ssh->exec("apt-get -y install openssl");
                           $os_version = "Debian 8"; $os_bit = "32";
 
                         } elseif ($os == "Debian 8 64bit") {
@@ -362,6 +373,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           $ssh->exec('apt-get -y install vsftpd');
                           $ssh->exec('apt-get -y install unzip');
                           $ssh->exec('apt-get -y install gawk');
+                          $ssh->exec("apt-get -y install openssl");
                           $os_version = "Debian 8"; $os_bit = "64";
 
                           } elseif ($os == "Ubuntu 14.04 32bit") {
@@ -375,6 +387,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             $ssh->exec('apt-get -y install vsftpd');
                             $ssh->exec('apt-get -y install unzip');
                             $ssh->exec('apt-get -y install gawk');
+                            $ssh->exec("apt-get -y install openssl");
                             $os_version = "Ubuntu 14.04"; $os_bit = "32";
 
                           } elseif ($os == "Ubuntu 14.04 64bit") {
@@ -391,7 +404,39 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             $ssh->exec('apt-get -y install vsftpd');
                             $ssh->exec('apt-get -y install unzip');
                             $ssh->exec('apt-get -y install gawk');
+                            $ssh->exec("apt-get -y install openssl");
                             $os_version = "Ubuntu 14.04"; $os_bit = "64";
+
+                          } elseif ($os == "Ubuntu 15.04 32bit") {
+
+                            $ssh->setTimeout(45);
+                            $ssh->exec('apt-get update');
+                            $ssh->exec('apt-get -y install sudo');
+                            $ssh->exec('apt-get -y install screen');
+                            $ssh->exec('apt-get -y install libtinfo5 libncurses5');
+                            $ssh->exec('apt-get -y install lib32stdc++6');
+                            $ssh->exec('apt-get -y install vsftpd');
+                            $ssh->exec('apt-get -y install unzip');
+                            $ssh->exec('apt-get -y install gawk');
+                            $ssh->exec("apt-get -y install openssl");
+                            $os_version = "Ubuntu 15.04"; $os_bit = "32";
+
+                          } elseif ($os == "Ubuntu 15.04 64bit") {
+
+                            $ssh->exec('dpkg --add-architecture i386');
+                            $ssh->setTimeout(45);
+                            $ssh->exec('apt-get update');
+                            $ssh->exec('apt-get -y install sudo');
+                            $ssh->exec('apt-get -y install screen');
+                            $ssh->exec('apt-get -y install ia32-libs');
+                            $ssh->exec('apt-get -y install libtinfo5:i386 libncurses5:i386');
+                            $ssh->exec('apt-get -y install lib32stdc++6');
+                            $ssh->exec('apt-get -y install lib32gcc1');
+                            $ssh->exec('apt-get -y install vsftpd');
+                            $ssh->exec('apt-get -y install unzip');
+                            $ssh->exec('apt-get -y install gawk');
+                            $ssh->exec("apt-get -y install openssl");
+                            $os_version = "Ubuntu 15.04"; $os_bit = "64";
 
 
                         } else {
@@ -421,6 +466,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         $ssh->exec("usermod -a -G sudo ".$user);
                         $ssh->exec('echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers');
                         $ssh->exec('echo "'.$vsftpd.'" >> /etc/vsftpd.conf');
+                        $ssh->exec('sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem -subj "/C=AU/ST=AU/L=AU/O=Internet Widgits Pty Ltd/OU=IT/CN='.$root.'"');
                         $ssh->exec('service vsftpd restart');
 
                         $stmt = $mysqli->prepare("INSERT INTO dedicated(name,os,ip,port,user,password,status,language,os_bit) VALUES (?, ?, ?, ? ,? ,? ,?, ? ,?)");
@@ -457,6 +503,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         <option disabled selected>Ubuntu</option>
                         <option>Ubuntu 14.04 32bit</option>
                         <option>Ubuntu 14.04 64bit</option>
+                        <option>Ubuntu 15.04 32bit</option>
+                        <option>Ubuntu 15.04 64bit</option>
                       </select>
                     </div>
                   </div>
