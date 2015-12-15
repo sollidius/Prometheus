@@ -19,6 +19,9 @@ Prometheus in a Nutshell:
 
 BEWARE: The Software is still in Alpha (Unstable), could possibly blow something up on your site
 
+TRANSLATION FOR ENGLISH IS STILL GOING ON, see here:
+https://github.com/Ne00n/Prometheus/issues/23
+
 Requirements
 - Webserver: PHP 5.6+, better 7.0
 - Dedicated: Debian 8.0 or Ubuntu 14.05/Ubuntu 15.05
