@@ -287,6 +287,8 @@ if ($result = $mysqli->query($query)) {
          $status = $ssh->exec("ps -ef | grep -i cp".$row[0]." | grep -v grep; echo $?");
          if ($status == 1) {
 
+           $ssh->exec('sudo rm /home/'.$row[0].'/steam.log');
+
            $status = 0;
            $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?  WHERE id = ?");
            $stmt->bind_param('ii',$status,$row[3]);
@@ -302,7 +304,7 @@ if ($result = $mysqli->query($query)) {
            //exit;
          } else {
 
-           $status = $ssh->exec('cat /home/'.$row[0].'/game/steam.log  | grep "state is 0x402 after update job" ; echo $?');
+           $status = $ssh->exec('cat /home/'.$row[0].'/game/steam.log  | grep "state is 0x[0-9][0-9][0-9]  after update job" ; echo $?');
            if ($status == 1) {
                $status = $ssh->exec('cat /home/'.$row[0].'/game/steam.log  | grep "Success!" ; echo $?');
                if ($status != 1) {
