@@ -60,7 +60,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               $stmt->bind_param('i', $row[0]);
                               $stmt->execute();
                               $stmt->close();
-                              msg_okay("Das Addon wurde gelöscht.");
+                              msg_okay(_addons_message_deleted);
                             } else {
                               msg_warning($msg);
                             }
@@ -83,8 +83,20 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  $path = htmlentities($_POST['path']);
                                  $folder = htmlentities($_POST['folder']);
                                  if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                                 if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;
+                                } else {
+
+                                  $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
+                                  $stmt->bind_param('s', $game);
+                                  $stmt->execute();
+                                  $stmt->bind_result($template_id);
+                                  $stmt->fetch();
+                                  $stmt->close();
+
+                                  if (check_template($template_id)) { $msg = _message_addon_error; $error = true;}
+
+                                }
+
 
                                  if ($error == false) {
 
@@ -100,7 +112,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                      $stmt->execute();
                                      $stmt->close();
 
-                                  msg_okay("Das Addon wurde aktualisiert.");
+                                  msg_okay(_addons_message_updated);
                                   $hide_msg = true;
 
                                } else {
@@ -152,7 +164,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-sm-2">URL/Pfad:</label>
+                              <label class="control-label col-sm-2">URL/<?php echo _addons_path; ?>:</label>
                               <div class="col-sm-3">
                                 <input type="text" class="form-control input-sm" name="url" value="<?php echo $db_url;?>">
                               </div>
@@ -161,7 +173,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-sm-2">Ordner:</label>
+                              <label class="control-label col-sm-2"><?php echo _addons_folder; ?>:</label>
                               <div class="col-sm-3">
                                 <input type="text" class="form-control input-sm" name="folder" value="<?php echo $db_folder;?>">
                               </div>
@@ -196,8 +208,19 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          $path = htmlentities($_POST['path']);
                          $folder = htmlentities($_POST['folder']);
                          if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;}
-                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;}
-                         if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;
+                         } else {
+
+                           $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
+                           $stmt->bind_param('i', $game);
+                           $stmt->execute();
+                           $stmt->bind_result($template_id);
+                           $stmt->fetch();
+                           $stmt->close();
+
+                           if (check_template($template_id)) { $msg = _message_addon_error; $error = true;}
+
+                         }
 
                          if ($error == false) {
 
@@ -246,7 +269,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">URL/Pfad:</label>
+                      <label class="control-label col-sm-2">URL/<?php echo _addons_path; ?>:</label>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="url" placeholder="csgo">
                       </div>
@@ -255,7 +278,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Ordner:</label>
+                      <label class="control-label col-sm-2"><?php echo _addons_folder; ?>:</label>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="folder" placeholder="ulib">
                       </div>
@@ -278,7 +301,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           <th>Name</th>
                           <th>Game</th>
                           <th>URL</th>
-                          <th>Pfad</th>
+                          <th><?php echo _addons_path; ?></th>
                           <th><?php echo _table_action; ?></th>
                         </tr>
                       </thead>
@@ -314,7 +337,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             } else {
                               echo "<td>" . $path . "</td>";
                             }
-                            echo '<td> <a href="index.php?page=addons?edit-'.$id.'"  class="btn btn-primary btn-xs">Editieren</i></a>
+                            echo '<td> <a href="index.php?page=addons?edit-'.$id.'"  class="btn btn-primary btn-xs">'._button_edit.'</i></a>
                                       <a style="margin-left:2px" href="index.php?page=addons?delete-'.$id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                             echo '</td>';
                             echo "</tr>";

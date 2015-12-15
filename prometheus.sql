@@ -110,14 +110,14 @@ INSERT INTO `templates` (`id`, `name`, `name_internal`, `type`, `type_name`, `ga
 (7, 'CounterStrikeSource', 'cstrike', 'steamcmd', '232330', 'css', '', '', 0),
 (9, 'CounterStrikeGlobalOffensive', 'csgo', 'steamcmd', '740', 'csgo', 'csgo', '', 730),
 (10, 'TeamFortress2', 'tf', 'steamcmd', '232250', 'tf2', 'tf', '', 440),
-(14, 'Left4Dead2', 'left4dead2', 'steamcmd', '222860', 'l4d2', '', '', 0),
-(20, 'Left4Dead', 'left4dead', 'steamcmd', '222840', 'l4d', '', '', 0),
-(21, 'DayofDefeatSource', 'dod', 'steamcmd', '232290', 'dods', '', '', 0),
+(14, 'Left4Dead2', 'left4dead2', 'steamcmd', '222860', 'l4d2', 'left4dead2', '', 550),
+(20, 'Left4Dead', 'left4dead', 'steamcmd', '222840', 'l4d', 'left4dead', '', 500),
+(21, 'DayofDefeatSource', 'dod', 'steamcmd', '232290', 'dods', '', '', 300),
 (31, 'MinecraftVanilla-1.8.9', 'java -jar minecraft_server.jar', 'image', 'http://it.ath.pw/images/minecraft_server1.8.9.zip', 'minecraft', '', '', 0),
 (32, 'TeamFortressClassic', 'tfc', 'steamcmd', '90', '', 'tfc', 'tfc', 0),
-(33, 'DayofDefeat', 'dod', 'steamcmd', '90', '', '', 'dod', 0),
+(33, 'DayofDefeat', 'dod', 'steamcmd', '90', '', '', 'dod', 30),
 (34, 'CounterStrikeConditionZero', 'cstrike', 'steamcmd', '90', '', '', 'czero', 0),
-(35, 'Half-Life', 'hl', 'steamcmd', '90', '', '', '', 0),
+(35, 'Half-Life', 'hl', 'steamcmd', '90', '', 'valve', '', 0),
 (36, 'Half-LifeDeathmatchSource', 'hldm', 'steamcmd', '255470', '', '', '', 0),
 (37, 'Half-Life2Deathmatch', 'hl2mp', 'steamcmd', '232370', '', 'hl2mp', '', 0),
 (38, 'Counter-Strike', 'cstrike', 'steamcmd', '90', '', '', 'needed', 0);
@@ -145,7 +145,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1450107125, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1450180864, 1, 1, 1);
 
 
 ALTER TABLE `addons`

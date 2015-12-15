@@ -37,7 +37,6 @@ if ($result = $mysqli->query($query)) {
 
                 $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                  if (!$ssh->login($dedi_login, $dedi_password)) {
-                   msg_error('Login failed');
                    //exit;
                  } else {
 
@@ -87,7 +86,6 @@ if ($result = $mysqli->query($query)) {
 
                 $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                  if (!$ssh->login($dedi_login, $dedi_password)) {
-                   msg_error('Login failed');
                    //exit;
                  } else {
 

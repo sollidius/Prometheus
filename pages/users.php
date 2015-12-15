@@ -302,7 +302,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             } elseif ($db_rank == 2) {
                               echo "<td>User</td>";
                             }
-                            echo '<td><a href="index.php?page=users?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</a>
+                            echo '<td><a href="index.php?page=users?edit-'.$db_id.'"  class="btn btn-primary btn-xs">'._button_edit.'</a>
                                   <a href="index.php?page=users?delete-'.$db_id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                             echo '</td>';
                             echo "</tr>";

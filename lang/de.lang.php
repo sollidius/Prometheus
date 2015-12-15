@@ -28,7 +28,21 @@ define('_dropdown_logout','Ausloggen');
 define('_dropdown_settings','Einstelungen');
 
 define('_button_save','Speichern');
+define('_button_edit','Editieren');
+define('_button_manage','Verwalten');
 define('_table_action','Aktion');
+define('_message_addon_error','Ungültiges Addon');
+define('_message_template_error','Ungültiges Template');
+
+//addons
+define('_addons_path','Path');
+define('_addons_url','URL');
+define('_addons_folder','Ordner');
+define('_addons_message_deleted','Das Addon wurde gelöscht.');
+define('_addons_message_updated','Das Addon wurde aktualisiert.');
+
+//Dedicated
+define('_dedicated_installed','Installiert');
 
 //Settings
 define('_settings_msgbox','Der Cronjob wurde am');
@@ -36,6 +50,8 @@ define('_settings_msgbox_executed','ausgeführt.');
 define('_settings_maintance','Wartungsmodus');
 define('_settings_cleanup','Gameserver Log Cleanup');
 define('_settings_restart','Gameserver Neustart bei Crash');
+define('_settings_restart_cpu_usage','Gameserver Neustarten bei mehr als 25% CPU Last (wenn leer)');
+define('_settings_message_cpu_load','Nachricht im Chat, bei mehr als 90% CPU Last');
 
 //USettings
 define('_usettings_general','Allgemein');

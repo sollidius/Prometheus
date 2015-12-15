@@ -221,8 +221,20 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                             if ($error == false) {
 
+                              $stmtz = $mysqli->prepare("SELECT ip FROM dedicated WHERE id = ?");
+                              $stmtz->bind_param('i', $row["id"]);
+                              $stmtz->execute();
+                              $stmtz->bind_result($ip_before);
+                              $stmtz->fetch();
+                              $stmtz->close();
+
                               $stmt = $mysqli->prepare("UPDATE dedicated SET ip = ?,port = ? WHERE id = ?");
                               $stmt->bind_param('sii', $ip, $port,$row["id"]);
+                              $stmt->execute();
+                              $stmt->close();
+
+                              $stmt = $mysqli->prepare("UPDATE gameservers SET ip = ? WHERE ip = ?");
+                              $stmt->bind_param('ss', $ip, $ip_before);
                               $stmt->execute();
                               $stmt->close();
 
@@ -559,8 +571,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         <th>Name</th>
                         <th>IP</th>
                         <th>Port</th>
-                        <th>Benutzer</th>
-                        <th>Passwort</th>
+                        <th><?php echo _gameserver_user; ?></th>
+                        <th><?php echo _usettings_password; ?></th>
                         <th>Status</th>
                         <th><?php echo _table_action; ?></th>
                       </tr>
@@ -581,7 +593,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           echo "<td>" . $row["user"] . "</td>";
                           echo "<td> ******** </td>";
                           if ($row["status"] == 0) { echo "<td>Unbekannt</td>"; }
-                          if ($row["status"] == 1) { echo '<td>Installiert: ';
+                          if ($row["status"] == 1) { echo '<td>'._dedicated_installed.': ';
 
                             $query = 'SELECT template_id FROM dedicated_games WHERE dedi_id = '.$row["id"].' ORDER by id';
                               $count = 0;
@@ -600,8 +612,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               }
                           echo '</td>';
                           echo '<td>';
-                          echo '<a href="index.php?page=rootserver?edit='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Editieren</a>
-                                  <a style="margin-left:2px;" href="index.php?page=rootserver?manage='.$row["id"].'" class="btn pull-left btn-primary btn-xs">Verwalten</a>
+                          echo '<a href="index.php?page=rootserver?edit='.$row["id"].'" class="btn pull-left btn-primary btn-xs">'._button_edit.'</a>
+                                  <a style="margin-left:2px;" href="index.php?page=rootserver?manage='.$row["id"].'" class="btn pull-left btn-primary btn-xs">'._button_manage.'</a>
                                   <a style="margin-left:2px;" href="index.php?page=rootserver?remove='.$row["id"].'" class="btn pull-left btn-danger btn-xs"><i class="fa fa-eraser"></i></a>
                                   <a style="margin-left:2px;" href="index.php?page=rootserver?delete='.$row["id"].'" class="btn pull-left btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                           echo '</td>'; }

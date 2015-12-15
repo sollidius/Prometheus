@@ -810,7 +810,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                      if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
                      if (check_dedi_id($dedicated)) {$msg = "Ungültige Dedicated ID"; $error = true;}
-                     if (check_template($game)) { $msg = "Ungültiges Template"; $error = true;}
+                     if (check_template($game)) { $msg = _message_template_error; $error = true;}
                      if (check_user_id($user_gs)) { $msg = "Ungültiger User"; $error = true;}
 
                      $installed = check_game_installed($dedicated,$game);

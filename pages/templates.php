@@ -358,7 +358,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             } else {
                               echo "<td>" . $db_gameq . "</td>";
                             }
-                            echo '<td> <a href="index.php?page=templates?edit-'.$db_id.'"  class="btn btn-primary btn-xs">Editieren</i></a>
+                            echo '<td> <a href="index.php?page=templates?edit-'.$db_id.'"  class="btn btn-primary btn-xs">'._button_edit.'</i></a>
                                       <a style="margin-left:2px" href="index.php?page=templates?delete-'.$db_id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                             echo '</td>';
                             echo "</tr>";

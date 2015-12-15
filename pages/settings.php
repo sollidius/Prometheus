@@ -171,7 +171,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                 <div class="form-group col-sm-8">
                   <label class="control-label">
                     <input data-size="mini" id="toggle-cpu" type="checkbox" name="gs_cpu" data-toggle="toggle">
-                    Gameserver Neustarten bei mehr als 25% CPU Last (wenn leer)</label>
+                    <?php echo _settings_restart_cpu_usage; ?></label>
                       <?php
                      if ($gs_check_cpu == 1) {
                       ?>
@@ -186,7 +186,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                 <div class="form-group col-sm-8">
                   <label class="control-label">
                     <input data-size="mini" id="toggle-msg" type="checkbox" name="gs_cpu_msg" data-toggle="toggle">
-                    Nachricht im Chat, bei mehr als 90% CPU Last</label>
+                    <?php echo _settings_message_cpu_load; ?></label>
                       <?php
                      if ($gs_check_cpu_msg == 1) {
                       ?>
