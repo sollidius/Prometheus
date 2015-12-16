@@ -18,8 +18,9 @@ Prometheus in a Nutshell:
 - Bans: Blocks users after 3 incorrect guesses of there password, such wow
 - Languages: German, (English 90% Translated)
 
-![alt tag](http://i.imgur.com/QiFFRG9.png)
-![alt tag](http://i.imgur.com/4TvggC1.png)
+![alt tag](http://i.imgur.com/p4SbBwU.png)
+![alt tag](http://i.imgur.com/2Zxk0ub.png)
+![alt tag](http://i.imgur.com/Gp9j9cm.png)
 
 BEWARE: The Software is still in Alpha (Unstable), could possibly blow something up on your site
 
