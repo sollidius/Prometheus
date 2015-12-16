@@ -19,6 +19,7 @@ Prometheus in a Nutshell:
 - Languages: German, (English 90% Translated)
 
 ![alt tag](http://i.imgur.com/p4SbBwU.png)
+![alt tag](http://i.imgur.com/3EwHtF5.png)
 ![alt tag](http://i.imgur.com/2Zxk0ub.png)
 ![alt tag](http://i.imgur.com/Gp9j9cm.png)
 
