@@ -34,6 +34,7 @@ This Project uses:
 - GameQ-2: https://github.com/Austinb/GameQ
 - PHPSeclib: https://github.com/phpseclib/phpseclib
 - JQuery: https://github.com/jquery/jquery
+- PHP: https://github.com/php/php-src
 
 Quick Installation
 
