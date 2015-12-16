@@ -39,3 +39,4 @@ Quick Installation
 - Run /toolbox/create_account.php in your browser, you should now able to login with Email: 123@123.de and Password: 123456789
 - DELETE /toolbox, this folder is just for debug/testing or fuck i locked me out again purposes.
 - Done, you can go to Settings > General and change your Language if you wish.
+- Read our FAQ: https://github.com/Ne00n/Prometheus/wiki/FAQ
