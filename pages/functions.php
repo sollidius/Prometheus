@@ -664,7 +664,7 @@ function event_id_to_ico($id) {
     return "remove";
   } elseif ($id == 4 or $id == 7 or $id == 8) {
     return "download";
-  } elseif ($id == 5 or $id == 9) {
+  } elseif ($id == 5 or $id == 9 or $id == 11) {
     return "refresh";
   } elseif ($id == 6) {
     return "plus";

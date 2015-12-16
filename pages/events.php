@@ -47,8 +47,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                  <table class="table table-bordered">
                    <thead>
                      <tr>
-                       <th>Datum</th>
-                       <th>Nachricht</th>
+                       <th><?php echo _events_date; ?></th>
+                       <th><?php echo _events_message; ?></th>
                      </tr>
                    </thead>
                    <tbody>
@@ -77,7 +77,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                        } elseif ($type == 6) {
                          echo "Der Gameserver ".$row['message']." wurde hinzugefügt.</td>";
                        } elseif ($type == 7) {
-                         $tmp = split(":",$row['message']);
+                         $tmp = explode(":",$row['message']);
                          echo "Das Template ".$tmp[0]. " auf dem Rootserver ".$tmp[1]. " wird aktualisiert.</td>";
                        } elseif ($type == 8) {
                          echo "Der Gameserver ".$row['message']." wurde aktualisiert.</td>";
@@ -85,6 +85,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          echo "Der Gameserver ".$row['message']." wurde neugestartet.</td>";
                        } elseif ($type == 10) {
                          echo "Der Gameserver ".$row['message']." ist abgestürtzt und wurde neu gestartet.</td>";
+                       } elseif ($type == 11) {
+                         echo "Der Gameserver ".$row['message']." wurde wegen hoher CPU Last neugestartet.</td>";
                        } else {
                           echo $row['message'].'</td>';
                        }
@@ -102,14 +104,16 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                        } elseif ($type == 6) {
                          echo "The Gameserver ".$row['message']." was added.</td>";
                        } elseif ($type == 7) {
-                         $tmp = split(":",$row['message']);
+                         $tmp = explode(":",$row['message']);
                          echo "The Template ".$tmp[0]. " on the Dedi ".$tmp[1]. " gets updated.</td>";
                        } elseif ($type == 8) {
                          echo "The Gameserver ".$row['message']." was updated.</td>";
                        } elseif ($type == 9) {
                          echo "The Gameserver ".$row['message']." has been restarted.</td>";
                        } elseif ($type == 10) {
-                         echo "The Gameserver ".$row['message']." crashed and was restarted.";
+                         echo "The Gameserver ".$row['message']." crashed and was restarted.</td>";
+                       } elseif ($type == 11) {
+                         echo "The Gameserver ".$row['message']." was restarted due to high CPU load.</td>";
                        } else {
                           echo $row['message'].'</td>';
                        }

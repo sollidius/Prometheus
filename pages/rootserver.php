@@ -107,7 +107,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                             $stmt->execute();
                                             $stmt->close();
 
-                                            msg_okay("Das Template wird erstellt, das kann etwas dauern :)");
+                                            msg_okay(_dedicated_template_created);
                                           } elseif ($row_2["type"] == "image") {
 
                                             $file = basename($row_2["type_name"]);
@@ -121,7 +121,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                               $ssh->exec($cmd);
                                             } else {
                                               //Die Hard 4.0
-                                              msg_error("Nur .tar oder .zip");
+                                              msg_error(_dedicated_file_error);
                                               exit;
                                             }
                                             $template = "image"; $zero = 0;
@@ -129,7 +129,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                             $stmt->bind_param('iisi', $row_2["id"], $id,$template,$zero);
                                             $stmt->execute();
                                             $stmt->close();
-                                            msg_okay("Das Image wird erstellt, das kann etwas dauern :)");
+                                            msg_okay(_dedicated_image_created);
                                           }
                                         } else {
                                           msg_error($installed[1]);
@@ -139,8 +139,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                     }   elseif (isset($_POST['remove_'.$row_2["id"]])) {
                                       $error = false;
 
-                                      if (check_game_in_use($row_2["id"],$row["ip"])) { $msg ="Es exestieren noch Installierte Gameserver mit diesen Spiel."; $error = true;}
-                                      if (check_template_job_exists($row["id"],$row_2["id"])) { $msg ="Installation des Templates läuft noch."; $error = true;}
+                                      if (check_game_in_use($row_2["id"],$row["ip"])) { $msg =_dedicated_message_gameserver_exists; $error = true;}
+                                      if (check_template_job_exists($row["id"],$row_2["id"])) { $msg =_dedicated_message_installation_running; $error = true;}
 
                                       if ($error == false) {
 
@@ -156,7 +156,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                            $stmt->bind_param('iii', $row["id"],$row_2["id"],$status_game);
                                            $stmt->execute();
                                            $stmt->close();
-                                           msg_okay("Das Template wurde auf dem Rootserver gelöscht.");
+                                           msg_okay(_dedicated_message_template_deleted);
 
                                          }
                                       } else {
@@ -168,13 +168,13 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                   $result_2->close();
                               }
                             }
-                        msg_info("Die Installation kann ca. 5-30 Minuten dauern, je nach Bandbreite und Downloadgröße, wenn die SteamCMD abstürtzt, wird der Updatevorgang neu gestartet.");
+                        msg_info(_dedicated_message_info);
                         echo '<form class="form-horizontal" action="index.php?page=rootserver?manage='.$row["id"].'" method="post">'; ?>
                          <div class="col-sm-5">
                          <table class="table table-bordered">
                            <thead>
                              <tr>
-                               <th colspan="1">Name</th>
+                               <th colspan="1"><?php echo _users_name; ?></th>
                                <th colspan="1"><?php echo _table_action; ?></th>
                              </tr>
                            </thead>
@@ -194,7 +194,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                     echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success" disabled>'.$installed[1].'</button>';
                                     echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">Deinstallieren</button></td>';
                                  } else {
-                                   echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success">Installieren</button> <button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>Deinstallieren</button> </td>';
+                                   echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success">'._dedicated_install.'</button> <button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>'._dedicated_remove.'</button> </td>';
                                  }
                                  echo "</tr>";
                                }
@@ -216,8 +216,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                             $ip = htmlentities($_POST['ip']); $port = htmlentities($_POST['port']);
 
-                            if (ip_exists($ip,$row["id"])) { $msg = "Die IP exestiert bereits."; $error = true;}
-                            if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                            if (ip_exists($ip,$row["id"])) { $msg = _dedicated_message_ip_exists; $error = true;}
+                            if(!preg_match("/^[0-9]+$/",$port)){ $msg = _dedicated_message_port_exists."<br>";  $error = true;}
 
                             if ($error == false) {
 

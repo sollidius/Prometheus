@@ -82,8 +82,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  $url = htmlentities($_POST['url']);
                                  $path = htmlentities($_POST['path']);
                                  $folder = htmlentities($_POST['folder']);
-                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;
+                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = _addons_message_error_name ."<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = _addons_message_error_game ."<br>";  $error = true;
                                 } else {
 
                                   $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
@@ -207,8 +207,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          $url = htmlentities($_POST['url']);
                          $path = htmlentities($_POST['path']);
                          $folder = htmlentities($_POST['folder']);
-                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;}
-                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = "Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;
+                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = _addons_message_error_name ."<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = _addons_message_error_game ."<br>";  $error = true;
                          } else {
 
                            $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
@@ -236,7 +236,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                            $stmt->execute();
                            $stmt->close();
 
-                          msg_okay("Das Addon wurde angelegt.");
+                          msg_okay(_addon_message_added);
 
                        } else {
                          msg_error('Something went wrong, '.$msg);
@@ -298,9 +298,9 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     <table class="table table-bordered">
                       <thead>
                         <tr>
-                          <th>Name</th>
-                          <th>Game</th>
-                          <th>URL</th>
+                          <th><?php echo _addons_name; ?></th>
+                          <th><?php echo _addons_game; ?></th>
+                          <th><?php echo _addons_url; ?></th>
                           <th><?php echo _addons_path; ?></th>
                           <th><?php echo _table_action; ?></th>
                         </tr>

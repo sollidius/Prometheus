@@ -23,6 +23,7 @@ define('_sidebar_users','Benutzer');
 define('_sidebar_events','Events');
 define('_sidebar_addons','Addons');
 define('_sidebar_bans','Bans');
+
 //Dropdown
 define('_dropdown_logout','Ausloggen');
 define('_dropdown_settings','Einstelungen');
@@ -40,9 +41,57 @@ define('_addons_url','URL');
 define('_addons_folder','Ordner');
 define('_addons_message_deleted','Das Addon wurde gelöscht.');
 define('_addons_message_updated','Das Addon wurde aktualisiert.');
+define('_addons_message_error_game','Das Game enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_addons_message_error_name','Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_addon_message_added','Das Addon wurde angelegt.');
+define('_addons_game','Spiel');
+define('_addons_name','Name');
+
+//Bans
+define('_bans_message','Bei 3 Versuchen ist die IP gebannt bis einer der 3 Einträge ausläuft nach 30 Minuten.');
+define('_bans_date','Datum');
+define('_bans_banned','Gebannt bis');
+define('_bans_message_removed','Der Ban wurde entfernt.');
 
 //Dedicated
 define('_dedicated_installed','Installiert');
+define('_dedicated_template_created','Das Template wird erstellt, das kann etwas dauern :)');
+define('_dedicated_image_created','Das Image wird erstellt, das kann etwas dauern :)');
+define('_dedicated_file_error','Nur .tar oder .zip');
+define('_dedicated_message_gameserver_exists','Es exestieren noch Installierte Gameserver mit diesen Spiel.');
+define('_dedicated_message_installation_running','Installation des Templates läuft noch.');
+define('_dedicated_message_template_deleted','Das Template wurde auf dem Rootserver gelöscht.');
+define('_dedicated_message_info','Die Installation kann ca. 5-30 Minuten dauern, je nach Bandbreite und Downloadgröße, wenn die SteamCMD abstürtzt, wird der Updatevorgang neu gestartet.');
+define('_dedicated_install','Installieren');
+define('_dedicated_remove','Deinstallieren');
+define('_dedicated_message_ip_exists','Die IP exestiert bereits.');
+define('_dedicated_message_port_exists','Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+
+//Dashboard
+define('_dashboard_events','Alle Events');
+
+//Events
+define('_events_date','Datum');
+define('_events_message','Nachricht');
+
+//Users
+define('_users_message_deleted','Benutzer wurde gelöscht.');
+define('_users_message_yourself','Du kannst dich nicht selber Löschen.');
+define('_users_message_gameserver','Der Benutzer besitzt noch Gameserver.');
+define('_users_password_notequal','Passwort ungleich');
+define('_users_password_toshort','Passwort zu kurz.');
+define('_users_exists','User exestiert.');
+define('_users_email_exists','E-Mail exestiert');
+define('_users_name_toshort','Name zu kurz.');
+define('_users_name_invalid_letters','Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_users_email_invalid','Die E-Mail ist nicht g&uuml;ltig');
+define('_users_email_toshort','E-Mail zu kurz.');
+define('_users_user_updated','Benutzer aktualisiert.');
+define('_users_user_created','Benutzer wurde erstellt.');
+define('_users_name','Name');
+define('_users_email','E-Mail');
+define('_users_rank','Rank');
+
 
 //Settings
 define('_settings_msgbox','Der Cronjob wurde am');
@@ -52,6 +101,8 @@ define('_settings_cleanup','Gameserver Log Cleanup');
 define('_settings_restart','Gameserver Neustart bei Crash');
 define('_settings_restart_cpu_usage','Gameserver Neustarten bei mehr als 25% CPU Last (wenn leer)');
 define('_settings_message_cpu_load','Nachricht im Chat, bei mehr als 90% CPU Last');
+define('_settings_message_ssl_true','Es wird SSL benutzt, um die Verbindung zu verschlüsseln. Um die Sicherheit der Verbindung zu Testen: <a href="https://www.ssllabs.com/ssltest/">ssllabs.com</a>');
+define('_settings_message_ssl_false','Es wird kein SSL benutzt, um die Verbindung zu verschlüsseln.');
 
 //USettings
 define('_usettings_general','Allgemein');

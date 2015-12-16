@@ -58,7 +58,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               $stmt->bind_param('i', $row[0]);
                               $stmt->execute();
                               $stmt->close();
-                              msg_okay("Der Eintrag wurde gelöscht.");
+                              msg_okay(_bans_message_removed);
                             } else {
                               msg_warning($msg);
                             }
@@ -70,14 +70,14 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                   if ($page == "bans" or startsWith($page, "bans?delete")) {
                     ?>
-                    <p>Bei 3 Versuchen ist die IP gebannt bis einer der 3 Einträge ausläuft nach 30 Minuten.</p>
+                    <p><?php echo _bans_message; ?></p>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
                           <th>IP</th>
                           <th>IP Proxy</th>
-                          <th>Datum</th>
-                          <th>Gebannt bis</th>
+                          <th><?php echo _bans_date; ?></th>
+                          <th><?php echo _bans_banned; ?></th>
                           <th><?php echo _table_action; ?></th>
                         </tr>
                       </thead>

@@ -124,4 +124,6 @@ if ($result = $mysqli->query($query)) {
    /* free result set */
    $result->close();
  }
+
+ echo "ok";
 ?>

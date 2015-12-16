@@ -159,7 +159,62 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              while ($row = $result->fetch_assoc()) {
                                $type = $row['type'];
                                echo '<a href="#" class="list-group-item">';
-                               echo '<i class="fa fa-'.event_id_to_ico($type).' fa-fw"></i>'.$row['message'];
+                               echo '<i class="fa fa-'.event_id_to_ico($type).' fa-fw"></i>';
+                               if ($db_language == "de") {
+                                 if ($type == 1) {
+                                  echo "Der Gameserver ".$row['message']." wurde gestartet.";
+                                } elseif ($type == 2) {
+                                   echo "Der Gameserver ".$row['message']." wurde angehalten.";
+                                } elseif ($type == 3) {
+                                   echo "Der Gameserver ".$row['message']." wurde gelöscht.";
+                                 } elseif ($type == 4) {
+                                   echo "Der Gameserver ".$row['message']." wird aktualisiert.";
+                                 } elseif ($type == 5) {
+                                   echo "Der Gameserver ".$row['message']." wird neuinstalliert.";
+                                 } elseif ($type == 6) {
+                                   echo "Der Gameserver ".$row['message']." wurde hinzugefügt.";
+                                 } elseif ($type == 7) {
+                                   $tmp = explode(":",$row['message']);
+                                   echo "Das Template ".$tmp[0]. " auf dem Rootserver ".$tmp[1]. " wird aktualisiert.";
+                                 } elseif ($type == 8) {
+                                   echo "Der Gameserver ".$row['message']." wurde aktualisiert.";
+                                 } elseif ($type == 9) {
+                                   echo "Der Gameserver ".$row['message']." wurde neugestartet.";
+                                 } elseif ($type == 10) {
+                                   echo "Der Gameserver ".$row['message']." ist abgestürtzt und wurde neu gestartet.";
+                                 } elseif ($type == 11) {
+                                   echo "Der Gameserver ".$row['message']." wurde wegen hoher CPU Last neugestartet.";
+                                 } else {
+                                    echo $row['message'];
+                                 }
+                               } elseif ($db_language == "en") {
+                                 if ($type == 1) {
+                                   echo "The Gameserver ".$row['message']." was started.";
+                                 } elseif ($type == 2) {
+                                    echo "The Gameserver ".$row['message']." was stopped.";
+                                 } elseif ($type == 3) {
+                                     echo "The Gameserver ".$row['message']." was deleted.";
+                                 } elseif ($type == 4) {
+                                   echo "The Gameserver ".$row['message']." gets updated.";
+                                 } elseif ($type == 5) {
+                                   echo "The Gameserver ".$row['message']." gets reinstalled.";
+                                 } elseif ($type == 6) {
+                                   echo "The Gameserver ".$row['message']." was added.";
+                                 } elseif ($type == 7) {
+                                   $tmp = explode(":",$row['message']);
+                                   echo "The Template ".$tmp[0]. " on the Dedi ".$tmp[1]. " gets updated.";
+                                 } elseif ($type == 8) {
+                                   echo "The Gameserver ".$row['message']." was updated.";
+                                 } elseif ($type == 9) {
+                                   echo "The Gameserver ".$row['message']." has been restarted.";
+                                 } elseif ($type == 10) {
+                                   echo "The Gameserver ".$row['message']." crashed and was restarted.";
+                                 } elseif ($type == 11) {
+                                   echo "The Gameserver ".$row['message']." was restarted due to high CPU load.";
+                                 } else {
+                                    echo $row['message'];
+                                 }
+                               }
                                echo ' <span class="pull-right text-muted small"><em>'.date('d-m-Y H:i:s', $row['timestamp']).'</em></span>';
 
                                echo '</a>';
@@ -169,7 +224,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                           }  ?>
                            </div>
                            <!-- /.list-group -->
-                           <a href="index.php?page=events" class="btn btn-default btn-block">Alle Events</a>
+                           <a href="index.php?page=events" class="btn btn-default btn-block"><?php echo _dashboard_events; ?></a>
                        </div>
                        <!-- /.panel-body -->
                    </div>

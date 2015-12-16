@@ -109,7 +109,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                   ?>
                   <div class="alert alert-dismissible alert-info">
                     <span class="fa fa-check" aria-hidden="true"></span>
-                    Es wird SSL benutzt, um die Verbindung zu verschlüsseln. Um die Sicherheit der Verbindung zu Testen: <a href="https://www.ssllabs.com/ssltest/">ssllabs.com</a>
+                    <?php echo _settings_message_ssl_true; ?>
                  </div>
                  <?php
                } else {
@@ -117,7 +117,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                  <div class="alert alert-danger" role="alert">
                   <span class="fa fa-warning" aria-hidden="true"></span>
                   <span class="sr-only">Error:</span>
-                  Es wird kein SSL benutzt, um die Verbindung zu verschlüsseln.
+                  <?php echo _settings_message_ssl_false; ?>
                 </div>
                  <?php
                }

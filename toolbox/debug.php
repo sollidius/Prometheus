@@ -14,8 +14,8 @@ if ($mysqli_connection->connect_error) {
    echo "MySQLi Verbunden<br>";
 }
 
+//Not needed in PHP 7.0
 if (function_exists('ssh2_connect')) {
-  //mysqli is installed
   echo "php5-ssh2 installiert<br>";
 } else {
   echo "php5-ssh2 nicht installiert<br>";
