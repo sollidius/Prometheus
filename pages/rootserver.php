@@ -460,7 +460,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         $ssh->exec('sudo useradd -m -d /home/'.$user.' -s /bin/bash '.$user);
                         $ssh->enablePTY();
                         $ssh->exec('sudo passwd '.$user);
-                        if ($language == "Englisch") {
+                        if ($language == "English") {
                         $ssh->read('Enter new UNIX password:');
                         $ssh->write($password . "\n");
                         $ssh->read('Retype new UNIX password:');
@@ -530,7 +530,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     </div>
                     <div class="col-sm-2">
                       <select class="form-control input-sm" name="language">
-                        <option>Englisch</option>
+                        <option>English</option>
                         <option>Deutsch</option>
                       </select>
                     </div>

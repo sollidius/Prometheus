@@ -68,7 +68,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
       $language = htmlentities($_POST['language']);
 
       $lang = "en";
-      if ($language == "German") {
+      if ($language == "Deutsch") {
           $lang = "de";
       } elseif ($language == "English") {
           $lang = "en";
@@ -155,7 +155,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                 <label class="control-label col-sm-2">Language:</label>
                 <div class="col-sm-2">
                   <select class="form-control input-sm" name="language">
-                    <?php if ($db_language == "de") { echo '<option selected="selected">German</option>';  } else { echo "<option>German</option>"; } ?>
+                    <?php if ($db_language == "de") { echo '<option selected="selected">Deutsch</option>';  } else { echo "<option>Deutsch</option>"; } ?>
                     <?php if ($db_language == "en") { echo '<option selected="selected">English</option>';  } else { echo "<option>English</option>"; } ?>
                   </select>
                 </div>

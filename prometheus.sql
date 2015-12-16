@@ -129,7 +129,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `rank` int(11) NOT NULL DEFAULT '2',
   `u_count` int(3) NOT NULL DEFAULT '1',
-  `language` varchar(2) NOT NULL DEFAULT 'de',
+  `language` varchar(2) NOT NULL DEFAULT 'en',
   `session_strict` int(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -145,7 +145,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1450195205, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1450266962, 1, 1, 1);
 
 
 ALTER TABLE `addons`
