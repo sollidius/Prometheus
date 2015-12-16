@@ -192,7 +192,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  echo "<td>" . $row_2["name"] . "</td>";
                                  if ($installed[0] == 0) {
                                     echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success" disabled>'.$installed[1].'</button>';
-                                    echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">Deinstallieren</button></td>';
+                                    echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">'._dedicated_remove.'</button></td>';
                                  } else {
                                    echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success">'._dedicated_install.'</button> <button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>'._dedicated_remove.'</button> </td>';
                                  }
@@ -239,7 +239,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               $stmt->close();
 
 
-                               msg_okay("Der Rootserver wurde aktualisiert.");
+                               msg_okay(_dedicated_message_updated);
 
                            } else {
                              msg_error('Something went wrong, '.$msg);
@@ -273,7 +273,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                       $error = false;
 
-                      if (check_template_exist_in_games_dedi_id($row["id"])) { $error = true; $msg = "Templates noch installiert.";}
+                      if (check_template_exist_in_games_dedi_id($row["id"])) { $error = true; $msg = _dedicated_message_template_installed;}
 
                       if ($error == false) {
 
@@ -287,7 +287,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         $stmt->execute();
                         $stmt->close();
 
-                        msg_okay("Rootserver gelöscht.");
+                        msg_okay(_dedicated_deleted);
 
                       } else {
 
@@ -322,12 +322,12 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                    $os_version = "";
 
 
-                   if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = "Exestiert bereits";}
-                   if (exists_entry("ip","dedicated","ip",$ip) == true) { $error = true; $msg = "Exestiert bereits";}
-                   if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                   if(!preg_match("/^[a-zA-Z0-9]+$/",$user)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                   if(!preg_match("/^[a-zA-Z0-9]+$/",$root)){ $msg = "Der Root Benutzer enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
-                   if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                   if (exists_entry("name","dedicated","name",$name) == true) { $error = true; $msg = _dedicated_message_exists;}
+                   if (exists_entry("ip","dedicated","ip",$ip) == true) { $error = true; $msg = _dedicated_message_exists;}
+                   if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = _dedicated_message_name_invalid."<br>";  $error = true;}
+                   if(!preg_match("/^[a-zA-Z0-9]+$/",$user)){ $msg = _dedicated_message_username_invalid."<br>";  $error = true;}
+                   if(!preg_match("/^[a-zA-Z0-9]+$/",$root)){ $msg = _dedicated_message_root_invalid."<br>";  $error = true;}
+                   if(!preg_match("/^[0-9]+$/",$port)){ $msg = _dedicated_message_port_invalid."<br>";  $error = true;}
 
                    if ($error == false) {
 
@@ -490,7 +490,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                         unset($root);
 
                       }
-                      msg_okay("Der Rootserver wurde angelegt.");
+                      msg_okay(_dedicated_message_added);
 
                   } else {
                     msg_error('Something went wrong, '.$msg);
@@ -499,7 +499,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                  }
                }
 
-                msg_info("Die Installation kann 1-2 Minuten dauern, abbruch des Ladevorgangs führt zur fehlerhafter installation.");
+                msg_info(_dedicated_message_info_abort);
                   ?>
                 <form class="form-horizontal" action="index.php?page=rootserver?add" method="post">
                   <div class="form-group">
@@ -536,7 +536,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="control-label col-sm-2" for="pwd">Benutzer/Passwort:</label>
+                    <label class="control-label col-sm-2" for="pwd"><?php echo _dedicated_user; ?>/<?php echo _usettings_password; ?>:</label>
                     <div class="col-sm-4">
                       <input type="text" class="form-control input-sm" name="user" placeholder="prometheus">
                     </div>
@@ -545,7 +545,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="control-label col-sm-2" for="pwd">Root/Passwort:</label>
+                    <label class="control-label col-sm-2" for="pwd">Root/<?php echo _usettings_password; ?>:</label>
                     <div class="col-sm-4">
                       <input type="text" class="form-control input-sm" name="root" placeholder="root">
                     </div>
@@ -568,7 +568,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                   <table class="table table-bordered">
                     <thead>
                       <tr>
-                        <th>Name</th>
+                        <th><?php echo _users_name; ?></th>
                         <th>IP</th>
                         <th>Port</th>
                         <th><?php echo _gameserver_user; ?></th>

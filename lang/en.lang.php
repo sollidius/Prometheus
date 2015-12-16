@@ -53,12 +53,30 @@ define('_bans_date','Date');
 define('_bans_banned','Banned until');
 define('_bans_message_removed','Ban haz been removed.');
 
-//Rootserver
-define('_rootserver_template_created','Das Template wird erstellt, das kann etwas dauern :)');
-
-
 //Dedicated
 define('_dedicated_installed','Installed');
+define('_dedicated_template_created','The Template will be created, this may take some time :)');
+define('_dedicated_image_created','The Image will be created, this may take some time n :)');
+define('_dedicated_file_error','Only .tar or .zip');
+define('_dedicated_message_gameserver_exists','There do still exist Gameservers with this Game.');
+define('_dedicated_message_installation_running','Installation of this Template is still running.');
+define('_dedicated_message_template_deleted','The Template was deleted from the Dedicated.');
+define('_dedicated_message_info','The Installation takes about 5-30 minutes, depending on the Downloadsize and Bandwidth. If the SteamCMD crashes, it gets restarted.');
+define('_dedicated_install','Install');
+define('_dedicated_remove','Uninstall');
+define('_dedicated_message_ip_exists','Die IP exists already.');
+define('_dedicated_message_port_exists','The Port contains invalid letters (0-9 are allowed)');
+define('_dedicated_message_updated','The Dedicated was updated.');
+define('_dedicated_message_template_installed','Template still installed.');
+define('_dedicated_deleted','Dedicated deleted.');
+define('_dedicated_message_exists','Exists already');
+define('_dedicated_message_name_invalid','The Name contains invalid letters (a-z,A-Z,0-9 are allowed)');
+define('_dedicated_message_username_invalid','The Username contains invalid letters (a-z,A-Z,0-9 are allowed)');
+define('_dedicated_message_root_invalid','The Root user contains invalid letters (a-z,A-Z,0-9 sare allowed)');
+define('_dedicated_message_port_invalid','The Port contains invalid letters (0-9 are allowed)');
+define('_dedicated_message_added','The Dedicated was added.');
+define('_dedicated_message_info_abort','The Installation takes about 1-2 minutes, if it gets interrupted the Installation will be corrupt.');
+define('_dedicated_user','User');
 
 //Dashboard
 define('_dashboard_events','All Events');
@@ -121,7 +139,21 @@ define('_gameserver_button_update','Update');
 define('_gameserver_button_console','Console');
 define('_gameserver_button_addons','Addons');
 define('_gameserver_button_settings','Settings');
-
+define('_gameserver_reinstalled','The Gameserver will be reinstalled.');
+define('_gameserver_updated','The Gameserver will be updated.');
+define('_gameserver_started','The Gamesever got restarted.');
+define('_gameserver_stopped','The Gameserver got stopped.');
+define('_gameserver_deleted','The Gameserver got deleted.');
+define('_gameserver_slots_invalid','Slots contains invalid letters (0-9 are allowed)');
+define('_gameserver_port_invalid','Der Port contains invalid letters (0-9 are allowed)');
+define('_gameserver_port_in_use','Port used');
+define('_gameserver_mass_error','The Ammount contains invalid letters (0-9are allowed)');
+define('_gameserver_dedicated_invalid','Dedicated contains invalid letters (0-9 are allowed)');
+define('_gameserver_user_invalid','THe User contains invalid letters (0-9 are allowed)');
+define('_gameserver_game_invalid','The Game contains invalid letters (a-z,A-Z,0-9._- are allowed)');
+define('_gameserver_dedi_id_invalid','Invalid Dedicated ID');
+define('_gameserver_installed','The Gameserver will be installed, that can take some time.');
+define('_gameserver_mass','Ammount');
 
 
 

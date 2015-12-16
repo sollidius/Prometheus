@@ -66,6 +66,17 @@ define('_dedicated_install','Installieren');
 define('_dedicated_remove','Deinstallieren');
 define('_dedicated_message_ip_exists','Die IP exestiert bereits.');
 define('_dedicated_message_port_exists','Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_dedicated_message_updated','Der Rootserver wurde aktualisiert.');
+define('_dedicated_message_template_installed','Templates noch installiert.');
+define('_dedicated_deleted','Rootserver gelöscht.');
+define('_dedicated_message_exists','Exestiert bereits');
+define('_dedicated_message_name_invalid','Der Name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_dedicated_message_username_invalid','Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_dedicated_message_root_invalid','Der Root Benutzer enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_dedicated_message_port_invalid','Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_dedicated_message_added','Der Rootserver wurde angelegt.');
+define('_dedicated_message_info_abort','Die Installation kann 1-2 Minuten dauern, abbruch des Ladevorgangs führt zur fehlerhafter installation.');
+define('_dedicated_user','Benutzer');
 
 //Dashboard
 define('_dashboard_events','Alle Events');
@@ -128,8 +139,21 @@ define('_gameserver_button_update','Update');
 define('_gameserver_button_console','Console');
 define('_gameserver_button_addons','Addons');
 define('_gameserver_button_settings','Einstellungen');
-
-
+define('_gameserver_reinstalled','Der Gameserver wird neuinstalliert.');
+define('_gameserver_updated','_Der Gameserver wird aktualisiert.');
+define('_gameserver_started','Der Gamesever wurde gestartet.');
+define('_gameserver_stopped','Der Gameserver wurde angehalten.');
+define('_gameserver_deleted','Der Gameserver wurde gelöscht.');
+define('_gameserver_slots_invalid','Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_gameserver_port_invalid','Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_gameserver_port_in_use','Port belegt');
+define('_gameserver_mass_error','Die Anzahl enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_gameserver_dedicated_invalid','Dedicated enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_gameserver_user_invalid','User enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_gameserver_game_invalid','Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)');
+define('_gameserver_dedi_id_invalid','Ungültige Dedicated ID');
+define('_gameserver_installed','Der Gameserver wird installiert, das kann etwas dauern.');
+define('_gameserver_mass','Anzahl');
 
 
 

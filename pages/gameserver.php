@@ -111,7 +111,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                $stmt->execute();
                                $stmt->close();
 
-                               msg_okay("Der Gameserver wird neuinstalliert.");
+                               msg_okay(_gameserver_reinstalled);
 
                                //event_add(5,"Gameserver ".$ip.":".$port." wird neuinstalliert.");
                                event_add(5,$ip.":".$port);
@@ -177,7 +177,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   } elseif ($app_set_config != "") {
                                     $ssh->exec('sudo -u '.$gs_login.' /home/'.$gs_login.'/steamcmd.sh +force_install_dir /home/'.$gs_login.'/game  +login anonymous +app_set_config '.$type_name.' mod '.$app_set_config.' +app_update '.$type_name.' validate +quit >> /home/'.$gs_login.'/game/steam.log &');
                                   }
-                                  msg_okay("Der Gameserver wird aktualisiert.");
+                                  msg_okay(_gameserver_updated);
 
                                   //event_add(4,"Der Gameserver ".$ip.":".$port." wird aktualisiert.");
                                   event_add(4,$ip.":".$port);
@@ -222,7 +222,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                  gameserver_restart($type,$ssh,$gs_login,$db_name_internal,$port,$ip,$map,$slots,$parameter,$db_gameq,$gs_select,$db_app_set_config);
                                  //event_add(1,"Der Gameserver ".$ip.":".$port." wurde gestartet.");
                                  event_add(1,$ip.":".$port);
-                                 msg_okay("Der Gamesever wurde gestartet.");
+                                 msg_okay(_gameserver_started);
                               }
                               break;
                           }
@@ -253,7 +253,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                </div>';
                              } else {
                                $ssh->exec('sudo -u '.$gs_login.' screen -S game'.$gs_login.' -p 0 -X quit');
-                               msg_okay("Der Gameserver wurde angehalten.");
+                               msg_okay(_gameserver_stopped);
 
                                //event_add(2,"Der Gameserver ".$ip.":".$port." wurde angehalten.");
                                event_add(2,$ip.":".$port);
@@ -304,7 +304,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                  //event_add(3,"Der Gameserver ".$ip.":".$port." wurde gelöscht.");
                                  event_add(3,$ip.":".$port);
 
-                                 msg_okay("Der Gameserver wurde gelöscht.");
+                                 msg_okay(_gameserver_deleted);
                                }
                                break;
                             }
@@ -371,9 +371,9 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   if (isset($_POST['restart_active'])) { $restart_active = 1;}
                                   if (isset($_POST['updates_active'])) { $updates_active = 1;}
 
-                                  if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                                  if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                                  if (port_exists($row[3],$port,$row[2])) { $msg = "Port belegt"; $error = true;}
+                                  if(!preg_match("/^[0-9]+$/",$slots)){ $msg = _gameserver_slots_invalid."<br>";  $error = true;}
+                                  if(!preg_match("/^[0-9]+$/",$port)){ $msg = _gameserver_port_invalid."<br>";  $error = true;}
+                                  if (port_exists($row[3],$port,$row[2])) { $msg = _gameserver_port_in_use; $error = true;}
 
                                   if ($error == false) {
 
@@ -656,9 +656,9 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                      echo "<td>" . $row_2["name"] . "</td>";
                                      if ($installed[0] == 0) {
                                         echo '<td><button type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-success" disabled>'.$installed[1].'</button>';
-                                        echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">Deinstallieren</button></td>';
+                                        echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">'._dedicated_remove.'</button></td>';
                                      } else {
-                                       echo '<td><button type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-success">Installieren</button> <button style="margin-left:2px;" type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>Deinstallieren</button> </td>';
+                                       echo '<td><button type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-success">'._dedicated_install.'</button> <button style="margin-left:2px;" type="submit" name="install_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>'._dedicated_remove.'</button> </td>';
                                      }
                                      echo "</tr>";
                                    }
@@ -782,7 +782,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                      if (isset($_POST['mass_ammount'])) { $mass_ammount = $_POST['mass_ammount'];}
 
                      if ($mass == 1) {
-                        if(!preg_match("/^[0-9]+$/",$mass_ammount)){ $msg = "Die Anzahl enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
+                        if(!preg_match("/^[0-9]+$/",$mass_ammount)){ $msg = _gameserver_mass_error."<br>";  $error = true;}
                         if ($mass_ammount > 14) {
                           $mass_ammount = 14;
                         }
@@ -790,11 +790,11 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                           $mass_ammount = 2;
                         }
                      }
-                     if(!preg_match("/^[0-9]+$/",$slots)){ $msg = "Der Slots enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/^[0-9]+$/",$port)){ $msg = "Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/^[0-9]+$/",$dedicated)){ $msg = "Dedicated enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/^[0-9]+$/",$user_gs)){ $msg = "User enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)<br>";  $error = true;}
-                     if(!preg_match("/^[a-zA-Z0-9._-]+$/",$type)){ $msg = "Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$slots)){ $msg = _gameserver_slots_invalid."<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$port)){ $msg = _gameserver_port_invalid."<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$dedicated)){ $msg = _gameserver_dedicated_invalid."<br>";  $error = true;}
+                     if(!preg_match("/^[0-9]+$/",$user_gs)){ $msg = _gameserver_user_invalid."<br>";  $error = true;}
+                     if(!preg_match("/^[a-zA-Z0-9._-]+$/",$type)){ $msg = _gameserver_game_invalid."<br>";  $error = true;}
 
 
                      $stmt = $mysqli->prepare("SELECT ip,port,user,password,id,language FROM dedicated WHERE id = ?");
@@ -813,10 +813,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                      if ($game == "") { exit; }
 
-                     if (port_exists($dedi_ip,$port)) { $msg = "Port belegt"; $error = true;}
-                     if (check_dedi_id($dedicated)) {$msg = "Ungültige Dedicated ID"; $error = true;}
+                     if (port_exists($dedi_ip,$port)) { $msg = _gameserver_port_in_use; $error = true;}
+                     if (check_dedi_id($dedicated)) {$msg = _gameserver_dedi_id_invalid; $error = true;}
                      if (check_template($game)) { $msg = _message_template_error; $error = true;}
-                     if (check_user_id($user_gs)) { $msg = "Ungültiger User"; $error = true;}
+                     if (check_user_id($user_gs)) { $msg = _gameserver_user_invalid; $error = true;}
 
                      $installed = check_game_installed($dedicated,$game);
 
@@ -883,7 +883,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->execute();
                              $stmt->close();
 
-                             msg_okay("Der Gameserver wird installiert, das kann etwas dauern.");
+                             msg_okay(_gameserver_installed);
 
                             // event_add(6,"Der Gameserver ".$dedi_ip.":".$port." wurde hinzugefügt.");
                             event_add(6,$dedi_ip.":".$port);
@@ -903,7 +903,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                   ?>
                   <form class="form-horizontal" action="index.php?page=gameserver?add" method="post">
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Type/Root:</label>
+                      <label class="control-label col-sm-2"><?php echo _gameserver_game; ?>/Root:</label>
                       <div class="col-sm-4">
                         <select class="form-control input-sm" name="type">
                         <?php
@@ -938,7 +938,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Map/Benutzer:</label>
+                      <label class="control-label col-sm-2">Map/<?php echo _dedicated_user; ?>:</label>
                       <div class="col-sm-4">
                         <input type="text" class="form-control input-sm" name="map" placeholder="gm_flatgrass">
                       </div>
@@ -969,7 +969,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Anzahl:</label>
+                      <label class="control-label col-sm-2"><?php echo _gameserver_mass; ?>:</label>
                       <input data-size="small" data-width="15" type="checkbox" name="mass" data-toggle="toggle">
                       <div class="col-sm-2">
                       <select name="mass_ammount" class="form-control input-sm">
