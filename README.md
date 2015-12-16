@@ -27,6 +27,14 @@ Requirements
 - Webserver: PHP 5.6+, better 7.0
 - Dedicated: Debian 8.0 or Ubuntu 14.05/Ubuntu 15.05
 
+This Project uses:
+- Bootstrap https://github.com/twbs/bootstrap
+- Bootstrap-Toogle: https://github.com/minhur/bootstrap-toggle
+- Font-Awesome: https://github.com/FortAwesome/Font-Awesome
+- GameQ-2: https://github.com/Austinb/GameQ
+- PHPSeclib: https://github.com/phpseclib/phpseclib
+- JQuery: https://github.com/jquery/jquery
+
 Quick Installation
 
 - Create a Database with a User, import the prometheus.sql file
