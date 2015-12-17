@@ -123,9 +123,9 @@ function exists_entry($spalte,$tabelle,$wo,$was) {
       }
 }
 
-function generatePassword($pwlen=12) {
+function generatePassword($pwlen=14) {
 	mt_srand();
-	$salt = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	$salt = "abcdefghijklmnopqrstuvwxyz@.-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@.-";
   $pw = "";
 	for($i=0;$i<$pwlen;$i++)
 	{
@@ -139,7 +139,7 @@ function msg_warning($msg) {
   echo'
   <div class="alert alert-dismissible alert-warning">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <h4>Warnung!</h4>
+    <h4>Warning!</h4>
     <p>'.$msg.'</p>
  </div>';
 }
@@ -670,6 +670,8 @@ function event_id_to_ico($id) {
     return "plus";
   } elseif ($id == 10) {
     return "exclamation-triangle";
+  } elseif ($id == 12) {
+    return "key";
   }
 
 }

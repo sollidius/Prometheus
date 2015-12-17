@@ -59,7 +59,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
             //      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
-                    $query = "SELECT id,status,user_id,ip,game FROM gameservers ORDER by id";
+                    $query = "SELECT id,status,user_id,ip,game,dedi_id,gs_login,port FROM gameservers ORDER by id";
 
                     if ($result = $mysqli->query($query)) {
 
@@ -764,6 +764,58 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              }
                              break;
                           }
+                          if ($page == "gameserver?pw-".$row[0] AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?pw-".$row[0] AND $db_rank == 1) {
+
+                            $stmt = $mysqli->prepare("SELECT ip,port,user,password,language FROM dedicated WHERE id = ?");
+                            $stmt->bind_param('i', $row[5]);
+                            $stmt->execute();
+                            $stmt->bind_result($dedi_ip,$dedi_port,$dedi_login,$dedi_password,$language);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            $user = $row[6];
+                            $password = generatePassword();
+
+                            $ssh = new Net_SSH2($dedi_ip,$dedi_port);
+                             if (!$ssh->login($dedi_login, $dedi_password)) {
+                               echo '
+                               <div class="alert alert-danger" role="alert">
+                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                 <span class="sr-only">Error:</span>
+                                 Login failed
+                               </div>';
+                             } else {
+
+                               $ssh->enablePTY();
+                               $ssh->exec('sudo passwd '.$user);
+                               if ($language == "English") {
+                               $ssh->read('Enter new UNIX password:');
+                               $ssh->write($password . "\n");
+                               $ssh->read('Retype new UNIX password:');
+                               $ssh->write($password . "\n");
+                               $ssh->read('passwd: password updated successfully');
+                               } elseif ($language == "Deutsch") {
+                                 $ssh->read('Geben Sie ein neues UNIX-Passwort ein:');
+                                 $ssh->write($password . "\n");
+                                 $ssh->read('Geben Sie das neue UNIX-Passwort erneut ein:');
+                                 $ssh->write($password . "\n");
+                                 $ssh->read('passwd: Passwort erfolgreich geändert');
+                               }
+                               $ssh->disablePTY();
+                               $ssh->read('[prompt]');
+
+                               $status = 1;
+                               $stmt = $mysqli->prepare("UPDATE gameservers SET gs_password = ?  WHERE id = ?");
+                               $stmt->bind_param('si',$password,$row[0]);
+                               $stmt->execute();
+                               $stmt->close();
+
+                               msg_okay(_gameserver_pw_changed);
+
+                               //event_add(12,$row[3].":".$row[7]); Lots of Spam meh
+
+                             }
+                          }
                         }
                         /* free result set */
                         $result->close();
@@ -1032,7 +1084,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               echo "<td>" .$row['player_online']."/". $row["slots"] . "</td>";
                               echo "<td>" . $row["map"] . "</td>";
                               echo "<td>" . $row["gs_login"] . "</td>";
-                              echo "<td>" . $row["gs_password"] . "</td>";
+                              echo '<td>' . $row["gs_password"] .' <a href="index.php?page=gameserver?pw-'.$row["id"].'"  class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></a></td>';
                               if ($row["status"] == 0) {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">'._gameserver_button_stop.'</a>  </td>';
                                 echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'" class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>  </td>';
@@ -1056,7 +1108,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               echo "<td>" . $row["slots"] . "</td>";
                               echo "<td>" . $row["map"] . "</td>";
                               echo "<td>" . $row["gs_login"] . "</td>";
-                              echo "<td>" . $row["gs_password"] . "</td>";
+                              echo '<td>' . $row["gs_password"] .' <a href="index.php?page=gameserver?pw-'.$row["id"].'"  class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i></a></td>';
                               if ($row["status"] == 0) {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">'._gameserver_button_stop.'</a>  </td>';
                                 echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';

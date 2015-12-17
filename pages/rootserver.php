@@ -540,8 +540,12 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     <div class="col-sm-4">
                       <input type="text" class="form-control input-sm" name="user" placeholder="prometheus">
                     </div>
-                    <div class="col-sm-4">
-                      <input type="password" class="form-control input-sm" name="password" placeholder="123456">
+                    <?php $pw = generatePassword(20); ?>
+                    <div class="col-sm-2">
+                      <input type="password" class="form-control input-sm" name="password" value="<?php echo $pw; ?>">
+                    </div>
+                    <div class="col-sm-2">
+                      <input type="text" class="form-control input-sm" value="<?php echo $pw; ?>" readonly="readonly">
                     </div>
                   </div>
                   <div class="form-group">

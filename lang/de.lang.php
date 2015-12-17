@@ -172,6 +172,7 @@ define('_gameserver_game_invalid','Das Spiel enth&auml;lt ung&uuml;ltige Zeichen
 define('_gameserver_dedi_id_invalid','Ungültige Dedicated ID');
 define('_gameserver_installed','Der Gameserver wird installiert, das kann etwas dauern.');
 define('_gameserver_mass','Anzahl');
+define('_gameserver_pw_changed','FTP Passwort wurde geändert.');
 
 
 

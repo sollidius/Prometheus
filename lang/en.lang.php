@@ -172,6 +172,7 @@ define('_gameserver_game_invalid','The Game contains invalid letters (a-z,A-Z,0-
 define('_gameserver_dedi_id_invalid','Invalid Dedicated ID');
 define('_gameserver_installed','The Gameserver will be installed, that can take some time.');
 define('_gameserver_mass','Ammount');
+define('_gameserver_pw_changed','FTP Password was changed.');
 
 
 

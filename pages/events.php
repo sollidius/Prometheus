@@ -87,6 +87,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          echo "Der Gameserver ".$row['message']." ist abgestürtzt und wurde neu gestartet.</td>";
                        } elseif ($type == 11) {
                          echo "Der Gameserver ".$row['message']." wurde wegen hoher CPU Last neugestartet.</td>";
+                       } elseif ($type == 12) {
+                         echo "Das FTP Passwort wurde für den Gameserver ".$row['message']." geändert.</td>";
                        } else {
                           echo $row['message'].'</td>';
                        }
@@ -114,6 +116,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          echo "The Gameserver ".$row['message']." crashed and was restarted.</td>";
                        } elseif ($type == 11) {
                          echo "The Gameserver ".$row['message']." was restarted due to high CPU load.</td>";
+                       } elseif ($type == 12) {
+                         echo "The FTP Password was changed for the Gameserver ".$row['message'].".</td>";
                        } else {
                           echo $row['message'].'</td>';
                        }
