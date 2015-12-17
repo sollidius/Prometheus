@@ -24,10 +24,30 @@ define('_sidebar_events','Events');
 define('_sidebar_addons','Addons');
 define('_sidebar_bans','Bans');
 
+//Templates
+define('_templates_rootserver_installed','The Template is still Installed on a Dedicated.');
+define('_template_rootserver_still_running','Installation of the Template is still running.');
+define('_template_deleted','The Template got deleted.');
+define('_template_updated','The Template was updated.');
+define('_template_exists','Template exists already.');
+define('_templates_internal_error','contains Invalid letters (a-z,A-Z,0-9 are allowed)');
+define('_templates_type_error','Type contains Invalid letters (a-z,A-Z,0-9 are allowed)');
+define('_templates_typename_error','Type contains Invalid letters (a-z,A-Z,0-9 are allowed)');
+define('_templates_gameq_error','GameQ contains Invalid letters (a-z,A-Z,0-9 are allowed)');
+define('_templates_invalid_type','Invalid Type.');
+define('_template_added','The Template was created.');
+define('_template_name','Name');
+define('_template_internal','Internal');
+define('_template_type','Type');
+define('_template_type_name','ID/URL');
+define('_template_map_path','Map Path');
+define('_template_limited','Only partially editable, as already installed.');
+
 //Dropdown
 define('_dropdown_logout','Logout');
 define('_dropdown_settings','Settings');
 
+//General
 define('_button_save','Save');
 define('_button_edit','Edit');
 define('_button_manage','Manage');
@@ -114,7 +134,6 @@ define('_settings_message_cpu_load','Print a Message into the Chat, if the CPU l
 define('_settings_message_ssl_true','Your Webserver is using SSL to encrypt the connection. To check if its really secure: <a href="https://www.ssllabs.com/ssltest/">ssllabs.com</a>');
 define('_settings_message_ssl_false','Your Webserver is not using SSL to encrypt your connection.');
 
-
 //USettings
 define('_usettings_general','General');
 define('_usettings_password','Password');
@@ -131,7 +150,6 @@ define('_gameserver_map','Map');
 define('_gameserver_ftp_login','FTP Login');
 define('_gameserver_ftp_password','FTP Password');
 define('_gameserver_parameter','Parameters');
-
 define('_gameserver_button_restart','(Re)start');
 define('_gameserver_button_stop','Stop');
 define('_gameserver_button_reinstall','Reinstall');

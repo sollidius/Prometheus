@@ -16,7 +16,7 @@ Prometheus in a Nutshell:
 - Templates: Add/Edit/Delete/Chill around while the Webinterface takes care of Steamupdates, also Support for Images (Minecraft..)
 - Gameservers: Add/Edit/Delete, Console, Daily Restart, Autocomplete for Maps
 - Bans: Blocks users after 3 incorrect guesses of there password, such wow
-- Languages: German, (English 90% Translated)
+- Languages: German, (English 93% Translated)
 
 ![alt tag](http://i.imgur.com/p4SbBwU.png)
 ![alt tag](http://i.imgur.com/3EwHtF5.png)
@@ -26,7 +26,7 @@ Prometheus in a Nutshell:
 BEWARE: The Software is still in Alpha (Unstable), could possibly blow something up on your site
 
 Requirements
-- Webserver: PHP 5.6+, better 7.0
+- Webserver: PHP 5.6+, recommended 7.0+
 - Dedicated: Debian 8.0 or Ubuntu 14.05/Ubuntu 15.05
 
 This Project uses:
@@ -40,14 +40,14 @@ This Project uses:
 
 Quick Installation
 
-- Create a Database with a User, import the prometheus.sql file
+- Create a Database with a User, Import the prometheus.sql file
 - Update /pages/functions.php with your login details
-- Add "you_had_one_job.php" and "come_to_the_dark_side_we_have_cookies.php" to your crontab, for example:
+- Add "you_had_one_job.php" and "come_to_the_dark_side_we_have_cookies.php" to your Crontab, for example:
 
 */1 * * * * /usr/bin/wget --spider http://wi.yourdomain.com/you_had_one_job.php <br />
 */5 * * * * /usr/bin/wget --spider http://wi.yourdomain.com/come_to_the_dark_side_we_have_cookies.php
 
-- Run /toolbox/create_account.php in your browser, you should now able to login with Email: 123@123.de and Password: 123456789
-- DELETE /toolbox, this folder is just for debug/testing or fuck i locked me out again purposes.
+- Run /toolbox/create_account.php in your Browser, you should now able to login with the Email: 123@123.de and Password: 123456789
+- DELETE /toolbox, this folder is just for debug/testing or fuck I locked me out again purposes.
 - Done, you can go to Settings > General and change your Language if you wish.
 - Read our FAQ: https://github.com/Ne00n/Prometheus/wiki/FAQ

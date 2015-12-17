@@ -52,8 +52,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                           if ($page == "templates?delete-".$row[0]) {
                             $error = false;
-                            if (check_template_exist_in_games($row[0])) { $msg = "Das Template ist noch auf Rootservern installiert.";$error = true;}
-                            if (check_template_job_exists_id_only($row[0])) { $msg ="Installation des Templates läuft noch."; $error = true;}
+                            if (check_template_exist_in_games($row[0])) { $msg = _templates_rootserver_installed;$error = true;}
+                            if (check_template_job_exists_id_only($row[0])) { $msg =_template_rootserver_still_running; $error = true;}
 
                             if ($error == false) {
 
@@ -61,7 +61,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               $stmt->bind_param('i', $row[0]);
                               $stmt->execute();
                               $stmt->close();
-                              msg_okay("Das Template wurde gelöscht.");
+                              msg_okay(_template_deleted);
                             } else {
                               msg_warning($msg);
                             }
@@ -86,25 +86,25 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  $gameq = htmlentities($_POST['gameq']);
                                  $appid = htmlentities($_POST['appid']);
                                  $app_set_config = htmlentities($_POST['app_set_config']);
-                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = _addons_message_error_name."<br>";  $error = true;}
                                  if ($type == "steamcmd") {
-                                   if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                   if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = _templates_internal_error."<br>";  $error = true;}
                                  }
-                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                 if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = _templates_type_error."<br>";  $error = true;}
                                  if ($type == "steamcmd") {
-                                    if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                    if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = _templates_typename_error."<br>";  $error = true;}
                                  }
                                  if ($gameq != "") {
-                                    if(!preg_match("/^[a-zA-Z0-9\s]+$/",$gameq)){ $msg = "GameQ enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                                    if(!preg_match("/^[a-zA-Z0-9\s]+$/",$gameq)){ $msg = _templates_gameq_error." <br>";  $error = true;}
                                  }
                                  if ($type == "steamcmd") {
 
                                  } elseif ($type == "image") {
 
                                  } else {
-                                    $error = true; $msg = "Ungültiger Type.";
+                                    $error = true; $msg = _templates_invalid_type;
                                  }
-                                 if (check_template($name,$row[0])) { $error = true; $msg = "Template exestiert bereits";}
+                                 if (check_template($name,$row[0])) { $error = true; $msg = _template_exists;}
 
                                  if ($error == false) {
 
@@ -124,7 +124,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                                    }
 
-                                  msg_okay("Das Template wurde aktualisiert.");
+                                  msg_okay(_template_updated);
                                   $hide_msg = true;
 
                                } else {
@@ -144,8 +144,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           echo '<form class="form-horizontal" action="index.php?page=templates?edit-'.$row[0].'" method="post">';
                           ?>
                             <div class="form-group">
-                              <?php if ($limited == true AND $hide_msg == false) { msg_warning("Nur teilweise editierbar, da bereits installiert."); } ?>
-                              <label class="control-label col-sm-2">Name/Internal:</label>
+                              <?php if ($limited == true AND $hide_msg == false) { msg_warning(_template_limited); } ?>
+                              <label class="control-label col-sm-2"><?php echo _template_name; ?>/<?php echo _template_internal; ?>:</label>
                               <div class="col-sm-3">
                                 <?php if ($limited == true) {
                                   echo '<input type="text" class="form-control input-sm" name="name" value="'.$db_name.'" readonly="readonly">';
@@ -159,7 +159,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-sm-2">Type:</label>
+                              <label class="control-label col-sm-2"><?php echo _template_type; ?>:</label>
                               <div class="col-sm-3">
                                 <?php if ($limited == true AND $hide_msg == false) {
                                   echo '<input type="text" class="form-control input-sm" name="type" value="'.$db_type.'" readonly="readonly">';
@@ -173,7 +173,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                               </div>
                             </div>
                             <div class="form-group">
-                              <label class="control-label col-sm-2">Map Pfad/GameQ:</label>
+                              <label class="control-label col-sm-2"><?php echo _template_map_path; ?>/GameQ:</label>
                               <div class="col-sm-3">
                                 <input type="text" class="form-control input-sm" name="path" value="<?php echo $db_path;?>">
                               </div>
@@ -222,25 +222,25 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          $gameq = htmlentities($_POST['gameq']);
                          $appid = htmlentities($_POST['appid']);
                          $app_set_config = htmlentities($_POST['app_set_config']);
-                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = "Der Username enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = _addons_message_error_name."<br>";  $error = true;}
                          if ($type == "steamcmd") {
-                           if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = "Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                           if(!preg_match("/^[a-zA-Z0-9]+$/",$internal)){ $msg = _templates_internal_error."<br>";  $error = true;}
                          }
-                         if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                         if(!preg_match("/^[a-zA-Z0-9]+$/",$type)){ $msg = _templates_type_error."<br>";  $error = true;}
                          if ($type == "steamcmd") {
-                            if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = "Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                            if(!preg_match("/^[a-zA-Z0-9]+$/",$type_name)){ $msg = _templates_typename_error."<br>";  $error = true;}
                          }
                          if ($gameq != "") {
-                            if(!preg_match("/^[a-zA-Z0-9\s]+$/",$gameq)){ $msg = "GameQ enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)<br>";  $error = true;}
+                            if(!preg_match("/^[a-zA-Z0-9\s]+$/",$gameq)){ $msg = _templates_gameq_error."<br>";  $error = true;}
                          }
                          if ($type == "steamcmd") {
 
                          } elseif ($type == "image") {
 
                          } else {
-                            $error = true; $msg = "Ungültiger Type.";
+                            $error = true; $msg = _templates_invalid_type;
                          }
-                         if (exists_entry("name","templates","name",$name) == true) { $error = true;  $msg = "Template exestiert bereits";}
+                         if (exists_entry("name","templates","name",$name) == true) { $error = true;  $msg = _template_exists;}
 
                          if ($error == false) {
 
@@ -250,7 +250,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                            $stmt->execute();
                            $stmt->close();
 
-                          msg_okay("Das Template wurde angelegt.");
+                          msg_okay(_template_added);
 
                        } else {
                          msg_error('Something went wrong, '.$msg);
@@ -261,7 +261,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                   <form class="form-horizontal" action="index.php?page=templates?add" method="post">
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Name/Internal:</label>
+                      <label class="control-label col-sm-2"><?php echo _template_name; ?>/<?php echo _template_internal; ?>:</label>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="name" placeholder="Garrysmod">
                       </div>
@@ -270,7 +270,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Type:</label>
+                      <label class="control-label col-sm-2"><?php echo _template_type; ?>:</label>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="type" placeholder="steamcmd oder image">
                       </div>
@@ -279,7 +279,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Map Pfad/GameQ:</label>
+                      <label class="control-label col-sm-2"><?php echo _template_map_path; ?>/GameQ:</label>
                       <div class="col-sm-3">
                         <input type="text" class="form-control input-sm" name="path" placeholder="csgo">
                       </div>
@@ -312,13 +312,13 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                     <table class="table table-bordered">
                       <thead>
                         <tr>
-                          <th>Name</th>
+                          <th><?php echo _template_name; ?></th>
                           <th>Internal</th>
-                          <th>Type</th>
-                          <th>Type Name</th>
+                          <th><?php echo _template_type; ?></th>
+                          <th><?php echo _template_type_name; ?></th>
                           <th>AppID</th>
-                          <th>App Config</th>
-                          <th>Map pfad</th>
+                          <th>App_Set Config</th>
+                          <th><?php echo _template_map_path; ?></th>
                           <th>GameQ</th>
                           <th><?php echo _table_action; ?></th>
                         </tr>
@@ -382,7 +382,6 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
  </div>
 </div>
 </div>
-
 
 <?php
 

@@ -24,10 +24,30 @@ define('_sidebar_events','Events');
 define('_sidebar_addons','Addons');
 define('_sidebar_bans','Bans');
 
+//Templates
+define('_templates_rootserver_installed','Das Template ist noch auf Rootservern installiert.');
+define('_template_rootserver_still_running','Installation des Templates läuft noch.');
+define('_template_deleted','Das Template wurde gelöscht.');
+define('_template_updated','Das Template wurde aktualisiert.');
+define('_template_exists','Template exestiert bereits.');
+define('_templates_internal_error','Internal enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_templates_type_error','Type enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_templates_typename_error','Type name enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_templates_gameq_error','GameQ enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
+define('_templates_invalid_type','Ungültiger Type.');
+define('_template_added','Das Template wurde angelegt.');
+define('_template_name','Name');
+define('_template_internal','Internal');
+define('_template_type','Type');
+define('_template_type_name','ID/URL');
+define('_template_map_path','Map Pfad');
+define('_template_limited','Nur teilweise editierbar, da bereits installiert.');
+
 //Dropdown
 define('_dropdown_logout','Ausloggen');
 define('_dropdown_settings','Einstelungen');
 
+//General
 define('_button_save','Speichern');
 define('_button_edit','Editieren');
 define('_button_manage','Verwalten');
@@ -103,7 +123,6 @@ define('_users_name','Name');
 define('_users_email','E-Mail');
 define('_users_rank','Rank');
 
-
 //Settings
 define('_settings_msgbox','Der Cronjob wurde am');
 define('_settings_msgbox_executed','ausgeführt.');
@@ -131,7 +150,6 @@ define('_gameserver_map','Map');
 define('_gameserver_ftp_login','FTP Login');
 define('_gameserver_ftp_password','FTP Passwort');
 define('_gameserver_parameter','Parameter');
-
 define('_gameserver_button_restart','(Re)start');
 define('_gameserver_button_stop','Stop');
 define('_gameserver_button_reinstall','Reinstall');
