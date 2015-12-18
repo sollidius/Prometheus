@@ -662,7 +662,7 @@ function event_id_to_ico($id) {
     return "stop";
   } elseif ($id == 3) {
     return "remove";
-  } elseif ($id == 4 or $id == 7 or $id == 8) {
+  } elseif ($id == 4 or $id == 7 or $id == 8 or $id == 13) {
     return "download";
   } elseif ($id == 5 or $id == 9 or $id == 11) {
     return "refresh";

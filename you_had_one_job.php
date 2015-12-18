@@ -98,7 +98,8 @@ if ($result = $mysqli->query($query)) {
 
                  } elseif ($row[4] == "template_update") {
 
-                   event_add(4,"Das Template ".$db_game_name. " auf dem Rootserver ".$dedi_name. " wurde aktualisiert");
+                   //event_add(4,"Das Template ".$db_game_name. " auf dem Rootserver ".$dedi_name. " wurde aktualisiert");
+                   event_add(13,$db_game_name.":".$dedi_name);
 
                  }
 

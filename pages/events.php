@@ -89,6 +89,9 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          echo "Der Gameserver ".$row['message']." wurde wegen hoher CPU Last neugestartet.</td>";
                        } elseif ($type == 12) {
                          echo "Das FTP Passwort wurde für den Gameserver ".$row['message']." geändert.</td>";
+                       } elseif ($type == 13) {
+                         $tmp = explode(":",$row['message']);
+                         echo "Das Template ".$tmp[0]. " auf dem Rootserver ".$tmp[1]. " wurde aktualisiert.</td>";
                        } else {
                           echo $row['message'].'</td>';
                        }
@@ -118,6 +121,9 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          echo "The Gameserver ".$row['message']." was restarted due to high CPU load.</td>";
                        } elseif ($type == 12) {
                          echo "The FTP Password was changed for the Gameserver ".$row['message'].".</td>";
+                       } elseif ($type == 13) {
+                         $tmp = explode(":",$row['message']);
+                         echo "The Template ".$tmp[0]. " on the Dedi ".$tmp[1]. " was updated.</td>";
                        } else {
                           echo $row['message'].'</td>';
                        }
