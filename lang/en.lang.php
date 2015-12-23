@@ -11,6 +11,7 @@ define('_title_users','Users');
 define('_title_events','Events');
 define('_title_addons','Addons');
 define('_title_bans','Bans');
+define('_title_backup','Backup');
 
 //Sidebar
 define('_sidebar_settings','Settings');
@@ -23,6 +24,7 @@ define('_sidebar_users','Users');
 define('_sidebar_events','Events');
 define('_sidebar_addons','Addons');
 define('_sidebar_bans','Bans');
+define('_sidebar_backupserver','Backupserver');
 
 //Templates
 define('_templates_rootserver_installed','The Template is still Installed on a Dedicated.');
@@ -71,7 +73,7 @@ define('_addons_name','Name');
 define('_bans_message','After 3 attempts is the User banned until one of the bans gets lifted after 30 minutes.');
 define('_bans_date','Date');
 define('_bans_banned','Banned until');
-define('_bans_message_removed','Ban haz been removed.');
+define('_bans_message_removed','Ban has been removed.');
 
 //Dedicated
 define('_dedicated_installed','Installed');
@@ -96,6 +98,7 @@ define('_dedicated_message_root_invalid','The Root user contains invalid letters
 define('_dedicated_message_port_invalid','The Port contains invalid letters (0-9 are allowed)');
 define('_dedicated_message_added','The Dedicated was added.');
 define('_dedicated_message_info_abort','The Installation takes about 1-2 minutes, if it gets interrupted the Installation will be corrupt.');
+define('_dedicated_message_ip_invalid','Invalid IP');
 define('_dedicated_user','User');
 
 //Dashboard
@@ -130,7 +133,7 @@ define('_settings_maintance','Maintance');
 define('_settings_cleanup','Gameserver Log Cleanup');
 define('_settings_restart','Gameserver Restart if Crashed');
 define('_settings_restart_cpu_usage','Restart the gameserver if it hits more as 25% CPU load (if empty)');
-define('_settings_message_cpu_load','Print a Message into the Chat, if the CPU load is higher then 90%');
+define('_settings_message_cpu_load','Print a Message into the Chat, if the CPU load is higher then 75%');
 define('_settings_message_ssl_true','Your Webserver is using SSL to encrypt the connection. To check if its really secure: <a href="https://www.ssllabs.com/ssltest/">ssllabs.com</a>');
 define('_settings_message_ssl_false','Your Webserver is not using SSL to encrypt your connection.');
 

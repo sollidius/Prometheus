@@ -11,6 +11,7 @@ define('_title_users','Benutzer');
 define('_title_events','Events');
 define('_title_addons','Addons');
 define('_title_bans','Bans');
+define('_title_backup','Backup');
 
 //Sidebar
 define('_sidebar_settings','Konfig');
@@ -23,6 +24,7 @@ define('_sidebar_users','Benutzer');
 define('_sidebar_events','Events');
 define('_sidebar_addons','Addons');
 define('_sidebar_bans','Bans');
+define('_sidebar_backupserver','Backupserver');
 
 //Templates
 define('_templates_rootserver_installed','Das Template ist noch auf Rootservern installiert.');
@@ -96,6 +98,7 @@ define('_dedicated_message_root_invalid','Der Root Benutzer enth&auml;lt ung&uum
 define('_dedicated_message_port_invalid','Der Port enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
 define('_dedicated_message_added','Der Rootserver wurde angelegt.');
 define('_dedicated_message_info_abort','Die Installation kann 1-2 Minuten dauern, abbruch des Ladevorgangs führt zur fehlerhafter installation.');
+define('_dedicated_message_ip_invalid','Ungültige IP');
 define('_dedicated_user','Benutzer');
 
 //Dashboard
@@ -130,7 +133,7 @@ define('_settings_maintance','Wartungsmodus');
 define('_settings_cleanup','Gameserver Log Cleanup');
 define('_settings_restart','Gameserver Neustart bei Crash');
 define('_settings_restart_cpu_usage','Gameserver Neustarten bei mehr als 25% CPU Last (wenn leer)');
-define('_settings_message_cpu_load','Nachricht im Chat, bei mehr als 90% CPU Last');
+define('_settings_message_cpu_load','Nachricht im Chat, bei mehr als 75% CPU Last');
 define('_settings_message_ssl_true','Es wird SSL benutzt, um die Verbindung zu verschlüsseln. Um die Sicherheit der Verbindung zu Testen: <a href="https://www.ssllabs.com/ssltest/">ssllabs.com</a>');
 define('_settings_message_ssl_false','Es wird kein SSL benutzt, um die Verbindung zu verschlüsseln.');
 

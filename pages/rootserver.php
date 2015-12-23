@@ -328,6 +328,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                    if(!preg_match("/^[a-zA-Z0-9]+$/",$user)){ $msg = _dedicated_message_username_invalid."<br>";  $error = true;}
                    if(!preg_match("/^[a-zA-Z0-9]+$/",$root)){ $msg = _dedicated_message_root_invalid."<br>";  $error = true;}
                    if(!preg_match("/^[0-9]+$/",$port)){ $msg = _dedicated_message_port_invalid."<br>";  $error = true;}
+                   if (isValidIP($ip) == false) { $msg = _dedicated_message_ip_invalid."<br>";  $error = true;}
 
                    if ($error == false) {
 

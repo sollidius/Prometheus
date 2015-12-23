@@ -6,9 +6,11 @@ include 'header.php';
 $remote = htmlentities($_SERVER['REMOTE_ADDR']);
 if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
   $forward = $_SERVER['HTTP_X_FORWARDED_FOR'];
+  if (isValidIP($forward) == false) { $forward = "1111";}
 } else {
   $forward = "0000";
 }
+if (isValidIP($remote) == false) { $remote = "1111";}
 
 $error = false; $msg = "";
 

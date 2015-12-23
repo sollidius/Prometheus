@@ -257,7 +257,7 @@ if ($result = $mysqli->query($query)) {
                    //exit;
                  } else {
                     $load = $ssh->exec("sudo -u ".$gs_login." top -b -n 1 -u ".$gs_login." | awk 'NR>7 { sum += $9; } END { print sum; }'");
-                    if ($load > 90) {
+                    if ($load > 75) {
                       $cmd = "say The CPU load is dam high! Please clean your stuff up.";
                       $ssh->exec('sudo -u '.$gs_login.' screen -S "game'.$gs_login.'" -X stuff "'.$cmd.'\n"');
                     }

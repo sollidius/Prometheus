@@ -574,6 +574,10 @@ function isValidEmail($email){
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
+function isValidIP($ip) {
+  return filter_var($ip,  FILTER_VALIDATE_IP);
+}
+
 function ip_exists($ip,$id = 0) {
   global $mysqli;
   $query = "SELECT `id` FROM `dedicated` WHERE ip=?";
