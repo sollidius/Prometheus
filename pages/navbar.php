@@ -52,6 +52,11 @@
            '; } ?>
            <?php if  ($db_rank === 1) { echo '
           <li>
+              <a href="index.php?page=backup"><i class="fa fa-save fa-fw"></i> '. _sidebar_backupserver.'</a>
+          </li>
+           '; } ?>
+           <?php if  ($db_rank === 1) { echo '
+          <li>
               <a href="index.php?page=templates"><i class="fa fa-file-o fa-fw"></i> '. _sidebar_templates.'</a>
           </li>
            '; } ?>
@@ -114,6 +119,11 @@
            <?php if  ($db_rank === 1) { echo '
           <li>
               <a href="index.php?page=rootserver"><i class="fa fa-server fa-fw"></i> '. _sidebar_rootserver.'</a>
+          </li>
+           '; } ?>
+           <?php if  ($db_rank === 1) { echo '
+          <li>
+              <a href="index.php?page=backup"><i class="fa fa-save fa-fw"></i> '. _sidebar_backupserver.'</a>
           </li>
            '; } ?>
            <?php if  ($db_rank === 1) { echo '

@@ -91,8 +91,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                        /* fetch object array */
                        while ($row = $result->fetch_assoc()) {
                             echo "<tr>";
-                            if ($row['ip_remote'] == "1111") { echo "<td>"._dedicated_message_ip_invalid."</td>"; } else { echo "<td>" . $row['ip_remote'] . "</td>"; }
-                            if ($row['ip_forward'] == "0000") { echo "<td>Kein Proxy</td>"; } elseif ($row['ip_forward'] == "11111") {  echo "<td>"._dedicated_message_ip_invalid."</td>"; } else { echo "<td>" . $row['ip_forward'] . "</td>"; }
+                            if ($row['ip_remote'] == "0") { echo "<td>"._dedicated_message_ip_invalid."</td>"; } else { echo "<td>" . $row['ip_remote'] . "</td>"; }
+                            if ($row['ip_forward'] == "0") { echo "<td>Kein Proxy</td>"; } elseif ($row['ip_forward'] == "0") {  echo "<td>"._dedicated_message_ip_invalid."</td>"; } else { echo "<td>" . $row['ip_forward'] . "</td>"; }
                             echo "<td>".date('d-m-Y H:i:s', $row['timestamp'])."</td>";
                             echo "<td>".date('d-m-Y H:i:s', $row['timestamp_expires'])."</td>";
                             echo '<td> <a style="margin-left:2px" href="index.php?page=bans?delete-'.$row['id'].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';

@@ -29,6 +29,11 @@ if ($page=="usettings") {
  include 'pages/usettings.php';
 }
 
+//Backup
+if (startsWith($page, "backup")) {
+ include 'pages/backup.php';
+}
+
 //Users
 if (startsWith($page, "users")) {
  include 'pages/users.php';

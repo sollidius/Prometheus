@@ -26,6 +26,10 @@ define('_sidebar_addons','Addons');
 define('_sidebar_bans','Bans');
 define('_sidebar_backupserver','Backupserver');
 
+//Backupserver
+define('_backup_message_added','Backupserver hinzugefügt.');
+define('_backup_message_removed','Backupserver entfernt.');
+
 //Templates
 define('_templates_rootserver_installed','Das Template ist noch auf Rootservern installiert.');
 define('_template_rootserver_still_running','Installation des Templates läuft noch.');

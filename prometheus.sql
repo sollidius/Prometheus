@@ -32,10 +32,10 @@ CREATE TABLE `api_token` (
 CREATE TABLE `backup_server` (
   `id` int(11) NOT NULL,
   `name` int(11) NOT NULL,
-  `ip` int(11) NOT NULL,
+  `ip` varchar(50) NOT NULL,
   `port` int(11) NOT NULL,
-  `user` int(11) NOT NULL,
-  `password` int(11) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `type` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -95,10 +95,10 @@ CREATE TABLE `gameservers` (
   `parameters_active` int(1) NOT NULL DEFAULT '0',
   `deadline` int(11) NOT NULL,
   `player_online` int(2) NOT NULL DEFAULT '0',
-  `restart` int(1) NOT NULL DEFAULT '0',
+  `restart` int(1) NOT NULL DEFAULT '1',
   `restart_time` int(2) NOT NULL DEFAULT '6',
   `version` int(11) NOT NULL DEFAULT '0',
-  `autoupdate` int(11) NOT NULL DEFAULT '0'
+  `autoupdate` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `jobs` (
@@ -161,7 +161,7 @@ CREATE TABLE `wi_settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `wi_settings` (`id`, `header_txt`, `log_gs_cleanup`, `wi_maintance`, `cronjob_lastrun`, `gs_check_crash`, `gs_check_cpu`, `gs_check_cpu_msg`) VALUES
-(1, 'Prometheus', 1, 0, 1450432863, 1, 1, 1);
+(1, 'Prometheus', 1, 0, 1450967556, 1, 1, 1);
 
 
 ALTER TABLE `addons`
