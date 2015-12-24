@@ -218,6 +218,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                             if (ip_exists($ip,$row["id"])) { $msg = _dedicated_message_ip_exists; $error = true;}
                             if(!preg_match("/^[0-9]+$/",$port)){ $msg = _dedicated_message_port_exists."<br>";  $error = true;}
+                            if (isValidIP($ip) == false) { $msg = _dedicated_message_ip_invalid."<br>";  $error = true;}
 
                             if ($error == false) {
 
@@ -592,10 +593,10 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                      /* fetch object array */
                      while ($row = $result->fetch_assoc()) {
                           echo "<tr>";
-                          echo "<td>" . $row["name"] . "</td>";
-                          echo "<td>" . $row["ip"] . "</td>";
-                          echo "<td>" . $row["port"] . "</td>";
-                          echo "<td>" . $row["user"] . "</td>";
+                          echo "<td>" . htmlentities($row["name"]) . "</td>";
+                          echo "<td>" . htmlentities($row["ip"]) . "</td>";
+                          echo "<td>" . htmlentities($row["port"]) . "</td>";
+                          echo "<td>" . htmlentities($row["user"]) . "</td>";
                           echo "<td> ******** </td>";
                           if ($row["status"] == 0) { echo "<td>Unbekannt</td>"; }
                           if ($row["status"] == 1) { echo '<td>'._dedicated_installed.': ';
@@ -607,9 +608,9 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                   /* fetch object array */
                                   while ($row_2 = $result_2->fetch_assoc()) {
                                     if ($count >= 1) {
-                                    echo ', '.get_template_by_id($row_2["template_id"]);
+                                    echo ', '. htmlentities(get_template_by_id($row_2["template_id"]));
                                   } else {
-                                    echo get_template_by_id($row_2["template_id"]);
+                                    echo htmlentities(get_template_by_id($row_2["template_id"]));
                                   }
                                     $count++;
                                   }
@@ -646,7 +647,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 <?php
 
-} elseif ($_SESSION['login'] == 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
+} elseif ($_SESSION['login'] === 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
 } else {  header('Location: index.php');}
 
 

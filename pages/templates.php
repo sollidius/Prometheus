@@ -385,7 +385,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 <?php
 
- } elseif ($_SESSION['login'] == 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
+ } elseif ($_SESSION['login'] === 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
  } else {  header('Location: index.php');}
 
 

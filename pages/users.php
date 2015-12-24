@@ -139,7 +139,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             <div class="form-group">
                               <label class="control-label col-sm-2"><?php echo _users_name; ?>:</label>
                               <div class="col-sm-8">
-                                <input type="text" class="form-control input-sm" name="name" value="<?php echo $db_name;?>">
+                                <input type="text" class="form-control input-sm" name="name" value="<?php echo htmlentities($db_name);?>">
                               </div>
                               <div class="col-sm-2">
                                   <input data-size="small" data-off="User" id="toggle-user" data-on="Administrator" data-height="20" type="checkbox" name="administrator" data-toggle="toggle">
@@ -158,7 +158,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             <div class="form-group">
                               <label class="control-label col-sm-2" for="email"><?php echo _users_email; ?>:</label>
                               <div class="col-sm-10">
-                                <input type="email" class="form-control input-sm" name="email" value="<?php echo $db_email;?>">
+                                <input type="email" class="form-control input-sm" name="email" value="<?php echo htmlentities($db_email);?>">
                               </div>
                             </div>
                             <div class="form-group">
@@ -294,8 +294,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
-                            echo "<td>" . $db_name . "</td>";
-                            echo "<td>" . $db_email . "</td>";
+                            echo "<td>" . htmlentities($db_name) . "</td>";
+                            echo "<td>" . htmlentities($db_email) . "</td>";
                             //echo "<td>***********</td>";
                             if ($db_rank == 1) {
                               echo "<td>Administrator</td>";
@@ -329,7 +329,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 <?php
 
- } elseif ($_SESSION['login'] == 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
+ } elseif ($_SESSION['login'] === 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
  } else {  header('Location: index.php');}
 
 

@@ -72,6 +72,7 @@ define('_addons_message_error_name','The Name contains invalid letters (a-z,A-Z,
 define('_addon_message_added','The Addon was added.');
 define('_addons_game','Game');
 define('_addons_name','Name');
+define('_addons_message_error_url','Invalid URL');
 
 //Bans
 define('_bans_message','After 3 attempts is the User banned until one of the bans gets lifted after 30 minutes.');
@@ -174,7 +175,7 @@ define('_gameserver_port_invalid','Der Port contains invalid letters (0-9 are al
 define('_gameserver_port_in_use','Port used');
 define('_gameserver_mass_error','The Ammount contains invalid letters (0-9are allowed)');
 define('_gameserver_dedicated_invalid','Dedicated contains invalid letters (0-9 are allowed)');
-define('_gameserver_user_invalid','THe User contains invalid letters (0-9 are allowed)');
+define('_gameserver_user_invalid','The User contains invalid letters (a-z,A-Z,0-9 are allowed)');
 define('_gameserver_game_invalid','The Game contains invalid letters (a-z,A-Z,0-9._- are allowed)');
 define('_gameserver_dedi_id_invalid','Invalid Dedicated ID');
 define('_gameserver_installed','The Gameserver will be installed, that can take some time.');

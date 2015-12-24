@@ -84,7 +84,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  $folder = htmlentities($_POST['folder']);
                                  if(!preg_match("/^[a-zA-Z0-9._-]+$/",$name)){ $msg = _addons_message_error_name ."<br>";  $error = true;}
                                  if(!preg_match("/^[a-zA-Z0-9._-]+$/",$game)){ $msg = _addons_message_error_game ."<br>";  $error = true;
-                                } else {
+                                 } else {
 
                                   $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name = ?");
                                   $stmt->bind_param('s', $game);
@@ -96,6 +96,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                   if (check_template($template_id)) { $msg = _message_addon_error; $error = true;}
 
                                 }
+                                if (isValidURL($url) == false) { $msg = _addons_message_error_url; $error = true;}
 
 
                                  if ($error == false) {
@@ -140,7 +141,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             <div class="form-group">
                               <label class="control-label col-sm-2">Name/Game:</label>
                               <div class="col-sm-3">
-                                <input type="text" class="form-control input-sm" name="name" value="<?php echo $db_name;?>">
+                                <input type="text" class="form-control input-sm" name="name" value="<?php echo htmlentities($db_name);?>">
                               </div>
                               <div class="col-sm-3">
                                 <select class="form-control input-sm" name="game">
@@ -166,16 +167,16 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             <div class="form-group">
                               <label class="control-label col-sm-2">URL/<?php echo _addons_path; ?>:</label>
                               <div class="col-sm-3">
-                                <input type="text" class="form-control input-sm" name="url" value="<?php echo $db_url;?>">
+                                <input type="text" class="form-control input-sm" name="url" value="<?php echo htmlentities($db_url);?>">
                               </div>
                               <div class="col-sm-3">
-                                <input type="text" class="form-control input-sm" name="path"value="<?php echo $db_path;?>">
+                                <input type="text" class="form-control input-sm" name="path"value="<?php echo htmlentities($db_path);?>">
                               </div>
                             </div>
                             <div class="form-group">
                               <label class="control-label col-sm-2"><?php echo _addons_folder; ?>:</label>
                               <div class="col-sm-3">
-                                <input type="text" class="form-control input-sm" name="folder" value="<?php echo $db_folder;?>">
+                                <input type="text" class="form-control input-sm" name="folder" value="<?php echo htmlentities($db_folder);?>">
                               </div>
                             </div>
                             <div class="form-group">
@@ -221,6 +222,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                            if (check_template($template_id)) { $msg = _message_addon_error; $error = true;}
 
                          }
+                         if (isValidURL($url) == false) { $msg = _addons_message_error_url; $error = true;}
 
                          if ($error == false) {
 
@@ -325,17 +327,17 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                             $url = $row['url'];
                             $id = $row['id'];
                             echo "<tr>";
-                            echo "<td>" . $row['name'] . "</td>";
-                            echo "<td>" . $game . "</td>";
+                            echo "<td>" . htmlentities($row['name']) . "</td>";
+                            echo "<td>" . htmlentities($game) . "</td>";
                             if ( strlen($url) > 15) {
-                              echo "<td>" . substr($url, 0, 15) . "...</td>";
+                              echo "<td>" . htmlentities(substr($url, 0, 15)) . "...</td>";
                             } else {
-                              echo "<td>" . $url . "</td>";
+                              echo "<td>" . htmlentities($url) . "</td>";
                             }
                             if ( strlen($path) > 15) {
-                              echo "<td>" . substr($path, 0, 15) . "...</td>";
+                              echo "<td>" . htmlentities(substr($path, 0, 15)) . "...</td>";
                             } else {
-                              echo "<td>" . $path . "</td>";
+                              echo "<td>" . htmlentities($path) . "</td>";
                             }
                             echo '<td> <a href="index.php?page=addons?edit-'.$id.'"  class="btn btn-primary btn-xs">'._button_edit.'</i></a>
                                       <a style="margin-left:2px" href="index.php?page=addons?delete-'.$id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
@@ -364,7 +366,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 <?php
 
- } elseif ($_SESSION['login'] == 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
+ } elseif ($_SESSION['login'] === 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
  } else {  header('Location: index.php');}
 
 

@@ -72,6 +72,7 @@ define('_addons_message_error_name','Der Name enth&auml;lt ung&uuml;ltige Zeiche
 define('_addon_message_added','Das Addon wurde angelegt.');
 define('_addons_game','Spiel');
 define('_addons_name','Name');
+define('_addons_message_error_url','Ungültiger URL');
 
 //Bans
 define('_bans_message','Bei 3 Versuchen ist die IP gebannt bis einer der 3 Einträge ausläuft nach 30 Minuten.');
@@ -174,7 +175,7 @@ define('_gameserver_port_invalid','Der Port enth&auml;lt ung&uuml;ltige Zeichen 
 define('_gameserver_port_in_use','Port belegt');
 define('_gameserver_mass_error','Die Anzahl enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
 define('_gameserver_dedicated_invalid','Dedicated enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
-define('_gameserver_user_invalid','User enth&auml;lt ung&uuml;ltige Zeichen (0-9 sind Erlaubt)');
+define('_gameserver_user_invalid','User enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9 sind Erlaubt)');
 define('_gameserver_game_invalid','Das Spiel enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._- sind Erlaubt)');
 define('_gameserver_dedi_id_invalid','Ungültige Dedicated ID');
 define('_gameserver_installed','Der Gameserver wird installiert, das kann etwas dauern.');

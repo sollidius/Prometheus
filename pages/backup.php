@@ -113,25 +113,25 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                           <div class="form-group">
                             <label class="control-label col-sm-2">Name:</label>
                             <div class="col-sm-6">
-                              <input type="text" class="form-control input-sm" name="name" value="<?php echo $db_name; ?>">
+                              <input type="text" class="form-control input-sm" name="name" value="<?php echo htmlentities($db_name); ?>">
                             </div>
                           </div>
                           <div class="form-group">
                             <label class="control-label col-sm-2">IP/Port:</label>
                             <div class="col-sm-3">
-                              <input type="text" class="form-control input-sm" name="ip" value="<?php echo $db_ip; ?>">
+                              <input type="text" class="form-control input-sm" name="ip" value="<?php echo htmlentities($db_ip); ?>">
                             </div>
                             <div class="col-sm-3">
-                              <input type="text" class="form-control input-sm" name="port" value="<?php echo $db_port; ?>">
+                              <input type="text" class="form-control input-sm" name="port" value="<?php echo htmlentities($db_port); ?>">
                             </div>
                           </div>
                           <div class="form-group">
                             <label class="control-label col-sm-2">User/Passwort:</label>
                             <div class="col-sm-3">
-                              <input type="text" class="form-control input-sm" name="user" value="<?php echo $db_user; ?>">
+                              <input type="text" class="form-control input-sm" name="user" value="<?php echo htmlentities($db_user); ?>">
                             </div>
                             <div class="col-sm-3">
-                              <input type="text" class="form-control input-sm" name="password" value="<?php echo $db_password; ?>">
+                              <input type="text" class="form-control input-sm" name="password" value="<?php echo htmlentities($db_password); ?>">
                             </div>
                           </div>
                           <div class="form-group">
@@ -265,11 +265,11 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
                           while ($stmt->fetch()) {
                             echo "<tr>";
-                            echo "<td>" . $db_name . "</td>";
-                            echo "<td>" . $db_ip . "</td>";
-                            echo "<td>" . $db_port . "</td>";
-                            echo "<td>" . $db_user . "</td>";
-                            echo "<td>" . $db_type . "</td>";
+                            echo "<td>" . htmlentities($db_name) . "</td>";
+                            echo "<td>" . htmlentities($db_ip) . "</td>";
+                            echo "<td>" . htmlentities($db_port) . "</td>";
+                            echo "<td>" . htmlentities($db_user) . "</td>";
+                            echo "<td>" . htmlentities($db_type) . "</td>";
                             echo '<td> <a href="index.php?page=backup?edit-'.$db_id.'"  class="btn btn-primary btn-xs">'._button_edit.'</i></a>
                                       <a style="margin-left:2px" href="index.php?page=backup?delete-'.$db_id.'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>';
                             echo '</td>';
@@ -297,7 +297,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
 
 <?php
 
- } elseif ($_SESSION['login'] == 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
+ } elseif ($_SESSION['login'] === 1 and $db_rank != 1) { header('Location: index.php?page=dashboard');
  } else {  header('Location: index.php');}
 
 

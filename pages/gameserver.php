@@ -410,7 +410,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                 <div class="form-group">
                                   <label class="control-label col-sm-2"><?php echo _gameserver_map; ?>/<?php echo _gameserver_restart; ?>:</label>
                                   <div class="col-sm-2">
-                                    <input class="typeahead form-control input-sm" type="text" name="map" value="<?php echo $db_map; ?>">
+                                    <input class="typeahead form-control input-sm" type="text" name="map" value="<?php echo htmlentities($db_map); ?>">
                                     <?php
                                     $ssh = new Net_SSH2($dedi_ip,$dedi_port);
                                      if (!$ssh->login($dedi_login, $dedi_password)) {
@@ -508,11 +508,11 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   <label class="control-label col-sm-2"><?php echo  _gameserver_parameter; ?>:</label>
                                   <div class="col-sm-4">
                                     <?php if ($db_rank == 1) { ?>
-                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>">
+                                  <input type="text" class="form-control input-sm" name="parameter" value="<?php echo htmlentities($db_parameter);?>">
                                   <?php } elseif ($db_rank == 2 AND $db_parameter_active == 1) { ?>
-                                    <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>"> <?php
+                                    <input type="text" class="form-control input-sm" name="parameter" value="<?php echo htmlentities($db_parameter);?>"> <?php
                                   } elseif ($db_rank == 2 AND $db_parameter_active == 0) { ?>
-                                    <input type="text" class="form-control input-sm" name="parameter" value="<?php echo $db_parameter;?>" readonly="readonly"> <?php
+                                    <input type="text" class="form-control input-sm" name="parameter" value="<?php echo htmlentities($db_parameter);?>" readonly="readonly"> <?php
                                   } ?>
                                   </div>
                                   <div class="col-sm-2">
@@ -533,10 +533,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   <div class="form-group">
                                     <label class="control-label col-sm-2">Slots/Port:</label>
                                     <div class="col-sm-2">
-                                      <input type="text" class="form-control input-sm" name="slots" value="<?php echo $db_slots;?>">
+                                      <input type="text" class="form-control input-sm" name="slots" value="<?php echo htmlentities($db_slots);?>">
                                     </div>
                                     <div class="col-sm-2">
-                                      <input type="text" class="form-control input-sm" name="port" value="<?php echo $db_port;?>">
+                                      <input type="text" class="form-control input-sm" name="port" value="<?php echo htmlentities($db_port);?>">
                                     </div>
                                   </div>
                               <?php  } ?>
@@ -1078,13 +1078,13 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               } elseif ($row["is_running"] == 0)  {
                                   echo '<tr class="danger">';
                               }
-                              echo "<td>" . $db_user_name . "</td>";
-                              echo "<td>" . get_template_by_id($row["game"]) . "</td>";
-                              echo "<td>" . $row["ip"] .":".$row["port"]."</td>";
-                              echo "<td>" .$row['player_online']."/". $row["slots"] . "</td>";
-                              echo "<td>" . $row["map"] . "</td>";
-                              echo "<td>" . $row["gs_login"] . "</td>";
-                              echo '<td>' . $row["gs_password"] .' <a href="index.php?page=gameserver?pw-'.$row["id"].'"  class="btn btn-primary btn-xs pull-right"><i class="fa fa-refresh"></i></a></td>';
+                              echo "<td>" . htmlentities($db_user_name) . "</td>";
+                              echo "<td>" . htmlentities(get_template_by_id($row["game"])) . "</td>";
+                              echo "<td>" . htmlentities($row["ip"] .":".$row["port"])."</td>";
+                              echo "<td>" . htmlentities($row['player_online']."/". $row["slots"]) . "</td>";
+                              echo "<td>" . htmlentities($row["map"]) . "</td>";
+                              echo "<td>" . htmlentities($row["gs_login"]) . "</td>";
+                              echo '<td>' . htmlentities($row["gs_password"]) .' <a href="index.php?page=gameserver?pw-'.$row["id"].'"  class="btn btn-primary btn-xs pull-right"><i class="fa fa-refresh"></i></a></td>';
                               if ($row["status"] == 0) {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">'._gameserver_button_stop.'</a>  </td>';
                                 echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'" class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>  </td>';
@@ -1102,13 +1102,13 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                               } elseif ($row["is_running"] == 0)  {
                                   echo '<tr class="danger">';
                               }
-                              echo "<td>" . $db_user_name . "</td>";
-                              echo "<td>" . $row["game"] . "</td>";
-                              echo "<td>" . $row["ip"] .":".$row["port"]."</td>";
-                              echo "<td>" . $row["slots"] . "</td>";
-                              echo "<td>" . $row["map"] . "</td>";
-                              echo "<td>" . $row["gs_login"] . "</td>";
-                              echo '<td>' . $row["gs_password"] .' <a href="index.php?page=gameserver?pw-'.$row["id"].'"  class="btn btn-primary btn-xs pull-right"><i class="fa fa-refresh"></i></a></td>';
+                              echo "<td>" . htmlentities($db_user_name) . "</td>";
+                              echo "<td>" . htmlentities($row["game"]) . "</td>";
+                              echo "<td>" . htmlentities($row["ip"] .":".$row["port"]) ."</td>";
+                              echo "<td>" . htmlentities($row["slots"]) . "</td>";
+                              echo "<td>" . htmlentities($row["map"]) . "</td>";
+                              echo "<td>" . htmlentities($row["gs_login"]) . "</td>";
+                              echo '<td>' . htmlentities($row["gs_password"]) .' <a href="index.php?page=gameserver?pw-'.$row["id"].'"  class="btn btn-primary btn-xs pull-right"><i class="fa fa-refresh"></i></a></td>';
                               if ($row["status"] == 0) {
                                 echo '<td> <a href="index.php?page=gameserver?start-'.$row["id"].'"  class="btn btn-success btn-xs">'._gameserver_button_restart.'</a> <a href="index.php?page=gameserver?stop-'.$row["id"].'"  class="btn btn-danger btn-xs">'._gameserver_button_stop.'</a>  </td>';
                                 echo '<td> <a href="index.php?page=gameserver?reinstall-'.$row["id"].'"  class="btn btn-warning btn-xs">'._gameserver_button_reinstall.'</a> <a href="index.php?page=gameserver?update-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_update.'</a> <a href="index.php?page=gameserver?console-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_console.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'-addons"  class="btn btn-primary btn-xs">'._gameserver_button_addons.'</a> <a href="index.php?page=gameserver?settings-'.$row["id"].'"  class="btn btn-primary btn-xs">'._gameserver_button_settings.'</a>  <a href="index.php?page=gameserver?delete-'.$row["id"].'"  class="btn btn-danger btn-xs" disabled><i class="fa fa-remove"></i></a>  </td>';

@@ -578,6 +578,10 @@ function isValidIP($ip) {
   return filter_var($ip,  FILTER_VALIDATE_IP);
 }
 
+function isValidURL($url) {
+  return filter_var($url, FILTER_VALIDATE_URL);
+}
+
 function ip_exists($ip,$id = 0) {
   global $mysqli;
   $query = "SELECT `id` FROM `dedicated` WHERE ip=?";
