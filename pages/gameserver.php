@@ -672,7 +672,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              <?php
                               }
                             }
-                          if ($page == "gameserver?console-".$row[0] AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?console-".$row[0] AND $row[1] == 0 AND $db_rank == 1) {
+                          if ($page == "gameserver?console-".$row[0] AND $row[2] == $_SESSION['user_id'] or $page == "gameserver?console-".$row[0] AND $db_rank == 1) {
 
                             $gs_select = $row[0];
 
