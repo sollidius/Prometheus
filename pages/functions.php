@@ -4,7 +4,7 @@ date_default_timezone_set('Europe/Amsterdam');
 $mysqli = new mysqli("localhost", "prometheus", "GZLUeYPKMDR69H6Z", "prometheus");
 
 if ($mysqli->connect_error) {
-   echo "Not connected, error: " . $mysqli_connection->connect_error;
+   echo "Not connected, error: " . $mysqli->connect_error;
    exit;
 }
 
@@ -788,7 +788,7 @@ function check_game_in_use_id($template_id) {
 }
 
 function ask_steam_for_cookies($appid) {
-
+  if(preg_match("/^[0-9]+$/",$appid)){
   $cookies = file_get_contents('https://api.steampowered.com/ISteamApps/UpToDateCheck/v1?appid='.$appid.'&version=1&format=json');
   $cookies = json_decode($cookies,true);
 
@@ -799,6 +799,7 @@ function ask_steam_for_cookies($appid) {
      }
     }
   }
+}
 }
 
  ?>

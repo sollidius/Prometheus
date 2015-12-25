@@ -18,6 +18,9 @@ if ($db_language == "de") {
     require_once('lang/de.lang.php');
   } elseif ($db_language == "en") {
     require_once('lang/en.lang.php');
+  } else {
+    echo "Invalid Language";
+    exit;
   }
 
 //header
@@ -1022,7 +1025,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->bind_result($db_name);
 
                              while ($stmt->fetch()) {
-                               echo "<option>" . $db_name . "</option>";
+                               echo "<option>" . htmlentities($db_name) . "</option>";
                              }
                              $stmt->close();
                          }  ?>
@@ -1038,7 +1041,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->bind_result($db_id,$db_name);
 
                              while ($stmt->fetch()) {
-                               echo '<option value="'. $db_id .'">'. $db_name .'</option>';
+                               echo '<option value="'. htmlentities($db_id) .'">'. htmlentities($db_name) .'</option>';
                              }
                              $stmt->close();
                          }  ?>
@@ -1060,7 +1063,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                              $stmt->bind_result($db_id,$db_name);
 
                              while ($stmt->fetch()) {
-                               echo '<option value="'. $db_id .'">'. $db_name .'</option>';
+                               echo '<option value="'. htmlentities($db_id) .'">'. htmlentities($db_name) .'</option>';
                              }
                              $stmt->close();
                          }  ?>

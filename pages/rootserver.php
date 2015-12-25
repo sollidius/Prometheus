@@ -18,6 +18,9 @@ if ($db_language == "de") {
     require_once('lang/de.lang.php');
   } elseif ($db_language == "en") {
     require_once('lang/en.lang.php');
+  } else {
+    echo "Invalid Language";
+    exit;
   }
 
 //header
@@ -191,10 +194,10 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                                  echo "<tr>";
                                  echo "<td>" . $row_2["name"] . "</td>";
                                  if ($installed[0] == 0) {
-                                    echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success" disabled>'.$installed[1].'</button>';
+                                    echo '<td><button type="submit" name="game_'. htmlentities($row_2["id"]).'" class="btn btn-xs btn-success" disabled>'.htmlentities($installed[1]).'</button>';
                                     echo '<button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger">'._dedicated_remove.'</button></td>';
                                  } else {
-                                   echo '<td><button type="submit" name="game_'.$row_2["id"].'" class="btn btn-xs btn-success">'._dedicated_install.'</button> <button style="margin-left:2px;" type="submit" name="remove_'.$row_2["id"].'" class="btn btn-xs btn-danger" disabled>'._dedicated_remove.'</button> </td>';
+                                   echo '<td><button type="submit" name="game_'.htmlentities($row_2["id"]).'" class="btn btn-xs btn-success">'._dedicated_install.'</button> <button style="margin-left:2px;" type="submit" name="remove_'.htmlentities($row_2["id"]).'" class="btn btn-xs btn-danger" disabled>'._dedicated_remove.'</button> </td>';
                                  }
                                  echo "</tr>";
                                }

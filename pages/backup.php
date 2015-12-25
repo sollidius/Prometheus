@@ -18,8 +18,10 @@ if ($db_language == "de") {
     require_once('lang/de.lang.php');
   } elseif ($db_language == "en") {
     require_once('lang/en.lang.php');
+  } else {
+    echo "Invalid Language";
+    exit;
   }
-
 //header
 $title = _title_backup;
 include 'header.php';

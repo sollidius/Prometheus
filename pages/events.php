@@ -18,6 +18,9 @@ if ($db_language == "de") {
     require_once('lang/de.lang.php');
   } elseif ($db_language == "en") {
     require_once('lang/en.lang.php');
+  } else {
+    echo "Invalid Language";
+    exit;
   }
 
 //header
@@ -61,8 +64,8 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                    while ($row = $result->fetch_assoc()) {
                      $type = $row['type'];
                      echo '<tr>';
-                     echo '<td>'.date('d-m-Y H:i:s', $row['timestamp']).'</td>';
-                     echo '<td><i class="fa fa-'.event_id_to_ico($type).' fa-fw"></i> ';
+                     echo '<td>'. htmlentities(date('d-m-Y H:i:s', $row['timestamp'])).'</td>';
+                     echo '<td><i class="fa fa-'. htmlentities(event_id_to_ico($type)).' fa-fw"></i> ';
                      if ($db_language == "de") {
                        if ($type == 1) {
                         echo "Der Gameserver ".$row['message']." wurde gestartet.</td>";
@@ -93,7 +96,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          $tmp = explode(":",$row['message']);
                          echo "Das Template ".$tmp[0]. " auf dem Rootserver ".$tmp[1]. " wurde aktualisiert.</td>";
                        } else {
-                          echo $row['message'].'</td>';
+                          echo htmlentities($row['message']).'</td>';
                        }
                      } elseif ($db_language == "en") {
                        if ($type == 1) {
@@ -125,7 +128,7 @@ if ($_SESSION['login'] === 1 and $db_rank === 1) {
                          $tmp = explode(":",$row['message']);
                          echo "The Template ".$tmp[0]. " on the Dedi ".$tmp[1]. " was updated.</td>";
                        } else {
-                          echo $row['message'].'</td>';
+                          echo htmlentities($row['message']).'</td>';
                        }
                      }
 
