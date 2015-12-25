@@ -182,6 +182,8 @@ define('_gameserver_installed','Der Gameserver wird installiert, das kann etwas 
 define('_gameserver_mass','Anzahl');
 define('_gameserver_pw_changed','FTP Passwort wurde geändert.');
 define('_gameserver_game_change','Drücke Reinstall um das neue Spiel zu installieren.');
+define('_gameserver_map_invalid','Die Map enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._-) sind Erlaubt)');
+define('_gameserver_parameter_invalid','Der Parameter enth&auml;lt ung&uuml;ltige Zeichen (a-z,A-Z,0-9._ -) sind Erlaubt)');
 
 
 

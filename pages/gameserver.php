@@ -335,6 +335,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                 if ($db_rank == 2) {
 
+                                  $error = false;
                                   $map = htmlentities($_POST['map']);
                                   $parameter = htmlentities($_POST['parameter']);
                                   $time = htmlentities($_POST['time']);
@@ -343,6 +344,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $time = str_replace(" ".$clock, "",$time);
                                   $restart_active = 0; $updates_active = 0;
                                   $game = htmlentities($_POST['game']);
+                                  if(!preg_match("/^[a-zA-Z0-9._-]+$/",$map)){ $msg = _gameserver_map_invalid."<br>";  $error = true;}
+                                  if ($parameter != "") {
+                                    if(!preg_match("/^[a-zA-Z0-9._ -]+$/",$parameter)){ $msg = _gameserver_map_invalid."<br>";  $error = true;}
+                                  }
 
                                   $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name= ?");
                                   $stmt->bind_param('s', $game);
@@ -367,11 +372,14 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   if ($db_game != $game) {
                                     msg_info(_gameserver_game_change);
                                   }
+                                    if ($error == false) {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?,restart = ?,restart_time = ?, autoupdate = ?, game = ?  WHERE id = ?");
-                                    $stmt->bind_param('ssiiiii',$map,$parameter,$restart_active,$time,$updates_active,$game,$row[0]);
-                                    $stmt->execute();
-                                    $stmt->close();
+                                      $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?,restart = ?,restart_time = ?, autoupdate = ?, game = ?  WHERE id = ?");
+                                      $stmt->bind_param('ssiiiii',$map,$parameter,$restart_active,$time,$updates_active,$game,$row[0]);
+                                      $stmt->execute();
+                                      $stmt->close();
+
+                                    }
 
                                 } elseif ($db_rank == 1) {
 
@@ -404,6 +412,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                   if(!preg_match("/^[0-9]+$/",$slots)){ $msg = _gameserver_slots_invalid."<br>";  $error = true;}
                                   if(!preg_match("/^[0-9]+$/",$port)){ $msg = _gameserver_port_invalid."<br>";  $error = true;}
+                                  if(!preg_match("/^[a-zA-Z0-9._-]+$/",$map)){ $msg = _gameserver_map_invalid."<br>";  $error = true;}
+                                  if ($parameter != "") {
+                                    if(!preg_match("/^[a-zA-Z0-9._ -]+$/",$parameter)){ $msg = _gameserver_map_invalid."<br>";  $error = true;}
+                                  }
                                   if (port_exists($row[3],$port,$row[2])) { $msg = _gameserver_port_in_use; $error = true;}
 
                                   if ($error == false) {
