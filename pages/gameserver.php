@@ -312,10 +312,10 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                             $gs_select = $row[0];
 
-                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id,parameters_active FROM gameservers WHERE id = ?");
+                            $stmt = $mysqli->prepare("SELECT ip,game,gs_login,slots,map,port,parameter,dedi_id,parameters_active,gameswitch,game FROM gameservers WHERE id = ?");
                             $stmt->bind_param('i', $gs_select);
                             $stmt->execute();
-                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$parameter,$dedi_id,$parameter_active);
+                            $stmt->bind_result($ip,$game,$gs_login,$slots,$map,$port,$db_parameter,$dedi_id,$parameter_active,$gameswitch,$db_game);
                             $stmt->fetch();
                             $stmt->close();
 
@@ -335,26 +335,40 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   $map = htmlentities($_POST['map']);
                                   $parameter = htmlentities($_POST['parameter']);
                                   $time = htmlentities($_POST['time']);
+                                  $clock = "o'clock";
                                   $time = str_replace(" Uhr", "",$time);
+                                  $time = str_replace(" ".$clock, "",$time);
                                   $restart_active = 0; $updates_active = 0;
+                                  $game = htmlentities($_POST['game']);
+
+                                  $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name= ?");
+                                  $stmt->bind_param('s', $game);
+                                  $stmt->execute();
+                                  $stmt->bind_result($game);
+                                  $stmt->fetch();
+                                  $stmt->close();
+
                                   if (isset($_POST['restart_active'])) { $restart_active = 1;}
                                   if (isset($_POST['updates_active'])) { $updates_active = 1;}
 
-                                  if ($parameter_active == 1) {
-
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?,restart = ?,restart_time = ?, updates_active = ?  WHERE id = ?");
-                                    $stmt->bind_param('ssiiii',$map,$parameter,$restart_active,$time,$updates_active,$row[0]);
-                                    $stmt->execute();
-                                    $stmt->close();
-
-                                  } else {
-
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?, restart = ?,restart_time = ?, updates_active = ?  WHERE id = ?");
-                                    $stmt->bind_param('siiii',$map,$restart_active,$time,$updates_active,$row[0]);
-                                    $stmt->execute();
-                                    $stmt->close();
-
+                                  if ($parameter_active == 0) {
+                                    $parameter = $db_parameter;
                                   }
+
+                                  $installed = check_game_installed($row[5],$game);
+
+                                  if ($gameswitch == 0 OR $installed[0] == 0) {
+                                    $game = $db_game;
+                                  }
+
+                                  if ($db_game != $game) {
+                                    msg_info(_gameserver_game_change);
+                                  }
+
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?,restart = ?,restart_time = ?, autoupdate = ?, game = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssiiiii',$map,$parameter,$restart_active,$time,$updates_active,$game,$row[0]);
+                                    $stmt->execute();
+                                    $stmt->close();
 
                                 } elseif ($db_rank == 1) {
 
@@ -370,6 +384,20 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   if (isset($_POST['parameter_active'])) { $parameter_active = 1;}
                                   if (isset($_POST['restart_active'])) { $restart_active = 1;}
                                   if (isset($_POST['updates_active'])) { $updates_active = 1;}
+                                  $game = htmlentities($_POST['game']);
+
+                                  $stmt = $mysqli->prepare("SELECT id FROM templates WHERE name= ?");
+                                  $stmt->bind_param('s', $game);
+                                  $stmt->execute();
+                                  $stmt->bind_result($game);
+                                  $stmt->fetch();
+                                  $stmt->close();
+
+                                  $installed = check_game_installed($row[5],$game);
+
+                                  if ($gameswitch == 0 OR $installed[0] == 0) {
+                                    $game = $db_game;
+                                  }
 
                                   if(!preg_match("/^[0-9]+$/",$slots)){ $msg = _gameserver_slots_invalid."<br>";  $error = true;}
                                   if(!preg_match("/^[0-9]+$/",$port)){ $msg = _gameserver_port_invalid."<br>";  $error = true;}
@@ -377,10 +405,14 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
 
                                   if ($error == false) {
 
-                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?, restart = ?,restart_time = ?,autoupdate = ?  WHERE id = ?");
-                                    $stmt->bind_param('ssiiiiiii',$map,$parameter,$slots,$port,$parameter_active,$restart_active,$time,$updates_active,$row[0]);
+                                    $stmt = $mysqli->prepare("UPDATE gameservers SET map = ?,parameter = ?, slots = ?, port = ?, parameters_active = ?, restart = ?,restart_time = ?,autoupdate = ?, game = ?  WHERE id = ?");
+                                    $stmt->bind_param('ssiiiiiiii',$map,$parameter,$slots,$port,$parameter_active,$restart_active,$time,$updates_active,$game,$row[0]);
                                     $stmt->execute();
                                     $stmt->close();
+
+                                    if ($db_game != $game) {
+                                      msg_info(_gameserver_game_change);
+                                    }
 
                                   } else {
                                     msg_error($msg);
@@ -541,7 +573,31 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   </div>
                               <?php  } ?>
                               <div class="form-group">
-                                <label class="control-label col-sm-2">Updates:</label>
+                                <label class="control-label col-sm-2"><?php echo _gameserver_game; ?>/Updates:</label>
+                                <div class="col-sm-2">
+                                  <select class="form-control input-sm form-control" name="game">
+                                  <?php
+                                  $query_2 = "SELECT name,id FROM templates ORDER by name ASC";
+
+                                  if ($result_3 = $mysqli->query($query_2)) {
+
+                                      /* fetch object array */
+                                      while ($row_3 = $result_3->fetch_row()) {
+                                        $installed = check_game_installed($row[5],$row_3[1]);
+                                        if ($installed[0] == 1 AND $row_3[1] == $row[4]) {
+                                          echo '<option selected="selected">'.$row_3[0].'</option>';
+                                        } elseif  ($installed[0] == 1 ) {
+                                          echo "<option>".$row_3[0]."</option>";
+                                         } else {
+                                          echo "<option disabled>".$row_3[0]."</option>";
+                                         }
+                                       }
+                                       /* free result set */
+                                       $result_3->close();
+                                   }
+                                   ?>
+                                  </select>
+                                </div>
                                 <div class="col-sm-2">
                                     <input data-size="small" id="toggle-updates" data-height="20" type="checkbox" name="updates_active" data-toggle="toggle">
                                 <?php   if ($autoupdate == 1) {
@@ -1103,7 +1159,7 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                   echo '<tr class="danger">';
                               }
                               echo "<td>" . htmlentities($db_user_name) . "</td>";
-                              echo "<td>" . htmlentities($row["game"]) . "</td>";
+                              echo "<td>" . htmlentities(get_template_by_id($row["game"])) . "</td>";
                               echo "<td>" . htmlentities($row["ip"] .":".$row["port"]) ."</td>";
                               echo "<td>" . htmlentities($row["slots"]) . "</td>";
                               echo "<td>" . htmlentities($row["map"]) . "</td>";

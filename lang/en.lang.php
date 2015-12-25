@@ -181,7 +181,7 @@ define('_gameserver_dedi_id_invalid','Invalid Dedicated ID');
 define('_gameserver_installed','The Gameserver will be installed, that can take some time.');
 define('_gameserver_mass','Ammount');
 define('_gameserver_pw_changed','FTP Password was changed.');
-
+define('_gameserver_game_change','Press Reinstall to finish the Installation of the new Game.');
 
 
 
