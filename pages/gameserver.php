@@ -108,9 +108,9 @@ if ($_SESSION['login'] === 1 AND ($db_rank === 1 OR $db_rank === 2)) {
                                $copy = "screen -amds cp".$gs_login." bash -c 'sudo cp -R /home/".$dedi_login."/templates/".$game_name."/* /home/".$gs_login.";sudo cp -R /home/".$dedi_login."/templates/".$game_name."/linux32/libstdc++.so.6 /home/".$gs_login."/game/bin;sudo chown -R ".$gs_login.":".$gs_login." /home/".$gs_login.";'";
                                $ssh->exec($copy);
 
-                               $status = 1;
-                               $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?  WHERE id = ?");
-                               $stmt->bind_param('ii',$status,$gs_select);
+                               $status = 1; $running = 0;
+                               $stmt = $mysqli->prepare("UPDATE gameservers SET status = ?, is_running = ?, running = ?  WHERE id = ?");
+                               $stmt->bind_param('iiii',$status,$running,$running,$gs_select);
                                $stmt->execute();
                                $stmt->close();
 
